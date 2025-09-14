@@ -1,84 +1,61 @@
 package com.github.callmephil.knr.runtime.typing.pointer
 
-import java.lang.foreign.MemorySegment
-import java.lang.foreign.ValueLayout
+import com.github.callmephil.knr.runtime.memory.ARC
 
 class NullableLongPointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<Long?>(memorySegment) {
+    arc: ARC,
+    onArcUpdated: (() -> Unit)? = null
+) : NullablePrimitivePointer<Long>(arc, onArcUpdated) {
 
-    override fun get() = if (memorySegment == MemorySegment.NULL) {
-        null
-    } else {
-        memorySegment.get(ValueLayout.JAVA_LONG, 0)
-    }
+    override fun get() = arc!!.getLong(0)
 
-    override fun reference(ref: MemorySegment) {
-        memorySegment = MemorySegment.ofAddress(ref.address())
-    }
+    override fun set(value: Long) = arc!!.setLong(0, value)
 
-    override fun set(value: Long) {
-            memorySegment.set(ValueLayout.JAVA_LONG, 0, value)
+    override fun shareOf(): NullableLongPointer {
+        validOrThrow(this)
+        return NullableLongPointer(arc!!, null)
     }
 }
 
 class LongPointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<Long>(memorySegment) {
-    init {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to construct a non-nullable LongPointer with NULL")
-        }
+    arc: ARC,
+    onArcUpdated: (() -> Unit)? = null
+) : PrimitivePointer<Long>(arc, onArcUpdated) {
+    override fun get() = arc!!.getLong(0)
+
+    override fun set(value: Long) = arc!!.setLong(0, value)
+
+    override fun shareOf(): LongPointer {
+        validOrThrow(this)
+        return LongPointer(arc!!, null)
     }
-
-    override fun get() = memorySegment.get(ValueLayout.JAVA_LONG, 0)
-
-    override fun reference(ref: MemorySegment) {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to reference a NULL memory segment to a non-nullable LongPointer.")
-        }
-        memorySegment = MemorySegment.ofAddress(ref.address())
-    }
-
-    override fun set(value: Long) = memorySegment.set(ValueLayout.JAVA_LONG, 0, value)
 }
 
 class NullableULongPointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<ULong?>(memorySegment) {
+    arc: ARC,
+    onArcUpdated: (() -> Unit)? = null
+) : NullablePrimitivePointer<ULong>(arc, onArcUpdated) {
 
-    override fun get() = if (memorySegment == MemorySegment.NULL) {
-        null
-    } else {
-        memorySegment.get(ValueLayout.JAVA_LONG, 0).toULong()
-    }
+    override fun get() = arc!!.getLong(0).toULong()
 
-    override fun reference(ref: MemorySegment) {
-        memorySegment = MemorySegment.ofAddress(ref.address())
-    }
+    override fun set(value: ULong) = arc!!.setLong(0, value.toLong())
 
-    override fun set(value: ULong) {
-        memorySegment.set(ValueLayout.JAVA_LONG, 0, value.toLong())
+    override fun shareOf(): NullableULongPointer {
+        validOrThrow(this)
+        return NullableULongPointer(arc!!, null)
     }
 }
 
 class ULongPointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<ULong>(memorySegment) {
-    init {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to construct a non-nullable ULongPointer with NULL")
-        }
+    arc: ARC,
+    onArcUpdated: (() -> Unit)? = null
+) : PrimitivePointer<ULong>(arc, onArcUpdated) {
+    override fun get() = arc!!.getLong(0).toULong()
+
+    override fun set(value: ULong) = arc!!.setLong(0, value.toLong())
+
+    override fun shareOf(): ULongPointer {
+        validOrThrow(this)
+        return ULongPointer(arc!!, null)
     }
-
-    override fun get() = memorySegment.get(ValueLayout.JAVA_LONG, 0).toULong()
-
-    override fun reference(ref: MemorySegment) {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to reference a NULL memory segment to a non-nullable ULongPointer.")
-        }
-        memorySegment = MemorySegment.ofAddress(ref.address())
-    }
-
-    override fun set(value: ULong) = memorySegment.set(ValueLayout.JAVA_LONG, 0, value.toLong())
 }

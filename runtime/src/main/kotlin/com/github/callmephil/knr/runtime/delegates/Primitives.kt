@@ -1,94 +1,93 @@
 package com.github.callmephil.knr.runtime.delegates
 
-import java.lang.foreign.MemorySegment
-import java.lang.foreign.ValueLayout
+import com.github.callmephil.knr.runtime.memory.ARC
 
 class BooleanDelegate(
-    memorySegment: MemorySegment,
+    arc: ARC,
     offset: Long
-) : FieldDelegate<Boolean>(memorySegment, offset) {
-    override fun get(): Boolean = memorySegment.get(ValueLayout.JAVA_BOOLEAN, offset)
+) : FieldDelegate<Boolean>(arc, offset) {
+    override fun get(): Boolean = ownerArc.getBoolean(offset)
     override fun set(value: Boolean) {
-        memorySegment.set(ValueLayout.JAVA_BOOLEAN, offset, value)
+        ownerArc.setBoolean(offset, value)
     }
 }
 
 class ByteDelegate(
-    memorySegment: MemorySegment,
+    arc: ARC,
     offset: Long
-) : FieldDelegate<Byte>(memorySegment, offset) {
-    override fun get(): Byte = memorySegment.get(ValueLayout.JAVA_BYTE, offset)
-    override fun set(value: Byte) = memorySegment.set(ValueLayout.JAVA_BYTE, offset, value)
+) : FieldDelegate<Byte>(arc, offset) {
+    override fun get(): Byte = ownerArc.getByte(offset)
+    override fun set(value: Byte) = ownerArc.setByte(offset, value)
 }
 
 class UByteDelegate(
-    memorySegment: MemorySegment,
+    arc: ARC,
     offset: Long
-) : FieldDelegate<UByte>(memorySegment, offset) {
-    override fun get(): UByte = memorySegment.get(ValueLayout.JAVA_BYTE, offset).toUByte()
-    override fun set(value: UByte) = memorySegment.set(ValueLayout.JAVA_BYTE, offset, value.toByte())
+) : FieldDelegate<UByte>(arc, offset) {
+    override fun get(): UByte = ownerArc.getByte(offset).toUByte()
+    override fun set(value: UByte) = ownerArc.setByte(offset, value.toByte())
 }
 
 class ShortDelegate(
-    memorySegment: MemorySegment,
+    arc: ARC,
     offset: Long
-) : FieldDelegate<Short>(memorySegment, offset) {
-    override fun get(): Short = memorySegment.get(ValueLayout.JAVA_SHORT, offset)
-    override fun set(value: Short) = memorySegment.set(ValueLayout.JAVA_SHORT, offset, value)
+) : FieldDelegate<Short>(arc, offset) {
+    override fun get(): Short = ownerArc.getShort(offset)
+    override fun set(value: Short) = ownerArc.setShort(offset, value)
 }
 
 class UShortDelegate(
-    memorySegment: MemorySegment,
+    arc: ARC,
     offset: Long
-) : FieldDelegate<UShort>(memorySegment, offset) {
-    override fun get(): UShort = memorySegment.get(ValueLayout.JAVA_SHORT, offset).toUShort()
-    override fun set(value: UShort) = memorySegment.set(ValueLayout.JAVA_SHORT, offset, value.toShort())
+) : FieldDelegate<UShort>(arc, offset) {
+    override fun get(): UShort = ownerArc.getShort(offset).toUShort()
+    override fun set(value: UShort) = ownerArc.setShort(offset, value.toShort())
 }
 
 class IntDelegate(
-    memorySegment: MemorySegment,
+    arc: ARC,
     offset: Long
-) : FieldDelegate<Int>(memorySegment, offset) {
-    override fun get(): Int = memorySegment.get(ValueLayout.JAVA_INT, offset)
-    override fun set(value: Int) = memorySegment.set(ValueLayout.JAVA_INT, offset, value)
+) : FieldDelegate<Int>(arc, offset) {
+    override fun get(): Int = ownerArc.getInt(offset)
+    override fun set(value: Int) = ownerArc.setInt(offset, value)
 }
 
 class UIntDelegate(
-    memorySegment: MemorySegment,
+    arc: ARC,
     offset: Long
-) : FieldDelegate<UInt>(memorySegment, offset) {
-    override fun get(): UInt = memorySegment.get(ValueLayout.JAVA_INT, offset).toUInt()
-    override fun set(value: UInt) = memorySegment.set(ValueLayout.JAVA_INT, offset, value.toInt())
+) : FieldDelegate<UInt>(arc, offset) {
+    override fun get(): UInt = ownerArc.getInt(offset).toUInt()
+    override fun set(value: UInt) = ownerArc.setInt(offset, value.toInt())
 }
 
 class LongDelegate(
-    memorySegment: MemorySegment,
+    arc: ARC,
     offset: Long
-) : FieldDelegate<Long>(memorySegment, offset) {
-    override fun get(): Long = memorySegment.get(ValueLayout.JAVA_LONG, offset)
-    override fun set(value: Long) = memorySegment.set(ValueLayout.JAVA_LONG, offset, value)
+) : FieldDelegate<Long>(arc, offset) {
+    override fun get(): Long = ownerArc.getLong(offset)
+    override fun set(value: Long) = ownerArc.setLong(offset, value)
 }
 
 class ULongDelegate(
-    memorySegment: MemorySegment,
+    arc: ARC,
     offset: Long
-) : FieldDelegate<ULong>(memorySegment, offset) {
-    override fun get(): ULong = memorySegment.get(ValueLayout.JAVA_LONG, offset).toULong()
-    override fun set(value: ULong) = memorySegment.set(ValueLayout.JAVA_LONG, offset, value.toLong())
+) : FieldDelegate<ULong>(arc, offset) {
+    override fun get(): ULong = ownerArc.getLong(offset).toULong()
+    override fun set(value: ULong) = ownerArc.setLong(offset, value.toLong())
 }
 
 class FloatDelegate(
-    memorySegment: MemorySegment,
+    arc: ARC,
     offset: Long
-) : FieldDelegate<Float>(memorySegment, offset) {
-    override fun get(): Float = memorySegment.get(ValueLayout.JAVA_FLOAT, offset)
-    override fun set(value: Float) = memorySegment.set(ValueLayout.JAVA_FLOAT, offset, value)
+) : FieldDelegate<Float>(arc, offset) {
+    override fun get(): Float = ownerArc.getFloat(offset)
+    override fun set(value: Float) = ownerArc.setFloat(offset, value)
 }
 
 class DoubleDelegate(
-    memorySegment: MemorySegment,
+    arc: ARC,
     offset: Long
-) : FieldDelegate<Double>(memorySegment, offset) {
-    override fun get(): Double = memorySegment.get(ValueLayout.JAVA_DOUBLE, offset)
-    override fun set(value: Double) = memorySegment.set(ValueLayout.JAVA_DOUBLE, offset, value)
+) : FieldDelegate<Double>(arc, offset) {
+    override fun get(): Double = ownerArc.getDouble(offset)
+    override fun set(value: Double) = ownerArc.setDouble(offset, value)
 }

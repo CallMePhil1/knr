@@ -180,93 +180,93 @@ object PrimitiveTestLibrary {
 
 
     fun getBool(struct: PrimitiveStruct) =
-        getBoolHandle.invokeExact(struct.memorySegment) as Boolean
+        getBoolHandle.invokeExact(struct.arc.memorySegment) as Boolean
 
     fun getByte(struct: PrimitiveStruct) =
-        getByteHandle.invokeExact(struct.memorySegment) as Byte
+        getByteHandle.invokeExact(struct.arc.memorySegment) as Byte
 
     fun getUByte(struct: PrimitiveStruct) =
-        (getUByteHandle.invokeExact(struct.memorySegment) as Byte).toUByte()
+        (getUByteHandle.invokeExact(struct.arc.memorySegment) as Byte).toUByte()
 
     fun getShort(struct: PrimitiveStruct) =
-        getShortHandle.invokeExact(struct.memorySegment) as Short
+        getShortHandle.invokeExact(struct.arc.memorySegment) as Short
 
     fun getUShort(struct: PrimitiveStruct) =
-        (getUShortHandle.invokeExact(struct.memorySegment) as Short).toUShort()
+        (getUShortHandle.invokeExact(struct.arc.memorySegment) as Short).toUShort()
 
     fun getInt(struct: PrimitiveStruct) =
-        getIntHandle.invokeExact(struct.memorySegment) as Int
+        getIntHandle.invokeExact(struct.arc.memorySegment) as Int
 
     fun getUInt(struct: PrimitiveStruct) =
-        (getUIntHandle.invokeExact(struct.memorySegment) as Int).toUInt()
+        (getUIntHandle.invokeExact(struct.arc.memorySegment) as Int).toUInt()
 
     fun getLong(struct: PrimitiveStruct) =
-        getLongHandle.invokeExact(struct.memorySegment) as Int
+        getLongHandle.invokeExact(struct.arc.memorySegment) as Int
 
     fun getULong(struct: PrimitiveStruct) =
-        (getULongHandle.invokeExact(struct.memorySegment) as Int).toUInt()
+        (getULongHandle.invokeExact(struct.arc.memorySegment) as Int).toUInt()
 
     fun getLongLong(struct: PrimitiveStruct) =
-        getLongLongHandle.invokeExact(struct.memorySegment) as Long
+        getLongLongHandle.invokeExact(struct.arc.memorySegment) as Long
 
     fun getULongLong(struct: PrimitiveStruct) =
-        (getULongLongHandle.invokeExact(struct.memorySegment) as Long).toULong()
+        (getULongLongHandle.invokeExact(struct.arc.memorySegment) as Long).toULong()
 
     fun getFloat(struct: PrimitiveStruct) =
-        getFloatHandle.invokeExact(struct.memorySegment) as Float
+        getFloatHandle.invokeExact(struct.arc.memorySegment) as Float
 
     fun getDouble(struct: PrimitiveStruct) =
-        getDoubleHandle.invokeExact(struct.memorySegment) as Double
+        getDoubleHandle.invokeExact(struct.arc.memorySegment) as Double
 
     fun setBool(struct: PrimitiveStruct, value: Boolean) {
-        setBoolHandle.invokeExact(struct.memorySegment, value)
+        setBoolHandle.invokeExact(struct.arc.memorySegment, value)
     }
 
     fun setByte(struct: PrimitiveStruct, value: Byte) {
-        setByteHandle.invokeExact(struct.memorySegment, value)
+        setByteHandle.invokeExact(struct.arc.memorySegment, value)
     }
 
     fun setUByte(struct: PrimitiveStruct, value: UByte) {
-        setUByteHandle.invokeExact(struct.memorySegment, value.toByte())
+        setUByteHandle.invokeExact(struct.arc.memorySegment, value.toByte())
     }
 
     fun setShort(struct: PrimitiveStruct, value: Short) {
-        setShortHandle.invokeExact(struct.memorySegment, value)
+        setShortHandle.invokeExact(struct.arc.memorySegment, value)
     }
 
     fun setUShort(struct: PrimitiveStruct, value: UShort) {
-        setUShortHandle.invokeExact(struct.memorySegment, value.toShort())
+        setUShortHandle.invokeExact(struct.arc.memorySegment, value.toShort())
     }
 
     fun setInt(struct: PrimitiveStruct, value: Int) {
-        setIntHandle.invokeExact(struct.memorySegment, value)
+        setIntHandle.invokeExact(struct.arc.memorySegment, value)
     }
 
     fun setUInt(struct: PrimitiveStruct, value: UInt) {
-        setUIntHandle.invokeExact(struct.memorySegment, value.toInt())
+        setUIntHandle.invokeExact(struct.arc.memorySegment, value.toInt())
     }
 
     fun setLong(struct: PrimitiveStruct, value: Int) {
-        setLongHandle.invokeExact(struct.memorySegment, value)
+        setLongHandle.invokeExact(struct.arc.memorySegment, value)
     }
 
     fun setULong(struct: PrimitiveStruct, value: UInt) {
-        setULongHandle.invokeExact(struct.memorySegment, value.toInt())
+        setULongHandle.invokeExact(struct.arc.memorySegment, value.toInt())
     }
 
     fun setLongLong(struct: PrimitiveStruct, value: Long) {
-        setLongLongHandle.invokeExact(struct.memorySegment, value)
+        setLongLongHandle.invokeExact(struct.arc.memorySegment, value)
     }
 
     fun setULongLong(struct: PrimitiveStruct, value: ULong) {
-        setULongLongHandle.invokeExact(struct.memorySegment, value.toLong())
+        setULongLongHandle.invokeExact(struct.arc.memorySegment, value.toLong())
     }
 
     fun setFloat(struct: PrimitiveStruct, value: Float) {
-        setFloatHandle.invokeExact(struct.memorySegment, value)
+        setFloatHandle.invokeExact(struct.arc.memorySegment, value)
     }
 
     fun setDouble(struct: PrimitiveStruct, value: Double) {
-        setDoubleHandle.invokeExact(struct.memorySegment, value)
+        setDoubleHandle.invokeExact(struct.arc.memorySegment, value)
     }
 }

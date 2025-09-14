@@ -1,84 +1,79 @@
 package com.github.callmephil.knr.runtime.typing.pointer
 
+import com.github.callmephil.knr.runtime.memory.ARC
 import java.lang.foreign.MemorySegment
-import java.lang.foreign.ValueLayout
 
 class NullableBytePointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<Byte?>(memorySegment) {
+    arc: ARC,
+    onArcUpdated: (() -> Unit)? = null
+) : NullablePrimitivePointer<Byte>(arc, onArcUpdated) {
 
-    override fun get(): Byte? = if (memorySegment == MemorySegment.NULL) {
-        null
-    } else {
-        memorySegment.get(ValueLayout.JAVA_BYTE, 0)
-    }
-
-    override fun reference(ref: MemorySegment) {
-        memorySegment = MemorySegment.ofAddress(ref.address())
-    }
+    override fun get(): Byte = arc!!.getByte(0)
 
     override fun set(value: Byte) {
-        memorySegment.set(ValueLayout.JAVA_BYTE, 0, value)
+        arc!!.setByte(0, value)
+    }
+
+    override fun shareOf(): NullableBytePointer {
+        validOrThrow(this)
+        return NullableBytePointer(arc!!, null)
     }
 }
 
 class BytePointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<Byte>(memorySegment) {
+    arc: ARC,
+    onArcUpdated: (() -> Unit)? = null
+) : PrimitivePointer<Byte>(arc, onArcUpdated) {
     init {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to construct a non-nullable BytePointer with NULL")
+        if (arc.isNull) {
+            throw NullPointerException("Tried to construct a non-nullable BytePointer with null arc")
         }
+        arc.incrementCount()
     }
 
-    override fun get() = memorySegment.get(ValueLayout.JAVA_BYTE, 0)
+    override fun get() = arc!!.getByte(0)
 
-    override fun reference(ref: MemorySegment) {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to reference a NULL memory segment to a non-nullable BytePointer.")
-        }
-        memorySegment = MemorySegment.ofAddress(ref.address())
+    override fun set(value: Byte) = arc!!.setByte(0, value)
+
+    override fun shareOf(): BytePointer {
+        validOrThrow(this)
+        return BytePointer(arc!!, null)
     }
-
-    override fun set(value: Byte) = memorySegment.set(ValueLayout.JAVA_BYTE, 0, value)
 }
 
 class NullableUBytePointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<UByte?>(memorySegment) {
+    arc: ARC,
+    onArcUpdated: (() -> Unit)? = null
+) : NullablePrimitivePointer<UByte>(arc, onArcUpdated) {
 
-    override fun get() = if (memorySegment == MemorySegment.NULL) {
-        null
-    } else {
-        memorySegment.get(ValueLayout.JAVA_BYTE, 0).toUByte()
-    }
-
-    override fun reference(ref: MemorySegment) {
-        memorySegment = MemorySegment.ofAddress(ref.address())
-    }
+    override fun get() = arc!!.getByte(0).toUByte()
 
     override fun set(value: UByte) {
-        memorySegment.set(ValueLayout.JAVA_BYTE, 0, value.toByte())
+        arc!!.setByte(0, value.toByte())
+    }
+
+    override fun shareOf(): NullableUBytePointer {
+        validOrThrow(this)
+        return NullableUBytePointer(arc!!, null)
     }
 }
 
 class UBytePointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<UByte>(memorySegment) {
+    arc: ARC,
+    onArcUpdated: (() -> Unit)? = null
+) : PrimitivePointer<UByte>(arc, onArcUpdated) {
     init {
-        if (memorySegment == MemorySegment.NULL) {
+        if (arc == MemorySegment.NULL) {
             throw NullPointerException("Tried to construct a non-nullable UBytePointer with NULL")
         }
     }
 
-    override fun get() = memorySegment.get(ValueLayout.JAVA_BYTE, 0).toUByte()
+    override fun get() = arc!!.getByte(0).toUByte()
 
-    override fun reference(ref: MemorySegment) {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to reference a NULL memory segment to a non-nullable UBytePointer.")
-        }
-        memorySegment = MemorySegment.ofAddress(ref.address())
+    override fun set(value: UByte) = arc!!.setByte(0, value.toByte())
+
+    override fun shareOf(): UBytePointer {
+        validOrThrow(this)
+        return UBytePointer(arc!!, null)
     }
-
-    override fun set(value: UByte) = memorySegment.set(ValueLayout.JAVA_BYTE, 0, value.toByte())
 }

@@ -2,6 +2,7 @@ package pointer
 
 import com.github.callmephil.knr.runtime.ext.downcallHandle
 import com.github.callmephil.knr.runtime.typing.pointer.IntPointer
+import com.github.callmephil.knr.runtime.typing.pointer.NullableIntPointer
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
 import java.lang.foreign.SymbolLookup
@@ -34,6 +35,12 @@ object PointerTestLibrary {
         ValueLayout.ADDRESS
     )
 
+    private val getNullableIntViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("get_nullable_int_via_pointer_from_struct").orElseThrow(),
+        retType = ValueLayout.JAVA_INT,
+        ValueLayout.ADDRESS
+    )
+
     private val setLongForPointerHandle: MethodHandle = linker.downcallHandle(
         segment = lookup.find("set_long_for_pointer").orElseThrow(),
         retType = null,
@@ -52,24 +59,43 @@ object PointerTestLibrary {
         ValueLayout.ADDRESS, ValueLayout.JAVA_INT
     )
 
+    private val setNullableIntViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("set_nullable_int_via_pointer_from_struct").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS, ValueLayout.JAVA_INT
+    )
+
     fun getLongFromPointer(pointer: IntPointer) =
-        getLongFromPointerHandle.invokeExact(pointer.memorySegment) as Int
+        getLongFromPointerHandle.invokeExact(pointer.arc!!.memorySegment) as Int
+
+    fun getLongFromPointer(pointer: NullableIntPointer) =
+        getLongFromPointerHandle.invokeExact(pointer.arc!!.memorySegment) as Int
 
     fun getLongFromStruct(struct: PointedStruct) =
-        getLongFromStructHandle.invokeExact(struct.memorySegment) as Int
+        getLongFromStructHandle.invokeExact(struct.arc.memorySegment) as Int
 
     fun getIntViaPointerFromStruct(struct: AllPointers) =
-        getIntViaPointerFromStructHandle.invokeExact(struct.memorySegment) as Int
+        getIntViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment) as Int
+
+    fun getNullableIntViaPointerFromStruct(struct: AllPointers): Int {
+        return getNullableIntViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment) as Int
+    }
 
     fun setLongForPointer(pointer: IntPointer, value: Int) {
-        setLongForPointerHandle.invokeExact(pointer.memorySegment, value)
+        setLongForPointerHandle.invokeExact(pointer.arc!!.memorySegment, value)
     }
 
     fun setLongForStruct(struct: PointedStruct, value: Int) {
-        setLongForStructHandle.invokeExact(struct.memorySegment, value)
+        setLongForStructHandle.invokeExact(struct.arc.memorySegment, value)
     }
 
     fun setIntViaPointerFromStruct(struct: AllPointers, value: Int) {
-        setIntViaPointerFromStructHandle.invokeExact(struct.memorySegment, value)
+        setIntViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment, value)
+    }
+
+    fun setNullableIntViaPointerFromStruct(struct: AllPointers, value: Int) {
+        if (struct.ni.isNull)
+            throw NullPointerException("Field 'ni' of 'AllPointers' was null")
+        setNullableIntViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment, value)
     }
 }

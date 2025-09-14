@@ -1,84 +1,101 @@
 package com.github.callmephil.knr.runtime.typing.pointer
 
-import java.lang.foreign.MemorySegment
+import com.github.callmephil.knr.runtime.memory.ARC
 import java.lang.foreign.ValueLayout
 
 class NullableIntPointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<Int?>(memorySegment) {
+    arc: ARC,
+    onArcUpdated: (() -> Unit)? = null
+) : NullablePrimitivePointer<Int>(arc, onArcUpdated) {
 
-    override fun get() = if (memorySegment == MemorySegment.NULL) {
-        null
-    } else {
-        memorySegment.get(ValueLayout.JAVA_INT, 0)
-    }
+    override fun get() = arc!!.getInt(0)
 
-    override fun reference(ref: MemorySegment) {
-        memorySegment = MemorySegment.ofAddress(ref.address())
-    }
+    override fun set(value: Int) = arc!!.setInt(0, value)
 
-    override fun set(value: Int) {
-        memorySegment.set(ValueLayout.JAVA_INT, 0, value)
+    override fun shareOf(): NullableIntPointer {
+        validOrThrow(this)
+        return NullableIntPointer(arc!!, null)
     }
 }
 
-class IntPointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<Int>(memorySegment) {
-    init {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to construct a non-nullable IntPointer with NULL")
-        }
+class IntPointer internal constructor(
+    arc: ARC,
+    onArcUpdated: (() -> Unit)? = null
+) : PrimitivePointer<Int>(arc, onArcUpdated) {
+
+    override fun get() = arc!!.getInt(0)
+
+    override fun set(value: Int) = arc!!.setInt(0, value)
+
+    override fun shareOf(): IntPointer {
+        validOrThrow(this)
+        return IntPointer(arc!!, null)
     }
-
-    override fun get() = memorySegment.get(ValueLayout.JAVA_INT, 0)
-
-    override fun reference(ref: MemorySegment) {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to reference a NULL memory segment to a non-nullable IntPointer.")
-        }
-        memorySegment = MemorySegment.ofAddress(ref.address())
-    }
-
-    override fun set(value: Int) = memorySegment.set(ValueLayout.JAVA_INT, 0, value)
 }
 
 class NullableUIntPointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<UInt?>(memorySegment) {
+    arc: ARC,
+    onArcUpdated: (() -> Unit)? = null
+) : NullablePrimitivePointer<UInt>(arc, onArcUpdated) {
 
-    override fun get() = if (memorySegment == MemorySegment.NULL) {
-        null
-    } else {
-        memorySegment.get(ValueLayout.JAVA_INT, 0).toUInt()
-    }
+    override fun get() = arc!!.getInt(0).toUInt()
 
-    override fun reference(ref: MemorySegment) {
-        memorySegment = MemorySegment.ofAddress(ref.address())
-    }
+    override fun set(value: UInt) = arc!!.setInt(0, value.toInt())
 
-    override fun set(value: UInt) {
-        memorySegment.set(ValueLayout.JAVA_INT, 0, value.toInt())
+    override fun shareOf(): NullableUIntPointer {
+        validOrThrow(this)
+        return NullableUIntPointer(arc!!, null)
     }
 }
 
 class UIntPointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<UInt>(memorySegment) {
-    init {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to construct a non-nullable UIntPointer with NULL")
+    arc: ARC,
+    onArcUpdated: (() -> Unit)? = null
+) : PrimitivePointer<UInt>(arc, onArcUpdated) {
+
+    override fun get() = arc!!.getInt(0).toUInt()
+
+    override fun set(value: UInt) = arc!!.setInt(0, value.toInt())
+
+    override fun shareOf(): UIntPointer {
+        validOrThrow(this)
+        return UIntPointer(arc!!, null)
+    }
+}
+
+fun nullableIntPointerOf(arc: ARC = ARC.ofNull()) = NullableIntPointer(arc)
+fun nullableIntPointerOf(value: Int, arc: ARC = ARC.shared(ValueLayout.JAVA_INT)): NullableIntPointer {
+    val pointer = NullableIntPointer(arc)
+    pointer.set(value)
+    return pointer
+}
+internal fun nullableIntPointerOf(
+    value: Int?,
+    onArcUpdate: () -> Unit
+): NullableIntPointer {
+    return if (value == null) {
+        NullableIntPointer(ARC.ofNull(), onArcUpdate)
+    } else {
+        NullableIntPointer(ARC.shared(ValueLayout.JAVA_INT), onArcUpdate).apply {
+            set(value)
         }
     }
+}
 
-    override fun get() = memorySegment.get(ValueLayout.JAVA_INT, 0).toUInt()
-
-    override fun reference(ref: MemorySegment) {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to reference a NULL memory segment to a non-nullable UIntPointer.")
-        }
-        memorySegment = MemorySegment.ofAddress(ref.address())
-    }
-
-    override fun set(value: UInt) = memorySegment.set(ValueLayout.JAVA_INT, 0, value.toInt())
+fun intPointerOf(arc: ARC = ARC.shared(ValueLayout.JAVA_INT)) = IntPointer(arc)
+fun intPointerOf(arc: ARC, offset: Long) = IntPointer(
+    ARC(
+        null,
+        arc.getAddress(offset).reinterpret(ValueLayout.JAVA_INT.byteSize())
+    )
+)
+fun intPointerOf(value: Int, arc: ARC = ARC.shared(ValueLayout.JAVA_INT)): IntPointer {
+    val pointer = IntPointer(arc)
+    pointer.set(value)
+    return pointer
+}
+internal fun intPointerOf(value: Int, onArcUpdate: () -> Unit): IntPointer {
+    val pointer = IntPointer(ARC.shared(ValueLayout.JAVA_INT), onArcUpdate)
+    pointer.set(value)
+    return pointer
 }

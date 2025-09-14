@@ -19,6 +19,7 @@ typedef struct {
 
 typedef struct {
     int *i;
+    int *ni;
     PointedStruct *s;
 } AllPointers;
 
@@ -33,5 +34,9 @@ API void set_long_for_struct(PointedStruct *ps, long value);
 API int get_int_via_pointer_from_struct(AllPointers *ap);
 
 API void set_int_via_pointer_from_struct(AllPointers *ap, int value);
+
+API int get_nullable_int_via_pointer_from_struct(AllPointers *ap);
+
+API void set_nullable_int_via_pointer_from_struct(AllPointers *ap, int value);
 
 #endif

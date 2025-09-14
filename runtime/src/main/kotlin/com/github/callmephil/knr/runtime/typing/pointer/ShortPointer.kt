@@ -1,84 +1,68 @@
 package com.github.callmephil.knr.runtime.typing.pointer
 
+import com.github.callmephil.knr.runtime.memory.ARC
 import java.lang.foreign.MemorySegment
-import java.lang.foreign.ValueLayout
 
 class NullableShortPointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<Short?>(memorySegment) {
+    arc: ARC,
+    onArcUpdated: (()-> Unit)? = null
+) : NullablePrimitivePointer<Short>(arc, onArcUpdated) {
 
-    override fun get() = if (memorySegment == MemorySegment.NULL) {
-        null
-    } else {
-        memorySegment.get(ValueLayout.JAVA_SHORT, 0)
-    }
-
-    override fun reference(ref: MemorySegment) {
-        memorySegment = MemorySegment.ofAddress(ref.address())
-    }
+    override fun get() = arc!!.getShort(0)
 
     override fun set(value: Short) {
-        memorySegment.set(ValueLayout.JAVA_SHORT, 0, value)
+        arc!!.setShort(0, value)
+    }
+
+    override fun shareOf(): NullableShortPointer {
+        validOrThrow(this)
+        return NullableShortPointer(arc!!, null)
     }
 }
 
 class ShortPointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<Short>(memorySegment) {
-    init {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to construct a non-nullable ShortPointer with NULL")
-        }
+    arc: ARC,
+    onArcUpdated: (()-> Unit)? = null
+) : PrimitivePointer<Short>(arc, onArcUpdated) {
+
+    override fun get() = arc!!.getShort(0)
+
+    override fun set(value: Short) = arc!!.setShort(0, value)
+
+    override fun shareOf(): ShortPointer {
+        validOrThrow(this)
+        return ShortPointer(arc!!, null)
     }
-
-    override fun get() = memorySegment.get(ValueLayout.JAVA_SHORT, 0)
-
-    override fun reference(ref: MemorySegment) {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to reference a NULL memory segment to a non-nullable ShortPointer.")
-        }
-        memorySegment = MemorySegment.ofAddress(ref.address())
-    }
-
-    override fun set(value: Short) = memorySegment.set(ValueLayout.JAVA_SHORT, 0, value)
 }
 
 class NullableUShortPointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<UShort?>(memorySegment) {
+    arc: ARC,
+    onArcUpdated: (()-> Unit)? = null
+) : NullablePrimitivePointer<UShort>(arc, onArcUpdated) {
 
-    override fun get() = if (memorySegment == MemorySegment.NULL) {
-        null
-    } else {
-        memorySegment.get(ValueLayout.JAVA_SHORT, 0).toUShort()
-    }
-
-    override fun reference(ref: MemorySegment) {
-        memorySegment = MemorySegment.ofAddress(ref.address())
-    }
+    override fun get() = arc!!.getShort(0).toUShort()
 
     override fun set(value: UShort) {
-        memorySegment.set(ValueLayout.JAVA_SHORT, 0, value.toShort())
+        arc!!.setShort(0, value.toShort())
+    }
+
+    override fun shareOf(): NullableUShortPointer {
+        validOrThrow(this)
+        return NullableUShortPointer(arc!!, null)
     }
 }
 
 class UShortPointer(
-    memorySegment: MemorySegment
-) : PrimitivePointer<UShort>(memorySegment) {
-    init {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to construct a non-nullable UShortPointer with NULL")
-        }
+    arc: ARC,
+    onArcUpdated: (()-> Unit)? = null
+) : PrimitivePointer<UShort>(arc, onArcUpdated) {
+
+    override fun get() = arc!!.getShort(0).toUShort()
+
+    override fun set(value: UShort) = arc!!.setShort(0, value.toShort())
+
+    override fun shareOf(): UShortPointer {
+        validOrThrow(this)
+        return UShortPointer(arc!!, null)
     }
-
-    override fun get() = memorySegment.get(ValueLayout.JAVA_SHORT, 0).toUShort()
-
-    override fun reference(ref: MemorySegment) {
-        if (memorySegment == MemorySegment.NULL) {
-            throw NullPointerException("Tried to reference a NULL memory segment to a non-nullable UShortPointer.")
-        }
-        memorySegment = MemorySegment.ofAddress(ref.address())
-    }
-
-    override fun set(value: UShort) = memorySegment.set(ValueLayout.JAVA_SHORT, 0, value.toShort())
 }
