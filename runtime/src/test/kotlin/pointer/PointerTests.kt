@@ -1,14 +1,18 @@
 package pointer
 
 import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.typing.pointer.NullablePointer
+import com.github.callmephil.knr.runtime.typing.pointer.giveTo
 import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableIntPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.shareFrom
 import com.github.callmephil.knr.runtime.typing.pointer.shareWith
 import com.github.callmephil.knr.runtime.typing.pointer.takeFrom
+import org.jetbrains.annotations.Nullable
 import java.lang.foreign.ValueLayout
 import kotlin.test.Test
 import kotlin.test.assertFails
+import kotlin.test.assertFailsWith
 
 class PointerTests {
     @Test
@@ -211,6 +215,70 @@ class PointerTests {
         assert(intPointer2.get() == 2000)
         assert(PointerTestLibrary.getLongFromPointer(intPointer1) == 2000)
         assert(PointerTestLibrary.getLongFromPointer(intPointer2) == 2000)
+    }
+
+    @Test
+    fun `GIVEN a non null nullable pointer WHEN giving to a non nullable pointer THEN it should succeed`() {
+        val nullablePointer = nullableIntPointerOf(1000)
+        val nonNullablePointer = intPointerOf(0)
+
+        nullablePointer giveTo nonNullablePointer
+
+        assert(nullablePointer.refCount == 0)
+        assert(nonNullablePointer.refCount == 1)
+        assert(nonNullablePointer.get() == 1000)
+    }
+
+    @Test
+    fun `GIVEN a null nullable pointer WHEN giving to a non nullable pointer THEN it should fail`() {
+        val nullablePointer = nullableIntPointerOf()
+        val nonNullablePointer = intPointerOf(0)
+
+        assertFailsWith(NullPointerException::class) { nullablePointer giveTo nonNullablePointer }
+    }
+
+    @Test
+    fun `GIVEN a non nullable pointer WHEN giving to a nullable pointer THEN it should succeed`() {
+        val nullablePointer = nullableIntPointerOf(0)
+        val nonNullablePointer = intPointerOf(1000)
+
+        nonNullablePointer giveTo nullablePointer
+
+        assert(nonNullablePointer.refCount == 0)
+        assert(nullablePointer.refCount == 1)
+        assert(nullablePointer.get() == 1000)
+    }
+
+    @Test
+    fun `GIVEN a non null nullable pointer WHEN sharing with a non nullable pointer THEN it should succeed`() {
+        val nullablePointer = nullableIntPointerOf(1000)
+        val nonNullablePointer = intPointerOf(0)
+
+        nullablePointer shareWith nonNullablePointer
+
+        assert(nullablePointer.refCount == 2)
+        assert(nonNullablePointer.refCount == 2)
+        assert(nonNullablePointer.get() == 1000)
+    }
+
+    @Test
+    fun `GIVEN a null nullable pointer WHEN sharing with a non nullable pointer THEN it should fail`() {
+        val nullablePointer = nullableIntPointerOf()
+        val nonNullablePointer = intPointerOf(0)
+
+        assertFailsWith(NullPointerException::class) { nullablePointer shareWith nonNullablePointer }
+    }
+
+    @Test
+    fun `GIVEN a non nullable pointer WHEN sharing with a nullable pointer THEN it should succeed`() {
+        val nullablePointer = nullableIntPointerOf(0)
+        val nonNullablePointer = intPointerOf(1000)
+
+        nonNullablePointer shareWith nullablePointer
+
+        assert(nonNullablePointer.refCount == 2)
+        assert(nullablePointer.refCount == 2)
+        assert(nullablePointer.get() == 1000)
     }
 
     @Test

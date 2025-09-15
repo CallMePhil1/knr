@@ -4,12 +4,13 @@ import com.github.callmephil.knr.runtime.memory.ARC
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
 
-abstract class Pointer<T, R> internal constructor(
+abstract class PointerBase internal constructor(
     arc: ARC?,
-    protected val onArcUpdated: (() -> Unit)?
+    internal val onArcUpdated: (() -> Unit)?
 ) : AutoCloseable {
+
     var arc: ARC? = arc
-        protected set
+        internal set
 
     val isValid get() = arc != null
     val isNotValid get() = arc == null
@@ -26,7 +27,15 @@ abstract class Pointer<T, R> internal constructor(
         arc = null
     }
 
-    fun giveTo(other: Pointer<T, R>) {
+    abstract fun pointTo(arc: ARC)
+}
+
+abstract class Pointer<T> internal constructor(
+    arc: ARC?,
+    onArcUpdated: (() -> Unit)?
+) : PointerBase(arc, onArcUpdated) {
+
+    fun giveTo(other: Pointer<T>) {
         validOrThrow(this)
 
         other.arc?.decrementCount()
@@ -35,15 +44,33 @@ abstract class Pointer<T, R> internal constructor(
         arc = null
     }
 
-    fun pointTo(arc: ARC) {
+    fun giveTo(other: NullablePointer<T>) {
+        validOrThrow(this)
+
+        other.arc?.decrementCount()
+        other.arc = arc
+        other.onArcUpdated?.invoke()
+        arc = null
+    }
+
+    override fun pointTo(arc: ARC) {
+        if (arc.isNull)
+            throw NullPointerException("Tried to point to a null ARC in a non-nullable Pointer")
         this.arc?.decrementCount()
         this.arc = arc
         onArcUpdated?.invoke()
     }
 
-    fun setToNull() = pointTo(ARC.ofNull())
+    fun shareWith(other: Pointer<T>) {
+        validOrThrow(this)
 
-    fun shareWith(other: Pointer<T, R>) {
+        other.arc?.decrementCount()
+        other.arc = arc
+        arc?.incrementCount()
+        other.onArcUpdated?.invoke()
+    }
+
+    fun shareWith(other: NullablePointer<T>) {
         validOrThrow(this)
 
         other.arc?.decrementCount()
@@ -56,26 +83,101 @@ abstract class Pointer<T, R> internal constructor(
     abstract fun set(value: T & Any)
 }
 
-infix fun <T, R> Pointer<T, R>.giveTo(other: Pointer<T, R>) {
-    this.giveTo(other)
+abstract class NullablePointer<T> internal constructor(
+    arc: ARC?,
+    onArcUpdated: (() -> Unit)?
+) : PointerBase(arc, onArcUpdated) {
+
+    fun giveTo(other: Pointer<T>) {
+        validOrThrow(this)
+
+        if (arc!!.isNull)
+            throw NullPointerException("Tried to give a nullable pointer to a non-nullable pointer when the pointer is null")
+
+        other.arc?.decrementCount()
+        other.arc = arc
+        other.onArcUpdated?.invoke()
+        arc = null
+    }
+
+    fun giveTo(other: NullablePointer<T>) {
+        validOrThrow(this)
+
+        other.arc?.decrementCount()
+        other.arc = arc
+        other.onArcUpdated?.invoke()
+        arc = null
+    }
+
+    override fun pointTo(arc: ARC) {
+        this.arc?.decrementCount()
+        this.arc = arc
+        onArcUpdated?.invoke()
+    }
+
+    fun setToNull() = pointTo(ARC.ofNull())
+
+    fun shareWith(other: Pointer<T>) {
+        validOrThrow(this)
+
+        if (arc!!.isNull)
+            throw NullPointerException("Tried to share a nullable pointer to a non-nullable pointer when the pointer is null")
+
+        other.arc?.decrementCount()
+        other.arc = arc
+        arc?.incrementCount()
+        other.onArcUpdated?.invoke()
+    }
+
+    fun shareWith(other: NullablePointer<T>) {
+        validOrThrow(this)
+
+        other.arc?.decrementCount()
+        other.arc = arc
+        arc?.incrementCount()
+        other.onArcUpdated?.invoke()
+    }
+
+    abstract fun get(): T
+    abstract fun set(value: T & Any)
 }
 
-infix fun <T, R> Pointer<T, R>.takeFrom(other: Pointer<T, R>) {
-    other.giveTo(this)
-}
+infix fun <T> Pointer<T>.giveTo(other: Pointer<T>): Unit = this.giveTo(other)
 
-infix fun <T, R> Pointer<T, R>.shareWith(other: Pointer<T, R>) {
-    this.shareWith(other)
-}
+infix fun <T> Pointer<T>.giveTo(other: NullablePointer<T>): Unit = this.giveTo(other)
 
-infix fun <T, R> Pointer<T, R>.shareFrom(other: Pointer<T, R>) {
-    other.shareWith(this)
-}
+infix fun <T> NullablePointer<T>.giveTo(other: Pointer<T>): Unit = this.giveTo(other)
+
+infix fun <T> NullablePointer<T>.giveTo(other: NullablePointer<T>): Unit = this.giveTo(other)
+
+infix fun <T> Pointer<T>.takeFrom(other: Pointer<T>): Unit = other.giveTo(this)
+
+infix fun <T> Pointer<T>.takeFrom(other: NullablePointer<T>): Unit = other.giveTo(this)
+
+infix fun <T> NullablePointer<T>.takeFrom(other: Pointer<T>): Unit = other.giveTo(this)
+
+infix fun <T> NullablePointer<T>.takeFrom(other: NullablePointer<T>): Unit = other.giveTo(this)
+
+infix fun <T> Pointer<T>.shareWith(other: Pointer<T>): Unit = this.shareWith(other)
+
+infix fun <T> Pointer<T>.shareWith(other: NullablePointer<T>): Unit = this.shareWith(other)
+
+infix fun <T> NullablePointer<T>.shareWith(other: Pointer<T>): Unit = this.shareWith(other)
+
+infix fun <T> NullablePointer<T>.shareWith(other: NullablePointer<T>): Unit = this.shareWith(other)
+
+infix fun <T> Pointer<T>.shareFrom(other: Pointer<T>): Unit = other.shareWith(this)
+
+infix fun <T> Pointer<T>.shareFrom(other: NullablePointer<T>): Unit = other.shareWith(this)
+
+infix fun <T> NullablePointer<T>.shareFrom(other: Pointer<T>): Unit = other.shareWith(this)
+
+infix fun <T> NullablePointer<T>.shareFrom(other: NullablePointer<T>): Unit = other.shareWith(this)
 
 abstract class NullablePrimitivePointer<T> internal constructor(
     arc: ARC?,
     onArcUpdated: (() -> Unit)?
-) : Pointer<T, ARC?>(arc, onArcUpdated) {
+) : NullablePointer<T>(arc, onArcUpdated) {
 
     val isNull: Boolean get() {
         validOrThrow(this)
@@ -100,29 +202,29 @@ abstract class NullablePrimitivePointer<T> internal constructor(
 abstract class PrimitivePointer<T> internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)?
-) : Pointer<T, ARC>(arc, onArcUpdated) {
+) : Pointer<T>(arc, onArcUpdated) {
     abstract fun shareOf(): PrimitivePointer<T>
 }
 
 // region Byte Pointers
 
-fun nullableBytePointerOf(arc: ARC = ARC.ofNull()) = NullableBytePointer(arc)
-fun nullableBytePointerOf(value: Byte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) {
-    val pointer = BytePointer(arc)
-    pointer.set(value)
-}
-fun bytePointerOf(arc: ARC) = BytePointer(arc)
-fun bytePointerOf(memorySegment: MemorySegment) = BytePointer(ARC(null, memorySegment))
-fun bytePointerOf(arc: ARC, offset: Long) = BytePointer(
-    ARC(
-        null,
-        arc.getAddress(offset).reinterpret(ValueLayout.JAVA_BYTE.byteSize())
-    )
-)
-fun bytePointerOf(value: Byte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) {
-    val pointer = BytePointer(arc)
-    pointer.set(value)
-}
+//fun nullableBytePointerOf(arc: ARC = ARC.ofNull()) = NullableBytePointer(arc)
+//fun nullableBytePointerOf(value: Byte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) {
+//    val pointer = BytePointer(arc)
+//    pointer.set(value)
+//}
+//fun bytePointerOf(arc: ARC) = BytePointer(arc)
+//fun bytePointerOf(memorySegment: MemorySegment) = BytePointer(ARC(null, memorySegment))
+//fun bytePointerOf(arc: ARC, offset: Long) = BytePointer(
+//    ARC(
+//        null,
+//        arc.getAddress(offset).reinterpret(ValueLayout.JAVA_BYTE.byteSize())
+//    )
+//)
+//fun bytePointerOf(value: Byte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) {
+//    val pointer = BytePointer(arc)
+//    pointer.set(value)
+//}
 
 // endregion
 

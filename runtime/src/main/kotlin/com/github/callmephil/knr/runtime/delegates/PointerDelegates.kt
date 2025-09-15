@@ -5,15 +5,16 @@ import com.github.callmephil.knr.runtime.typing.pointer.BytePointer
 import com.github.callmephil.knr.runtime.typing.pointer.IntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.NullableBytePointer
 import com.github.callmephil.knr.runtime.typing.pointer.NullableIntPointer
+import com.github.callmephil.knr.runtime.typing.pointer.NullablePointer
 import com.github.callmephil.knr.runtime.typing.pointer.Pointer
-import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
+//import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableIntPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.shareFrom
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
 
-abstract class PointerFieldDelegate<T, P : Pointer<T, ARC>>(
+abstract class PointerFieldDelegate<T, P : Pointer<T>>(
     ownerArc: ARC,
     offset: Long,
 ) : FieldDelegate<P>(
@@ -34,7 +35,7 @@ abstract class PointerFieldDelegate<T, P : Pointer<T, ARC>>(
     }
 }
 
-abstract class NullablePointerFieldDelegate<T, P : Pointer<T, ARC?>>(
+abstract class NullablePointerFieldDelegate<T, P : NullablePointer<T>>(
     ownerArc: ARC,
     offset: Long,
 ) : FieldDelegate<P>(
