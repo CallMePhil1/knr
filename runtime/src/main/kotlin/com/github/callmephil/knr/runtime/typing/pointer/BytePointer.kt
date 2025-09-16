@@ -1,9 +1,9 @@
 package com.github.callmephil.knr.runtime.typing.pointer
 
 import com.github.callmephil.knr.runtime.memory.ARC
-import java.lang.foreign.MemorySegment
+import java.lang.foreign.ValueLayout
 
-class NullableBytePointer(
+class NullableBytePointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
 ) : NullablePrimitivePointer<Byte>(arc, onArcUpdated) {
@@ -20,16 +20,10 @@ class NullableBytePointer(
     }
 }
 
-class BytePointer(
+class BytePointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
 ) : PrimitivePointer<Byte>(arc, onArcUpdated) {
-    init {
-        if (arc.isNull) {
-            throw NullPointerException("Tried to construct a non-nullable BytePointer with null arc")
-        }
-        arc.incrementCount()
-    }
 
     override fun get() = arc!!.getByte(0)
 
@@ -41,7 +35,7 @@ class BytePointer(
     }
 }
 
-class NullableUBytePointer(
+class NullableUBytePointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
 ) : NullablePrimitivePointer<UByte>(arc, onArcUpdated) {
@@ -58,15 +52,10 @@ class NullableUBytePointer(
     }
 }
 
-class UBytePointer(
+class UBytePointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
 ) : PrimitivePointer<UByte>(arc, onArcUpdated) {
-    init {
-        if (arc == MemorySegment.NULL) {
-            throw NullPointerException("Tried to construct a non-nullable UBytePointer with NULL")
-        }
-    }
 
     override fun get() = arc!!.getByte(0).toUByte()
 
@@ -77,3 +66,80 @@ class UBytePointer(
         return UBytePointer(arc!!, null)
     }
 }
+
+// region Byte Pointer
+fun nullableBytePointerOf(arc: ARC = ARC.ofNull()) = NullableBytePointer(arc)
+fun nullableBytePointerOf(value: Byte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) {
+    val pointer = BytePointer(arc)
+    pointer.set(value)
+}
+internal fun nullableBytePointerOf(
+    value: Byte?,
+    onArcUpdate: () -> Unit
+): NullableBytePointer {
+    return if (value == null) {
+        NullableBytePointer(ARC.ofNull(), onArcUpdate)
+    } else {
+        NullableBytePointer(ARC.shared(ValueLayout.JAVA_INT), onArcUpdate).apply {
+            set(value)
+        }
+    }
+}
+
+fun bytePointerOf(arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) = BytePointer(arc)
+fun bytePointerOf(arc: ARC, offset: Long) = BytePointer(
+    ARC(
+        null,
+        arc.getAddress(offset).reinterpret(ValueLayout.JAVA_BYTE.byteSize())
+    )
+)
+fun bytePointerOf(value: Byte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) {
+    val pointer = BytePointer(arc)
+    pointer.set(value)
+}
+internal fun bytePointerOf(value: Byte, onArcUpdate: () -> Unit): BytePointer {
+    val pointer = BytePointer(ARC.shared(ValueLayout.JAVA_BYTE), onArcUpdate)
+    pointer.set(value)
+    return pointer
+}
+
+// endregion
+
+// region UByte Pointer
+
+fun nullableUBytePointerOf(arc: ARC = ARC.ofNull()) = NullableUBytePointer(arc)
+fun nullableUBytePointerOf(value: UByte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) {
+    val pointer = UBytePointer(arc)
+    pointer.set(value)
+}
+internal fun nullableUBytePointerOf(
+    value: UByte?,
+    onArcUpdate: () -> Unit
+): NullableUBytePointer {
+    return if (value == null) {
+        NullableUBytePointer(ARC.ofNull(), onArcUpdate)
+    } else {
+        NullableUBytePointer(ARC.shared(ValueLayout.JAVA_INT), onArcUpdate).apply {
+            set(value)
+        }
+    }
+}
+
+fun ubytePointerOf(arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) = UBytePointer(arc)
+fun ubytePointerOf(arc: ARC, offset: Long) = UBytePointer(
+    ARC(
+        null,
+        arc.getAddress(offset).reinterpret(ValueLayout.JAVA_BYTE.byteSize())
+    )
+)
+fun bytePointerOf(value: UByte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) {
+    val pointer = UBytePointer(arc)
+    pointer.set(value)
+}
+internal fun bytePointerOf(value: UByte, onArcUpdate: () -> Unit): UBytePointer {
+    val pointer = UBytePointer(ARC.shared(ValueLayout.JAVA_BYTE), onArcUpdate)
+    pointer.set(value)
+    return pointer
+}
+
+// endregion

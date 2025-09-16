@@ -3,7 +3,7 @@ package com.github.callmephil.knr.runtime.typing.pointer
 import com.github.callmephil.knr.runtime.memory.ARC
 import java.lang.foreign.ValueLayout
 
-class NullableIntPointer(
+class NullableIntPointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
 ) : NullablePrimitivePointer<Int>(arc, onArcUpdated) {
@@ -33,7 +33,7 @@ class IntPointer internal constructor(
     }
 }
 
-class NullableUIntPointer(
+class NullableUIntPointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
 ) : NullablePrimitivePointer<UInt>(arc, onArcUpdated) {
@@ -48,7 +48,7 @@ class NullableUIntPointer(
     }
 }
 
-class UIntPointer(
+class UIntPointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
 ) : PrimitivePointer<UInt>(arc, onArcUpdated) {
@@ -62,6 +62,8 @@ class UIntPointer(
         return UIntPointer(arc!!, null)
     }
 }
+
+// region Int Pointer
 
 fun nullableIntPointerOf(arc: ARC = ARC.ofNull()) = NullableIntPointer(arc)
 fun nullableIntPointerOf(value: Int, arc: ARC = ARC.shared(ValueLayout.JAVA_INT)): NullableIntPointer {
@@ -99,3 +101,46 @@ internal fun intPointerOf(value: Int, onArcUpdate: () -> Unit): IntPointer {
     pointer.set(value)
     return pointer
 }
+
+// endregion
+
+// region UInt Pointer
+
+fun nullableUIntPointerOf(arc: ARC = ARC.ofNull()) = NullableUIntPointer(arc)
+fun nullableUIntPointerOf(value: UInt, arc: ARC = ARC.shared(ValueLayout.JAVA_INT)): NullableUIntPointer {
+    val pointer = NullableUIntPointer(arc)
+    pointer.set(value)
+    return pointer
+}
+internal fun nullableUIntPointerOf(
+    value: UInt?,
+    onArcUpdate: () -> Unit
+): NullableUIntPointer {
+    return if (value == null) {
+        NullableUIntPointer(ARC.ofNull(), onArcUpdate)
+    } else {
+        NullableUIntPointer(ARC.shared(ValueLayout.JAVA_INT), onArcUpdate).apply {
+            set(value)
+        }
+    }
+}
+
+fun uintPointerOf(arc: ARC = ARC.shared(ValueLayout.JAVA_INT)) = UIntPointer(arc)
+fun uintPointerOf(arc: ARC, offset: Long) = UIntPointer(
+    ARC(
+        null,
+        arc.getAddress(offset).reinterpret(ValueLayout.JAVA_INT.byteSize())
+    )
+)
+fun uintPointerOf(value: UInt, arc: ARC = ARC.shared(ValueLayout.JAVA_INT)): UIntPointer {
+    val pointer = UIntPointer(arc)
+    pointer.set(value)
+    return pointer
+}
+internal fun uintPointerOf(value: UInt, onArcUpdate: () -> Unit): UIntPointer {
+    val pointer = UIntPointer(ARC.shared(ValueLayout.JAVA_INT), onArcUpdate)
+    pointer.set(value)
+    return pointer
+}
+
+// endregion
