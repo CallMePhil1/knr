@@ -4,11 +4,14 @@ import com.github.callmephil.knr.runtime.memory.ARC
 
 abstract class PointerBase internal constructor(
     arc: ARC?,
-    internal val onArcUpdated: (() -> Unit)?
+    private val onArcUpdated: (() -> Unit)?
 ) : AutoCloseable {
 
     var arc: ARC? = arc
-        internal set
+        internal set(value) {
+            field = value
+            onArcUpdated?.invoke()
+        }
 
     val isValid get() = arc != null
     val isNotValid get() = arc == null
@@ -38,7 +41,6 @@ abstract class Pointer<T> internal constructor(
 
         other.arc?.decrementCount()
         other.arc = arc
-        other.onArcUpdated?.invoke()
         arc = null
     }
 
@@ -47,7 +49,6 @@ abstract class Pointer<T> internal constructor(
 
         other.arc?.decrementCount()
         other.arc = arc
-        other.onArcUpdated?.invoke()
         arc = null
     }
 
@@ -56,7 +57,6 @@ abstract class Pointer<T> internal constructor(
             throw NullPointerException("Tried to point to a null ARC in a non-nullable Pointer")
         this.arc?.decrementCount()
         this.arc = arc
-        onArcUpdated?.invoke()
     }
 
     fun shareWith(other: Pointer<T>) {
@@ -65,7 +65,6 @@ abstract class Pointer<T> internal constructor(
         other.arc?.decrementCount()
         other.arc = arc
         arc?.incrementCount()
-        other.onArcUpdated?.invoke()
     }
 
     fun shareWith(other: NullablePointer<T>) {
@@ -74,7 +73,6 @@ abstract class Pointer<T> internal constructor(
         other.arc?.decrementCount()
         other.arc = arc
         arc?.incrementCount()
-        other.onArcUpdated?.invoke()
     }
 
     abstract fun get(): T
@@ -94,7 +92,6 @@ abstract class NullablePointer<T> internal constructor(
 
         other.arc?.decrementCount()
         other.arc = arc
-        other.onArcUpdated?.invoke()
         arc = null
     }
 
@@ -103,14 +100,12 @@ abstract class NullablePointer<T> internal constructor(
 
         other.arc?.decrementCount()
         other.arc = arc
-        other.onArcUpdated?.invoke()
         arc = null
     }
 
     override fun pointTo(arc: ARC) {
         this.arc?.decrementCount()
         this.arc = arc
-        onArcUpdated?.invoke()
     }
 
     fun setToNull() = pointTo(ARC.ofNull())
@@ -124,7 +119,6 @@ abstract class NullablePointer<T> internal constructor(
         other.arc?.decrementCount()
         other.arc = arc
         arc?.incrementCount()
-        other.onArcUpdated?.invoke()
     }
 
     fun shareWith(other: NullablePointer<T>) {
@@ -133,7 +127,6 @@ abstract class NullablePointer<T> internal constructor(
         other.arc?.decrementCount()
         other.arc = arc
         arc?.incrementCount()
-        other.onArcUpdated?.invoke()
     }
 
     abstract fun get(): T
@@ -171,38 +164,6 @@ infix fun <T> Pointer<T>.shareFrom(other: NullablePointer<T>): Unit = other.shar
 infix fun <T> NullablePointer<T>.shareFrom(other: Pointer<T>): Unit = other.shareWith(this)
 
 infix fun <T> NullablePointer<T>.shareFrom(other: NullablePointer<T>): Unit = other.shareWith(this)
-
-abstract class NullablePrimitivePointer<T> internal constructor(
-    arc: ARC?,
-    onArcUpdated: (() -> Unit)?
-) : NullablePointer<T>(arc, onArcUpdated) {
-
-    val isNull: Boolean get() {
-        validOrThrow(this)
-        return arc!!.isNull
-    }
-
-    abstract fun shareOf(): NullablePrimitivePointer<T>
-
-    inline fun ifIsNull(block: NullablePrimitivePointer<T>.() -> Unit): NullablePrimitivePointer<T> {
-        if (isNull)
-            block()
-        return this
-    }
-
-    inline fun ifNotNull(block: NullablePrimitivePointer<T>.(T) -> Unit): NullablePrimitivePointer<T> {
-        if (!isNull)
-            block(get())
-        return this
-    }
-}
-
-abstract class PrimitivePointer<T> internal constructor(
-    arc: ARC,
-    onArcUpdated: (() -> Unit)?
-) : Pointer<T>(arc, onArcUpdated) {
-    abstract fun shareOf(): PrimitivePointer<T>
-}
 
 // region Struct Pointers
 

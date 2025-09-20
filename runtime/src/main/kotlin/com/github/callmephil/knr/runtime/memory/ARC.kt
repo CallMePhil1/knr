@@ -71,33 +71,21 @@ open class ARC(
     fun setDouble(offset: Long, value: Double) = memorySegment!!.set(ValueLayout.JAVA_DOUBLE, offset, value)
 
     companion object {
-        fun auto(layout: MemoryLayout): ARC {
-            val arena = Arena.ofAuto()
-            val memorySegment = arena.allocate(layout)
-            return ARC(arena, memorySegment)
-        }
+        fun auto(layout: MemoryLayout): ARC = auto(layout.byteSize())
         fun auto(byteSize: Long): ARC {
             val arena = Arena.ofAuto()
             val memorySegment = arena.allocate(byteSize)
             return ARC(arena, memorySegment)
         }
 
-        fun confined(layout: MemoryLayout): ARC {
-            val arena = Arena.ofConfined()
-            val memorySegment = arena.allocate(layout)
-            return ARC(arena, memorySegment)
-        }
+        fun confined(layout: MemoryLayout): ARC = confined(layout.byteSize())
         fun confined(byteSize: Long): ARC {
             val arena = Arena.ofConfined()
             val memorySegment = arena.allocate(byteSize)
             return ARC(arena, memorySegment)
         }
 
-        fun global(layout: MemoryLayout): ARC {
-            val arena = Arena.global()
-            val memorySegment = arena.allocate(layout)
-            return ARC(arena, memorySegment)
-        }
+        fun global(layout: MemoryLayout): ARC = global(layout.byteSize())
         fun global(byteSize: Long): ARC {
             val arena = Arena.global()
             val memorySegment = arena.allocate(byteSize)
@@ -106,11 +94,7 @@ open class ARC(
 
         fun ofNull(): ARC = ARC(null, MemorySegment.NULL)
 
-        fun shared(layout: MemoryLayout): ARC {
-            val arena = Arena.ofShared()
-            val memorySegment = arena.allocate(layout)
-            return ARC(arena, memorySegment)
-        }
+        fun shared(layout: MemoryLayout): ARC = shared(layout.byteSize())
         fun shared(byteSize: Long): ARC {
             val arena = Arena.ofShared()
             val memorySegment = arena.allocate(byteSize)

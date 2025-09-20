@@ -1,6 +1,8 @@
 package com.github.callmephil.knr.runtime.typing
 
 import com.github.callmephil.knr.runtime.delegates.*
+import com.github.callmephil.knr.runtime.delegates.pointers.IntPointerDelegate
+import com.github.callmephil.knr.runtime.delegates.pointers.NullableIntPointerDelegate
 import com.github.callmephil.knr.runtime.memory.ARC
 import java.lang.foreign.Arena
 import java.lang.foreign.StructLayout
@@ -30,8 +32,8 @@ abstract class Struct(
     protected fun floatField(offset: Long) = FloatDelegate(arc, offset)
     protected fun doubleField(offset: Long) = DoubleDelegate(arc, offset)
 
-    protected fun intPointerField(offset: Long, initialValue: Int) = IntPointerDelegate(arc, offset, initialValue)
-    protected fun nullableIntPointerField(offset: Long, initialValue: Int?) = NullableIntPointerDelegate(arc, offset, initialValue)
+    protected fun intPointerField(offset: Long, initialValue: Int = 0) = IntPointerDelegate(arc, offset, initialValue)
+    protected fun nullableIntPointerField(offset: Long, initialValue: Int? = null) = NullableIntPointerDelegate(arc, offset, initialValue)
 
     fun asByteBuffer(): ByteBuffer = arc.memorySegment!!.asByteBuffer()
 
