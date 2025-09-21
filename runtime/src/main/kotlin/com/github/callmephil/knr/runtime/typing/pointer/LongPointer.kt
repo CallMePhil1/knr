@@ -96,10 +96,11 @@ fun longPointerOf(value: Long, arc: ARC = ARC.shared(ValueLayout.JAVA_LONG)): Lo
     pointer.set(value)
     return pointer
 }
-internal fun longPointerOf(value: Long, onArcUpdate: () -> Unit): LongPointer {
-    val pointer = LongPointer(ARC.shared(ValueLayout.JAVA_LONG), onArcUpdate)
-    pointer.set(value)
-    return pointer
+internal fun longPointerOf(
+    value: Long,
+    onArcUpdate: () -> Unit
+) = LongPointer(ARC.shared(ValueLayout.JAVA_LONG), onArcUpdate).apply {
+    set(value)
 }
 
 // endregion
@@ -137,10 +138,11 @@ fun ulongPointerOf(value: ULong, arc: ARC = ARC.shared(ValueLayout.JAVA_LONG)): 
     pointer.set(value)
     return pointer
 }
-internal fun ulongPointerOf(value: ULong, onArcUpdate: () -> Unit): ULongPointer {
-    val pointer = ULongPointer(ARC.shared(ValueLayout.JAVA_LONG), onArcUpdate)
-    pointer.set(value)
-    return pointer
+internal fun ulongPointerOf(
+    value: ULong,
+    onArcUpdate: () -> Unit
+) = ULongPointer(ARC.shared(ValueLayout.JAVA_LONG), onArcUpdate).apply {
+    set(value)
 }
 
 // endregion

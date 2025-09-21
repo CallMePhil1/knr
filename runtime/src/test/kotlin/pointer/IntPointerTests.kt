@@ -12,9 +12,9 @@ import kotlin.test.Test
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 
-class PointerTests {
+class IntPointerTests {
     @Test
-    fun `GIVEN two pointer WHEN sharing between them multiple times THEN ref count shouldn't change`() {
+    fun `GIVEN two int pointer WHEN sharing between them multiple times THEN ref count shouldn't change`() {
         val pointer1 = intPointerOf()
         val pointer2 = intPointerOf()
 
@@ -33,7 +33,7 @@ class PointerTests {
     }
 
     @Test
-    fun `GIVEN two pointers WHEN sharing and disposing THEN ref count should update`() {
+    fun `GIVEN two int pointers WHEN sharing and disposing THEN ref count should update`() {
         val pointer1 = intPointerOf()
         val pointer2 = intPointerOf()
 
@@ -56,7 +56,7 @@ class PointerTests {
     }
 
     @Test
-    fun `GIVEN a pointer WHEN setting and getting the pointer THEN it should work`() {
+    fun `GIVEN a int pointer WHEN setting and getting the pointer THEN it should work`() {
         val intPointerDirect = intPointerOf()
 
         intPointerDirect.set(1000)
@@ -64,13 +64,13 @@ class PointerTests {
 
         val intPointerMethod = intPointerOf()
 
-        PointerTestLibrary.setLongForPointer(intPointerMethod, 2000)
-        assert(PointerTestLibrary.getLongFromPointer(intPointerMethod) == 2000)
+        PointerTestLibrary.setIntForPointer(intPointerMethod, 2000)
+        assert(PointerTestLibrary.getIntFromPointer(intPointerMethod) == 2000)
         assert(intPointerMethod.get() == 2000)
     }
 
     @Test
-    fun `GIVEN a pointer WHEN taking ownership THEN pointer should point to data and old pointer should be disposed`() {
+    fun `GIVEN a int pointer WHEN taking ownership THEN pointer should point to data and old pointer should be disposed`() {
         val intPointer1 = intPointerOf()
         val intPointer2 = intPointerOf()
 
@@ -85,7 +85,7 @@ class PointerTests {
     }
 
     @Test
-    fun `GIVEN a pointer WHEN sharing a pointer THEN they should point to the same`() {
+    fun `GIVEN a int pointer WHEN sharing a pointer THEN they should point to the same`() {
         val longPointer1 = intPointerOf()
 
         longPointer1.set(1000)
@@ -98,19 +98,19 @@ class PointerTests {
 
         assert(longPointer2.get() == 1000)
 
-        assert(PointerTestLibrary.getLongFromPointer(longPointer1) == 1000)
-        assert(PointerTestLibrary.getLongFromPointer(longPointer2) == 1000)
+        assert(PointerTestLibrary.getIntFromPointer(longPointer1) == 1000)
+        assert(PointerTestLibrary.getIntFromPointer(longPointer2) == 1000)
 
         longPointer2.set(2000)
 
         assert(longPointer2.get() == 2000)
 
-        assert(PointerTestLibrary.getLongFromPointer(longPointer1) == 2000)
-        assert(PointerTestLibrary.getLongFromPointer(longPointer2) == 2000)
+        assert(PointerTestLibrary.getIntFromPointer(longPointer1) == 2000)
+        assert(PointerTestLibrary.getIntFromPointer(longPointer2) == 2000)
     }
 
     @Test
-    fun `GIVEN two nullable pointer WHEN sharing between them multiple times THEN ref count shouldn't change`() {
+    fun `GIVEN two nullable int pointer WHEN sharing between them multiple times THEN ref count shouldn't change`() {
         val pointer1 = nullableIntPointerOf()
         val pointer2 = nullableIntPointerOf()
 
@@ -129,7 +129,7 @@ class PointerTests {
     }
 
     @Test
-    fun `GIVEN two nullable pointers WHEN sharing and disposing THEN ref count should update`() {
+    fun `GIVEN two nullable int pointers WHEN sharing and disposing THEN ref count should update`() {
         val pointer1 = nullableIntPointerOf()
         val pointer2 = nullableIntPointerOf()
 
@@ -152,7 +152,7 @@ class PointerTests {
     }
 
     @Test
-    fun `GIVEN a nullable pointer WHEN setting and getting the pointer THEN it should work`() {
+    fun `GIVEN a nullable int pointer WHEN setting and getting the pointer THEN it should work`() {
         val intPointerDirect = nullableIntPointerOf(ARC.shared(ValueLayout.JAVA_INT))
 
         assert(intPointerDirect.get() == 0)
@@ -165,7 +165,7 @@ class PointerTests {
     }
 
     @Test
-    fun `GIVEN a nullable pointer WHEN taking ownership THEN pointer should point to data and old pointer should be disposed`() {
+    fun `GIVEN a nullable int pointer WHEN taking ownership THEN pointer should point to data and old pointer should be disposed`() {
         val intPointer1 = nullableIntPointerOf(ARC.shared(ValueLayout.JAVA_INT))
         val intPointer2 = nullableIntPointerOf(ARC.shared(ValueLayout.JAVA_INT))
 
@@ -180,7 +180,7 @@ class PointerTests {
     }
 
     @Test
-    fun `GIVEN a nullable pointer WHEN sharing a pointer THEN they should point to the same`() {
+    fun `GIVEN a nullable int pointer WHEN sharing a pointer THEN they should point to the same`() {
         val intPointer1 = nullableIntPointerOf()
 
         assertFails { intPointer1.get() }
@@ -204,19 +204,19 @@ class PointerTests {
 
         assert(intPointer1.get() == 1000)
         assert(intPointer2.get() == 1000)
-        assert(PointerTestLibrary.getLongFromPointer(intPointer1) == 1000)
-        assert(PointerTestLibrary.getLongFromPointer(intPointer2) == 1000)
+        assert(PointerTestLibrary.getIntFromPointer(intPointer1) == 1000)
+        assert(PointerTestLibrary.getIntFromPointer(intPointer2) == 1000)
 
         intPointer2.set(2000)
 
         assert(intPointer1.get() == 2000)
         assert(intPointer2.get() == 2000)
-        assert(PointerTestLibrary.getLongFromPointer(intPointer1) == 2000)
-        assert(PointerTestLibrary.getLongFromPointer(intPointer2) == 2000)
+        assert(PointerTestLibrary.getIntFromPointer(intPointer1) == 2000)
+        assert(PointerTestLibrary.getIntFromPointer(intPointer2) == 2000)
     }
 
     @Test
-    fun `GIVEN a non null nullable pointer WHEN giving to a non nullable pointer THEN it should succeed`() {
+    fun `GIVEN a non null nullable int pointer WHEN giving to a non nullable pointer THEN it should succeed`() {
         val nullablePointer = nullableIntPointerOf(1000)
         val nonNullablePointer = intPointerOf(0)
 
@@ -228,7 +228,7 @@ class PointerTests {
     }
 
     @Test
-    fun `GIVEN a null nullable pointer WHEN giving to a non nullable pointer THEN it should fail`() {
+    fun `GIVEN a null nullable int pointer WHEN giving to a non nullable pointer THEN it should fail`() {
         val nullablePointer = nullableIntPointerOf()
         val nonNullablePointer = intPointerOf(0)
 
@@ -236,7 +236,7 @@ class PointerTests {
     }
 
     @Test
-    fun `GIVEN a non nullable pointer WHEN giving to a nullable pointer THEN it should succeed`() {
+    fun `GIVEN a non nullable int pointer WHEN giving to a nullable pointer THEN it should succeed`() {
         val nullablePointer = nullableIntPointerOf(0)
         val nonNullablePointer = intPointerOf(1000)
 
@@ -248,7 +248,7 @@ class PointerTests {
     }
 
     @Test
-    fun `GIVEN a non null nullable pointer WHEN sharing with a non nullable pointer THEN it should succeed`() {
+    fun `GIVEN a non null nullable int pointer WHEN sharing with a non nullable pointer THEN it should succeed`() {
         val nullablePointer = nullableIntPointerOf(1000)
         val nonNullablePointer = intPointerOf(0)
 
@@ -260,7 +260,7 @@ class PointerTests {
     }
 
     @Test
-    fun `GIVEN a null nullable pointer WHEN sharing with a non nullable pointer THEN it should fail`() {
+    fun `GIVEN a null nullable int pointer WHEN sharing with a non nullable pointer THEN it should fail`() {
         val nullablePointer = nullableIntPointerOf()
         val nonNullablePointer = intPointerOf(0)
 
@@ -268,7 +268,7 @@ class PointerTests {
     }
 
     @Test
-    fun `GIVEN a non nullable pointer WHEN sharing with a nullable pointer THEN it should succeed`() {
+    fun `GIVEN a non nullable int pointer WHEN sharing with a nullable pointer THEN it should succeed`() {
         val nullablePointer = nullableIntPointerOf(0)
         val nonNullablePointer = intPointerOf(1000)
 

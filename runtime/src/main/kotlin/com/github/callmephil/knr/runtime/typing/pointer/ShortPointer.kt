@@ -100,10 +100,11 @@ fun shortPointerOf(value: Short, arc: ARC = ARC.shared(ValueLayout.JAVA_SHORT)):
     pointer.set(value)
     return pointer
 }
-internal fun shortPointerOf(value: Short, onArcUpdate: () -> Unit): ShortPointer {
-    val pointer = ShortPointer(ARC.shared(ValueLayout.JAVA_SHORT), onArcUpdate)
-    pointer.set(value)
-    return pointer
+internal fun shortPointerOf(
+    value: Short,
+    onArcUpdate: () -> Unit
+) = ShortPointer(ARC.shared(ValueLayout.JAVA_SHORT), onArcUpdate).apply {
+    set(value)
 }
 
 // endregion
@@ -136,15 +137,16 @@ fun ushortPointerOf(arc: ARC, offset: Long) = UShortPointer(
         arc.getAddress(offset).reinterpret(ValueLayout.JAVA_SHORT.byteSize())
     )
 )
-fun shortPointerOf(value: UShort, arc: ARC = ARC.shared(ValueLayout.JAVA_SHORT)): UShortPointer {
+fun ushortPointerOf(value: UShort, arc: ARC = ARC.shared(ValueLayout.JAVA_SHORT)): UShortPointer {
     val pointer = UShortPointer(arc)
     pointer.set(value)
     return pointer
 }
-internal fun shortPointerOf(value: UShort, onArcUpdate: () -> Unit): UShortPointer {
-    val pointer = UShortPointer(ARC.shared(ValueLayout.JAVA_SHORT), onArcUpdate)
-    pointer.set(value)
-    return pointer
+internal fun ushortPointerOf(
+    value: UShort,
+    onArcUpdate: () -> Unit
+) = UShortPointer(ARC.shared(ValueLayout.JAVA_SHORT), onArcUpdate).apply {
+    set(value)
 }
 
 // endregion

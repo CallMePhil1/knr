@@ -2,7 +2,7 @@ package com.github.callmephil.knr.runtime.typing.pointer
 
 import com.github.callmephil.knr.runtime.memory.ARC
 
-abstract class PointerBase internal constructor(
+abstract class ByRef<T> internal constructor(
     arc: ARC?,
     private val onArcUpdated: (() -> Unit)?
 ) : AutoCloseable {
@@ -34,7 +34,7 @@ abstract class PointerBase internal constructor(
 abstract class Pointer<T> internal constructor(
     arc: ARC?,
     onArcUpdated: (() -> Unit)?
-) : PointerBase(arc, onArcUpdated) {
+) : ByRef<T>(arc, onArcUpdated) {
 
     fun giveTo(other: Pointer<T>) {
         validOrThrow(this)
@@ -82,7 +82,7 @@ abstract class Pointer<T> internal constructor(
 abstract class NullablePointer<T> internal constructor(
     arc: ARC?,
     onArcUpdated: (() -> Unit)?
-) : PointerBase(arc, onArcUpdated) {
+) : ByRef<T>(arc, onArcUpdated) {
 
     fun giveTo(other: Pointer<T>) {
         validOrThrow(this)

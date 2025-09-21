@@ -68,10 +68,10 @@ class UBytePointer internal constructor(
 }
 
 // region Byte Pointer
+
 fun nullableBytePointerOf(arc: ARC = ARC.ofNull()) = NullableBytePointer(arc)
-fun nullableBytePointerOf(value: Byte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) {
-    val pointer = BytePointer(arc)
-    pointer.set(value)
+fun nullableBytePointerOf(value: Byte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) = BytePointer(arc).apply {
+    set(value)
 }
 internal fun nullableBytePointerOf(
     value: Byte?,
@@ -93,14 +93,14 @@ fun bytePointerOf(arc: ARC, offset: Long) = BytePointer(
         arc.getAddress(offset).reinterpret(ValueLayout.JAVA_BYTE.byteSize())
     )
 )
-fun bytePointerOf(value: Byte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) {
-    val pointer = BytePointer(arc)
-    pointer.set(value)
+fun bytePointerOf(value: Byte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) = BytePointer(arc).apply {
+    set(value)
 }
-internal fun bytePointerOf(value: Byte, onArcUpdate: () -> Unit): BytePointer {
-    val pointer = BytePointer(ARC.shared(ValueLayout.JAVA_BYTE), onArcUpdate)
-    pointer.set(value)
-    return pointer
+internal fun bytePointerOf(
+    value: Byte,
+    onArcUpdate: () -> Unit
+) = BytePointer(ARC.shared(ValueLayout.JAVA_BYTE), onArcUpdate).apply {
+    set(value)
 }
 
 // endregion
@@ -132,14 +132,14 @@ fun ubytePointerOf(arc: ARC, offset: Long) = UBytePointer(
         arc.getAddress(offset).reinterpret(ValueLayout.JAVA_BYTE.byteSize())
     )
 )
-fun bytePointerOf(value: UByte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) {
-    val pointer = UBytePointer(arc)
-    pointer.set(value)
+fun ubytePointerOf(value: UByte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) = UBytePointer(arc).apply {
+    set(value)
 }
-internal fun bytePointerOf(value: UByte, onArcUpdate: () -> Unit): UBytePointer {
-    val pointer = UBytePointer(ARC.shared(ValueLayout.JAVA_BYTE), onArcUpdate)
-    pointer.set(value)
-    return pointer
+internal fun ubytePointerOf(
+    value: UByte,
+    onArcUpdate: () -> Unit
+) = UBytePointer(ARC.shared(ValueLayout.JAVA_BYTE), onArcUpdate).apply {
+    set(value)
 }
 
 // endregion

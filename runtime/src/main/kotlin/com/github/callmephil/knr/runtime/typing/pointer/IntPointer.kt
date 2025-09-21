@@ -96,10 +96,11 @@ fun intPointerOf(value: Int, arc: ARC = ARC.shared(ValueLayout.JAVA_INT)): IntPo
     pointer.set(value)
     return pointer
 }
-internal fun intPointerOf(value: Int, onArcUpdate: () -> Unit): IntPointer {
-    val pointer = IntPointer(ARC.shared(ValueLayout.JAVA_INT), onArcUpdate)
-    pointer.set(value)
-    return pointer
+internal fun intPointerOf(
+    value: Int,
+    onArcUpdate: () -> Unit
+) = IntPointer(ARC.shared(ValueLayout.JAVA_INT), onArcUpdate).apply {
+    set(value)
 }
 
 // endregion
@@ -137,10 +138,11 @@ fun uintPointerOf(value: UInt, arc: ARC = ARC.shared(ValueLayout.JAVA_INT)): UIn
     pointer.set(value)
     return pointer
 }
-internal fun uintPointerOf(value: UInt, onArcUpdate: () -> Unit): UIntPointer {
-    val pointer = UIntPointer(ARC.shared(ValueLayout.JAVA_INT), onArcUpdate)
-    pointer.set(value)
-    return pointer
+internal fun uintPointerOf(
+    value: UInt,
+    onArcUpdate: () -> Unit
+) = UIntPointer(ARC.shared(ValueLayout.JAVA_INT), onArcUpdate).apply {
+    set(value)
 }
 
 // endregion
