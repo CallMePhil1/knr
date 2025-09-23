@@ -1,0 +1,35 @@
+package com.github.callmephil.knr.runtime.native
+
+import com.github.callmephil.knr.runtime.ext.downcallHandle
+import com.github.callmephil.knr.runtime.typing.pointer.ByRef
+import java.lang.foreign.ValueLayout
+
+object StringLib {
+    private val strcmpHandle = Stdlib.stdlibLinker.downcallHandle(
+        segment = Stdlib.stdlib.find("strcmp").orElseThrow(),
+        retType = ValueLayout.JAVA_INT,
+        ValueLayout.ADDRESS,
+        ValueLayout.ADDRESS
+    )
+
+    private val strlenHandle = Stdlib.stdlibLinker.downcallHandle(
+        segment = Stdlib.stdlib.find("strlen").orElseThrow(),
+        retType = ValueLayout.JAVA_LONG,
+        ValueLayout.ADDRESS
+    )
+
+    fun stringCompare(cString1: ByRef<String>, cString2: ByRef<String>): Boolean {
+        when {
+            cString1.arc!!.isNull -> throw NullPointerException("cString1 is NULL")
+            cString2.arc!!.isNull -> throw NullPointerException("cString2 is NULL")
+        }
+        val result = strcmpHandle.invokeExact(cString1.arc!!.memorySegment, cString2.arc!!.memorySegment) as Int
+        return result == 0
+    }
+
+    fun stringLength(cString: ByRef<String>): Long {
+        if (cString.arc?.isNull == true)
+            throw NullPointerException("Tried to get a null string's length via strlen")
+        return strlenHandle.invokeExact(cString.arc!!.memorySegment) as Long
+    }
+}

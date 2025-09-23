@@ -98,6 +98,7 @@ object PrimitiveTestLibrary {
     // endregion
 
     // region Setters
+
     private val setBoolHandle = linker.downcallHandle(
         segment = lookup.find("set_bool").orElseThrow(),
         retType = null,
@@ -177,7 +178,6 @@ object PrimitiveTestLibrary {
     )
 
     // endregion
-
 
     fun getBool(struct: PrimitiveStruct) =
         getBoolHandle.invokeExact(struct.arc.memorySegment) as Boolean

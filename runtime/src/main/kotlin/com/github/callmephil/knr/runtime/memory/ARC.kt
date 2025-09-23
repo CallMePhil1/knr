@@ -5,6 +5,7 @@ import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
+import java.nio.charset.Charset
 
 open class ARC(
     arena: Arena?,
@@ -20,6 +21,13 @@ open class ARC(
 
     var isDisposed: Boolean = false
 
+    val isNull get() = memorySegment == MemorySegment.NULL
+
+    fun copyTo(arc: ARC, start: Long, end: Long) {
+        val slice = memorySegment!!.asSlice(start, end - start)
+        arc.memorySegment!!.copyFrom(slice)
+    }
+
     open fun decrementCount() {
         counter -= 1
 
@@ -27,18 +35,16 @@ open class ARC(
             dispose()
     }
 
+    fun dispose() {
+        setToNull()
+        isDisposed = true
+    }
+
     open fun incrementCount() {
         if (isDisposed) {
             throw ARCIsDisposedException()
         }
         counter += 1
-    }
-
-    val isNull get() = memorySegment == MemorySegment.NULL
-
-    fun dispose() {
-        setToNull()
-        isDisposed = true
     }
 
     fun setToNull() {
@@ -60,6 +66,9 @@ open class ARC(
     fun getLong(offset: Long) = memorySegment!!.get(ValueLayout.JAVA_LONG, offset)
     fun getFloat(offset: Long) = memorySegment!!.get(ValueLayout.JAVA_FLOAT, offset)
     fun getDouble(offset: Long) = memorySegment!!.get(ValueLayout.JAVA_DOUBLE, offset)
+    fun getChar(offset: Long) = memorySegment!!.get(ValueLayout.JAVA_CHAR, offset)
+    fun getCharUnaligned(offset: Long) = memorySegment!!.get(ValueLayout.JAVA_CHAR_UNALIGNED, offset)
+    fun getString(offset: Long, charset: Charset): String = memorySegment!!.getString(offset, charset)
 
     fun setAddress(offset: Long, value: MemorySegment) = memorySegment!!.set(ValueLayout.ADDRESS, offset, value)
     fun setBoolean(offset: Long, value: Boolean) = memorySegment!!.set(ValueLayout.JAVA_BOOLEAN, offset, value)
@@ -69,6 +78,7 @@ open class ARC(
     fun setLong(offset: Long, value: Long) = memorySegment!!.set(ValueLayout.JAVA_LONG, offset, value)
     fun setFloat(offset: Long, value: Float) = memorySegment!!.set(ValueLayout.JAVA_FLOAT, offset, value)
     fun setDouble(offset: Long, value: Double) = memorySegment!!.set(ValueLayout.JAVA_DOUBLE, offset, value)
+    fun setString(offset: Long, value: String, charset: Charset) = memorySegment!!.setString(offset, value, charset)
 
     companion object {
         fun auto(layout: MemoryLayout): ARC = auto(layout.byteSize())
@@ -98,6 +108,12 @@ open class ARC(
         fun shared(byteSize: Long): ARC {
             val arena = Arena.ofShared()
             val memorySegment = arena.allocate(byteSize)
+            return ARC(arena, memorySegment)
+        }
+
+        fun string(value: String, charset: Charset): ARC {
+            val arena = Arena.ofShared()
+            val memorySegment = arena.allocateFrom(value, charset)
             return ARC(arena, memorySegment)
         }
     }

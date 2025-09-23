@@ -7,11 +7,6 @@ abstract class NullablePrimitivePointer<T> internal constructor(
     onArcUpdated: (() -> Unit)?
 ) : NullablePointer<T>(arc, onArcUpdated) {
 
-    val isNull: Boolean get() {
-        validOrThrow(this)
-        return arc!!.isNull
-    }
-
     abstract fun shareOf(): NullablePrimitivePointer<T>
 
     inline fun ifIsNull(block: NullablePrimitivePointer<T>.() -> Unit): NullablePrimitivePointer<T> {

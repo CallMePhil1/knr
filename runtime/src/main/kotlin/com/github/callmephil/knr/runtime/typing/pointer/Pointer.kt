@@ -84,6 +84,11 @@ abstract class NullablePointer<T> internal constructor(
     onArcUpdated: (() -> Unit)?
 ) : ByRef<T>(arc, onArcUpdated) {
 
+    val isNull: Boolean get() {
+        validOrThrow(this)
+        return arc!!.isNull
+    }
+
     fun giveTo(other: Pointer<T>) {
         validOrThrow(this)
 
