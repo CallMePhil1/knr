@@ -6,7 +6,7 @@ import java.lang.foreign.ValueLayout
 class NullableBytePointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
-) : NullablePrimitivePointer<Byte>(arc, onArcUpdated) {
+) : NullablePointer<Byte>(arc, onArcUpdated) {
 
     override fun get(): Byte = arc!!.getByte(0)
 
@@ -23,7 +23,7 @@ class NullableBytePointer internal constructor(
 class BytePointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
-) : PrimitivePointer<Byte>(arc, onArcUpdated) {
+) : Pointer<Byte>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getByte(0)
 
@@ -38,7 +38,7 @@ class BytePointer internal constructor(
 class NullableUBytePointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
-) : NullablePrimitivePointer<UByte>(arc, onArcUpdated) {
+) : NullablePointer<UByte>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getByte(0).toUByte()
 
@@ -55,7 +55,7 @@ class NullableUBytePointer internal constructor(
 class UBytePointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
-) : PrimitivePointer<UByte>(arc, onArcUpdated) {
+) : Pointer<UByte>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getByte(0).toUByte()
 

@@ -5,6 +5,7 @@ import com.github.callmephil.knr.runtime.native.StringLib
 import com.github.callmephil.knr.runtime.typing.pointer.ByRef
 import com.github.callmephil.knr.runtime.typing.pointer.NullablePointer
 import com.github.callmephil.knr.runtime.typing.pointer.Pointer
+import com.github.callmephil.knr.runtime.typing.pointer.validOrThrow
 import java.nio.charset.Charset
 
 class CString(
@@ -17,6 +18,11 @@ class CString(
 
     override fun set(value: String) {
         throw NotImplementedError("CString is immutable")
+    }
+
+    override fun shareOf(): CString {
+        validOrThrow(this)
+        return CString(arc!!, null, charset)
     }
 }
 
@@ -36,6 +42,11 @@ class NullableCString(
     override fun set(value: String) {
         throw NotImplementedError("NullableCString is immutable")
     }
+
+    override fun shareOf(): NullableCString {
+        validOrThrow(this)
+        return NullableCString(arc!!, null, charset)
+    }
 }
 
 class CachedCString(
@@ -49,6 +60,11 @@ class CachedCString(
 
     override fun set(value: String) {
         throw NotImplementedError("CachedCString is immutable")
+    }
+
+    override fun shareOf(): CachedCString {
+        validOrThrow(this)
+        return CachedCString(arc!!, null, arc!!.getString(0, charset), charset)
     }
 
     fun updateCache() {
@@ -78,6 +94,11 @@ class NullableCachedCString(
 
     override fun set(value: String) {
         throw NotImplementedError("NullableCachedCString is immutable")
+    }
+
+    override fun shareOf(): NullableCachedCString {
+        validOrThrow(this)
+        return NullableCachedCString(arc!!, null, arc!!.getString(0, charset), charset)
     }
 
     fun updateCache() {

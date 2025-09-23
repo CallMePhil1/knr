@@ -6,7 +6,7 @@ import java.lang.foreign.ValueLayout
 class NullableLongPointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
-) : NullablePrimitivePointer<Long>(arc, onArcUpdated) {
+) : NullablePointer<Long>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getLong(0)
 
@@ -21,7 +21,7 @@ class NullableLongPointer internal constructor(
 class LongPointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
-) : PrimitivePointer<Long>(arc, onArcUpdated) {
+) : Pointer<Long>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getLong(0)
 
@@ -36,7 +36,7 @@ class LongPointer internal constructor(
 class NullableULongPointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
-) : NullablePrimitivePointer<ULong>(arc, onArcUpdated) {
+) : NullablePointer<ULong>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getLong(0).toULong()
 
@@ -51,7 +51,7 @@ class NullableULongPointer internal constructor(
 class ULongPointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
-) : PrimitivePointer<ULong>(arc, onArcUpdated) {
+) : Pointer<ULong>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getLong(0).toULong()
 

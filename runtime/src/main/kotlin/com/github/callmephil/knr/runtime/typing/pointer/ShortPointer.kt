@@ -6,7 +6,7 @@ import java.lang.foreign.ValueLayout
 class NullableShortPointer internal constructor(
     arc: ARC,
     onArcUpdated: (()-> Unit)? = null
-) : NullablePrimitivePointer<Short>(arc, onArcUpdated) {
+) : NullablePointer<Short>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getShort(0)
 
@@ -23,7 +23,7 @@ class NullableShortPointer internal constructor(
 class ShortPointer internal constructor(
     arc: ARC,
     onArcUpdated: (()-> Unit)? = null
-) : PrimitivePointer<Short>(arc, onArcUpdated) {
+) : Pointer<Short>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getShort(0)
 
@@ -38,7 +38,7 @@ class ShortPointer internal constructor(
 class NullableUShortPointer internal constructor(
     arc: ARC,
     onArcUpdated: (()-> Unit)? = null
-) : NullablePrimitivePointer<UShort>(arc, onArcUpdated) {
+) : NullablePointer<UShort>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getShort(0).toUShort()
 
@@ -55,7 +55,7 @@ class NullableUShortPointer internal constructor(
 class UShortPointer internal constructor(
     arc: ARC,
     onArcUpdated: (()-> Unit)? = null
-) : PrimitivePointer<UShort>(arc, onArcUpdated) {
+) : Pointer<UShort>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getShort(0).toUShort()
 

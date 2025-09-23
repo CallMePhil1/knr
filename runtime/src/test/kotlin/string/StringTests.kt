@@ -1,5 +1,6 @@
 package string
 
+import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.native.StringLib
 import com.github.callmephil.knr.runtime.typing.cstringOf
 import kotlin.test.Test
@@ -20,5 +21,17 @@ class StringTests {
         val str = cstringOf("123456")
 
         assertEquals(StringLib.stringLength(str), 6L)
+    }
+
+    @Test
+    fun `GIVEN a CString WHEN pointing to another ARC THEN it should succeed`() {
+        val str = cstringOf("")
+
+        val arc = ARC.string("testing", Charsets.UTF_8)
+
+        assertEquals("", str.get())
+
+        str.pointTo(arc)
+        assertEquals("testing", str.get())
     }
 }

@@ -6,7 +6,7 @@ import java.lang.foreign.ValueLayout
 class NullableIntPointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
-) : NullablePrimitivePointer<Int>(arc, onArcUpdated) {
+) : NullablePointer<Int>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getInt(0)
 
@@ -21,7 +21,7 @@ class NullableIntPointer internal constructor(
 class IntPointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
-) : PrimitivePointer<Int>(arc, onArcUpdated) {
+) : Pointer<Int>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getInt(0)
 
@@ -36,7 +36,7 @@ class IntPointer internal constructor(
 class NullableUIntPointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
-) : NullablePrimitivePointer<UInt>(arc, onArcUpdated) {
+) : NullablePointer<UInt>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getInt(0).toUInt()
 
@@ -51,7 +51,7 @@ class NullableUIntPointer internal constructor(
 class UIntPointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
-) : PrimitivePointer<UInt>(arc, onArcUpdated) {
+) : Pointer<UInt>(arc, onArcUpdated) {
 
     override fun get() = arc!!.getInt(0).toUInt()
 

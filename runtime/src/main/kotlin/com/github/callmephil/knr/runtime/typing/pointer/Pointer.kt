@@ -54,10 +54,12 @@ abstract class Pointer<T> internal constructor(
 
     override fun pointTo(arc: ARC) {
         if (arc.isNull)
-            throw NullPointerException("Tried to point to a null ARC in a non-nullable Pointer")
+            throw NullPointerException("Tried to point a non-nullable Pointer to a null")
         this.arc?.decrementCount()
         this.arc = arc
     }
+
+    abstract fun shareOf(): Pointer<T>
 
     fun shareWith(other: Pointer<T>) {
         validOrThrow(this)
@@ -108,12 +110,26 @@ abstract class NullablePointer<T> internal constructor(
         arc = null
     }
 
+    inline fun ifNull(block: NullablePointer<T>.() -> Unit): NullablePointer<T> {
+        if (isNull)
+            block()
+        return this
+    }
+
+    inline fun ifNotNull(block: NullablePointer<T>.(T) -> Unit): NullablePointer<T> {
+        if (!isNull)
+            block(get())
+        return this
+    }
+
     override fun pointTo(arc: ARC) {
         this.arc?.decrementCount()
         this.arc = arc
     }
 
     fun setToNull() = pointTo(ARC.ofNull())
+
+    abstract fun shareOf(): NullablePointer<T>
 
     fun shareWith(other: Pointer<T>) {
         validOrThrow(this)
