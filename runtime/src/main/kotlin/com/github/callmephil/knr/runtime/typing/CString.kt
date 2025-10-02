@@ -11,7 +11,7 @@ import java.nio.charset.Charset
 class CString(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null,
-    private val charset: Charset
+    val charset: Charset
 ) : Pointer<String>(arc, onArcUpdated) {
 
     override fun get(): String = arc!!.getString(0, charset)
@@ -29,7 +29,7 @@ class CString(
 class NullableCString(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null,
-    private val charset: Charset
+    val charset: Charset
 ) : NullablePointer<String>(arc, onArcUpdated) {
 
     override fun get(): String {
@@ -53,7 +53,7 @@ class CachedCString(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null,
     private var value: String = "",
-    private val charset: Charset
+    val charset: Charset
 ) : Pointer<String>(arc, onArcUpdated) {
 
     override fun get(): String = value
@@ -76,7 +76,7 @@ class NullableCachedCString(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null,
     initialValue: String? = null,
-    private val charset: Charset
+    val charset: Charset
 ) : NullablePointer<String>(arc, onArcUpdated) {
 
     private var value: String? = initialValue

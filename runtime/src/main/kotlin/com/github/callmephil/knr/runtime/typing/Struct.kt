@@ -21,6 +21,7 @@ import com.github.callmephil.knr.runtime.memory.ARC
 import java.lang.foreign.Arena
 import java.lang.foreign.StructLayout
 import java.nio.ByteBuffer
+import java.nio.charset.Charset
 
 abstract class Struct(
     val arc: ARC
@@ -65,6 +66,8 @@ abstract class Struct(
     protected fun nullableLongPointerField(offset: Long, initialValue: Long? = null) = NullableLongPointerDelegate(arc, offset, initialValue)
     protected fun ulongPointerField(offset: Long, initialValue: ULong = 0u) = ULongPointerDelegate(arc, offset, initialValue)
     protected fun nullableULongPointerField(offset: Long, initialValue: ULong? = null) = NullableULongPointerDelegate(arc, offset, initialValue)
+
+    protected fun cstringField(offset: Long, charset: Charset, initialValue: String = "") = StringDelegate(arc, offset, charset, initialValue)
 
     fun asByteBuffer(): ByteBuffer = arc.memorySegment!!.asByteBuffer()
 

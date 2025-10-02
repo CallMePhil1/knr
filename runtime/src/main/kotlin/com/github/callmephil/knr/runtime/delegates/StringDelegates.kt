@@ -1,29 +1,24 @@
 package com.github.callmephil.knr.runtime.delegates
 
 import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.typing.CString
+import com.github.callmephil.knr.runtime.typing.cstringOf
 import java.nio.charset.Charset
 
-//class StringDelegate(
-//    memorySegment: MemorySegment,
-//    offset: Long,
-//    private val arena: Arena,
-//    private val charset: Charset = Charsets.UTF_8,
-//    value: String = ""
-//) : FieldDelegate<String>(memorySegment, offset) {
-//
-//    private lateinit var stringMemorySegment: MemorySegment
-//
-//    init {
-//        set(value)
-//    }
-//
-//    override fun get(): String = stringMemorySegment.getString(0, charset)
-//    override fun set(value: String) {
-//        stringMemorySegment = arena.allocateFrom(value, charset)
-//        memorySegment.set(ValueLayout.ADDRESS, offset, stringMemorySegment)
-//    }
-//}
-//
+class StringDelegate(
+    ownerArc: ARC,
+    offset: Long,
+    private val charset: Charset,
+    initialValue: String = ""
+) : PointerFieldDelegate<String, CString>(ownerArc, offset) {
+
+    override var pointer: CString = cstringOf(initialValue, charset)
+
+    init {
+        updateOwnersArc()
+    }
+}
+
 //class CachedStringDelegate(
 //    memorySegment: MemorySegment,
 //    offset: Long,

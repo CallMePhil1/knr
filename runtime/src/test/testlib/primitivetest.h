@@ -4,13 +4,13 @@
 #include <stdbool.h>
 
 #ifdef _WIN32
-  #ifdef PRIMTEST_EXPORTS
-    #define API __declspec(dllexport)
-  #else
-    #define API __declspec(dllimport)
-  #endif
+    #ifdef PRIMTEST_EXPORTS
+        #define API __declspec(dllexport)
+    #else
+        #define API __declspec(dllimport)
+    #endif
 #else
-  #define API __attribute__((visibility("default")))
+    #define API __attribute__((visibility("default")))
 #endif
 
 typedef struct {
