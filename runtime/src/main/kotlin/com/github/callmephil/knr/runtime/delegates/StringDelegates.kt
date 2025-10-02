@@ -2,7 +2,9 @@ package com.github.callmephil.knr.runtime.delegates
 
 import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.typing.CString
+import com.github.callmephil.knr.runtime.typing.NullableCString
 import com.github.callmephil.knr.runtime.typing.cstringOf
+import com.github.callmephil.knr.runtime.typing.nullableCStringOf
 import java.nio.charset.Charset
 
 class StringDelegate(
@@ -12,7 +14,21 @@ class StringDelegate(
     initialValue: String = ""
 ) : PointerFieldDelegate<String, CString>(ownerArc, offset) {
 
-    override var pointer: CString = cstringOf(initialValue, charset)
+    override var pointer: CString = cstringOf(initialValue, charset, ::updateOwnersArc)
+
+    init {
+        updateOwnersArc()
+    }
+}
+
+class NullableStringDelegate(
+    ownerArc: ARC,
+    offset: Long,
+    private val charset: Charset,
+    initialValue: String?
+) : NullablePointerFieldDelegate<String, NullableCString>(ownerArc, offset) {
+
+    override var pointer: NullableCString = nullableCStringOf(initialValue, charset, ::updateOwnersArc)
 
     init {
         updateOwnersArc()

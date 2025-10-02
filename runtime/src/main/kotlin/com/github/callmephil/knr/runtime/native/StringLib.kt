@@ -18,7 +18,15 @@ object StringLib {
         ValueLayout.ADDRESS
     )
 
-    fun stringCompare(cString1: ByRef<String>, cString2: ByRef<String>): Boolean {
+    fun compare(cString1: ByRef<String>, cString2: ByRef<String>): Int {
+        when {
+            cString1.arc!!.isNull -> throw NullPointerException("cString1 is NULL")
+            cString2.arc!!.isNull -> throw NullPointerException("cString2 is NULL")
+        }
+        return strcmpHandle.invokeExact(cString1.arc!!.memorySegment, cString2.arc!!.memorySegment) as Int
+    }
+
+    fun equal(cString1: ByRef<String>, cString2: ByRef<String>): Boolean {
         when {
             cString1.arc!!.isNull -> throw NullPointerException("cString1 is NULL")
             cString2.arc!!.isNull -> throw NullPointerException("cString2 is NULL")
@@ -27,7 +35,7 @@ object StringLib {
         return result == 0
     }
 
-    fun stringLength(cString: ByRef<String>): Long {
+    fun length(cString: ByRef<String>): Long {
         if (cString.arc?.isNull == true)
             throw NullPointerException("Tried to get a null string's length via strlen")
         return strlenHandle.invokeExact(cString.arc!!.memorySegment) as Long

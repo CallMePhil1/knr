@@ -8,7 +8,7 @@ import com.github.callmephil.knr.runtime.typing.pointer.Pointer
 import com.github.callmephil.knr.runtime.typing.pointer.validOrThrow
 import java.nio.charset.Charset
 
-class CString(
+open class CString internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null,
     val charset: Charset
@@ -26,7 +26,7 @@ class CString(
     }
 }
 
-class NullableCString(
+open class NullableCString internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null,
     val charset: Charset
@@ -53,14 +53,10 @@ class CachedCString(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null,
     private var value: String = "",
-    val charset: Charset
-) : Pointer<String>(arc, onArcUpdated) {
+    charset: Charset
+) : CString(arc, onArcUpdated, charset) {
 
     override fun get(): String = value
-
-    override fun set(value: String) {
-        throw NotImplementedError("CachedCString is immutable")
-    }
 
     override fun shareOf(): CachedCString {
         validOrThrow(this)
@@ -68,6 +64,9 @@ class CachedCString(
     }
 
     fun updateCache() {
+        if (arc!!.isNull) {
+            throw NullPointerException("Tried to update cache for CachedCString but it's pointing to NULL")
+        }
         value = arc!!.getString(0, charset)
     }
 }
@@ -76,8 +75,8 @@ class NullableCachedCString(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null,
     initialValue: String? = null,
-    val charset: Charset
-) : NullablePointer<String>(arc, onArcUpdated) {
+    charset: Charset
+) : NullableCString(arc, onArcUpdated, charset) {
 
     private var value: String? = initialValue
 
@@ -92,28 +91,32 @@ class NullableCachedCString(
         }
     }
 
-    override fun set(value: String) {
-        throw NotImplementedError("NullableCachedCString is immutable")
-    }
-
     override fun shareOf(): NullableCachedCString {
         validOrThrow(this)
         return NullableCachedCString(arc!!, null, arc!!.getString(0, charset), charset)
     }
 
     fun updateCache() {
-        if (arc!!.isNull) {
-            throw NullPointerException("Tried to update cache for NullableCachedCString but it's pointing to NULL")
+        value = when {
+            arc!!.isNull -> null
+            else -> arc!!.getString(0, charset)
         }
-        value = arc!!.getString(0, charset)
     }
 }
 
-infix fun ByRef<String>.cmp(other: ByRef<String>) = StringLib.stringCompare(this, other)
+infix fun ByRef<String>.equal(other: ByRef<String>) = StringLib.equal(this, other)
 
-val ByRef<String>.length get() = StringLib.stringLength(this)
+val ByRef<String>.length get() = StringLib.length(this)
 
-fun cstringOf(value: String = "", charset: Charset = Charsets.UTF_8): CString {
-    val arc = ARC.string(value, charset)
-    return CString(arc, null, charset)
-}
+internal fun cstringOf(value: String = "", charset: Charset = Charsets.UTF_8, onArcUpdated: (() -> Unit)?) =
+    CString(ARC.string(value, charset), onArcUpdated, charset)
+fun cstringOf(value: String = "", charset: Charset = Charsets.UTF_8) =
+    cstringOf(value, charset, null)
+
+internal fun nullableCStringOf(value: String? = null, charset: Charset = Charsets.UTF_8, onArcUpdated: (() -> Unit)?) =
+    when (value) {
+        null -> NullableCString(ARC.ofNull(), onArcUpdated, charset)
+        else -> NullableCString(ARC.string(value, charset), onArcUpdated, charset)
+    }
+fun nullableCStringOf(value: String? = null, charset: Charset = Charsets.UTF_8) =
+    nullableCStringOf(value, charset, null)

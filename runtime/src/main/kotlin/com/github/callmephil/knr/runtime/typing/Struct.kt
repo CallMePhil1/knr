@@ -68,17 +68,9 @@ abstract class Struct(
     protected fun nullableULongPointerField(offset: Long, initialValue: ULong? = null) = NullableULongPointerDelegate(arc, offset, initialValue)
 
     protected fun cstringField(offset: Long, charset: Charset, initialValue: String = "") = StringDelegate(arc, offset, charset, initialValue)
+    protected fun nullableCStringField(offset: Long, charset: Charset, initialValue: String? = null) = NullableStringDelegate(arc, offset, charset, initialValue)
 
     fun asByteBuffer(): ByteBuffer = arc.memorySegment!!.asByteBuffer()
-
-//    protected fun stringField(offset: Long, arena: Arena, charset: Charset = Charsets.UTF_8, initialValue: String = "") =
-//        StringDelegate(memorySegment, offset, arena, charset, initialValue)
-//    protected fun cachedStringField(offset: Long, arena: Arena, charset: Charset = Charsets.UTF_8, initialValue: String = "") =
-//        CachedStringDelegate(memorySegment, offset, arena, charset, initialValue)
-//    protected fun fixedLengthStringField(offset: Long, charset: Charset = Charsets.UTF_8, initialValue: String, length: Int) =
-//        FixedLengthStringDelegate(memorySegment, offset, charset, initialValue, length)
-//    protected fun cachedFixedLengthStringField(offset: Long, charset: Charset = Charsets.UTF_8, initialValue: String, length: Int) =
-//        CachedFixedLengthStringDelegate(memorySegment, offset, charset, initialValue, length)
 }
 
 interface StructCompanion<T : Struct> {
