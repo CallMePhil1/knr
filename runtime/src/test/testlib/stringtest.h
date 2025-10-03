@@ -15,6 +15,7 @@
 
 typedef struct {
     char *str_ptr;
+    char *cached_str_ptr;
 } StringStruct;
 
 API bool are_strs_equal(const char *str1, const char *str2);

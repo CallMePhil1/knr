@@ -11,7 +11,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class StringTests {
+class CStringTests {
     @Test
     fun `GIVEN different strings with the same value WHEN comparing they are equal THEN it should return true`() {
         val str1 = cstringOf("Hello")
@@ -44,7 +44,6 @@ class StringTests {
         val str = cstringOf("testing")
 
         assertEquals(str.get(), "testing")
-
         assertFailsWith<NotImplementedError> { str.set("newValue") }
     }
 

@@ -69,6 +69,8 @@ abstract class Struct(
 
     protected fun cstringField(offset: Long, charset: Charset, initialValue: String = "") = StringDelegate(arc, offset, charset, initialValue)
     protected fun nullableCStringField(offset: Long, charset: Charset, initialValue: String? = null) = NullableStringDelegate(arc, offset, charset, initialValue)
+    protected fun cachedCStringField(offset: Long, charset: Charset, initialValue: String = "") = CachedStringDelegate(arc, offset, charset, initialValue)
+    protected fun nullableCachedCStringField(offset: Long, charset: Charset, initialValue: String? = null) = NullableCachedStringDelegate(arc, offset, charset, initialValue)
 
     fun asByteBuffer(): ByteBuffer = arc.memorySegment!!.asByteBuffer()
 }

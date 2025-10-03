@@ -120,3 +120,14 @@ internal fun nullableCStringOf(value: String? = null, charset: Charset = Charset
     }
 fun nullableCStringOf(value: String? = null, charset: Charset = Charsets.UTF_8) =
     nullableCStringOf(value, charset, null)
+
+internal fun cachedCStringOf(value: String = "", charset: Charset = Charsets.UTF_8, onArcUpdated: (() -> Unit)?) =
+    CachedCString(ARC.string(value, charset), onArcUpdated, value, charset)
+fun cachedCStringOf(value: String = "", charset: Charset = Charsets.UTF_8) = cachedCStringOf(value, charset, null)
+
+internal fun nullableCachedCStringOf(value: String? = null, charset: Charset = Charsets.UTF_8, onArcUpdated: (() -> Unit)?) =
+    when (value) {
+        null -> NullableCachedCString(ARC.ofNull(), onArcUpdated, value, charset)
+        else -> NullableCachedCString(ARC.string(value, charset), onArcUpdated, value, charset)
+    }
+fun nullableCachedCStringOf(value: String? = null, charset: Charset = Charsets.UTF_8) = nullableCachedCStringOf(value, charset, null)

@@ -11,10 +11,12 @@ class StringStruct(
     arc: ARC
 ) : Struct(arc) {
     var strPointer by cstringField(0, Charsets.UTF_8, "")
+    var cachedStrPointer by cachedCStringField(8, Charsets.UTF_8, "")
 
     companion object : StructCompanion<StringStruct> {
         override val layout: StructLayout = MemoryLayout.structLayout(
-            ValueLayout.ADDRESS.withName("str_ptr")
+            ValueLayout.ADDRESS.withName("str_ptr"),
+            ValueLayout.ADDRESS.withName("cached_str_ptr")
         )
 
         override fun wrap(arc: ARC) = StringStruct(arc)

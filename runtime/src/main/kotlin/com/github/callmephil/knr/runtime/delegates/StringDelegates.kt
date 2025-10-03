@@ -2,9 +2,13 @@ package com.github.callmephil.knr.runtime.delegates
 
 import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.typing.CString
+import com.github.callmephil.knr.runtime.typing.CachedCString
 import com.github.callmephil.knr.runtime.typing.NullableCString
+import com.github.callmephil.knr.runtime.typing.NullableCachedCString
+import com.github.callmephil.knr.runtime.typing.cachedCStringOf
 import com.github.callmephil.knr.runtime.typing.cstringOf
 import com.github.callmephil.knr.runtime.typing.nullableCStringOf
+import com.github.callmephil.knr.runtime.typing.nullableCachedCStringOf
 import java.nio.charset.Charset
 
 class StringDelegate(
@@ -35,27 +39,33 @@ class NullableStringDelegate(
     }
 }
 
-//class CachedStringDelegate(
-//    memorySegment: MemorySegment,
-//    offset: Long,
-//    private val arena: Arena,
-//    private val charset: Charset = Charsets.UTF_8,
-//    private var value: String = ""
-//) : FieldDelegate<String>(memorySegment, offset) {
-//
-//    private lateinit var stringMemorySegment: MemorySegment
-//
-//    init {
-//        set(value)
-//    }
-//
-//    override fun get(): String = value
-//    override fun set(value: String) {
-//        stringMemorySegment = arena.allocateFrom(value, charset)
-//        memorySegment.set(ValueLayout.ADDRESS, offset, stringMemorySegment)
-//        this.value = value
-//    }
-//}
+class CachedStringDelegate(
+    ownerArc: ARC,
+    offset: Long,
+    private val charset: Charset,
+    initialValue: String
+) : PointerFieldDelegate<String, CachedCString>(ownerArc, offset) {
+
+    override var pointer: CachedCString = cachedCStringOf(initialValue, charset, ::updateOwnersArc)
+
+    init {
+        updateOwnersArc()
+    }
+}
+
+class NullableCachedStringDelegate(
+    ownerArc: ARC,
+    offset: Long,
+    private val charset: Charset,
+    initialValue: String?
+) : NullablePointerFieldDelegate<String, NullableCachedCString>(ownerArc, offset) {
+
+    override var pointer: NullableCachedCString = nullableCachedCStringOf(initialValue, charset, ::updateOwnersArc)
+
+    init {
+        updateOwnersArc()
+    }
+}
 
 class CCharArrayDelegate(
     ownerArc: ARC,
