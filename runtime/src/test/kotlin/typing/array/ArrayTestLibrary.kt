@@ -6,6 +6,7 @@ import com.github.callmephil.knr.runtime.typing.array.IntNativeArray
 import com.github.callmephil.knr.runtime.typing.array.LongNativeArray
 import com.github.callmephil.knr.runtime.typing.array.ShortNativeArray
 import com.github.callmephil.knr.runtime.typing.array.UByteNativeArray
+import com.github.callmephil.knr.runtime.typing.array.UIntNativeArray
 import com.github.callmephil.knr.runtime.typing.array.UShortNativeArray
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
@@ -95,6 +96,21 @@ object ArrayTestLibrary {
         ValueLayout.JAVA_INT
     )
 
+    private val getUIntHandle = linker.downcallHandle(
+        segment = lookup.find("get_uint").orElseThrow(),
+        retType = ValueLayout.JAVA_INT,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT
+    )
+
+    private val setUIntHandle = linker.downcallHandle(
+        segment = lookup.find("set_uint").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT,
+        ValueLayout.JAVA_INT
+    )
+
     private val getLongHandle = linker.downcallHandle(
         segment = lookup.find("get_long").orElseThrow(),
         retType = ValueLayout.JAVA_LONG,
@@ -143,6 +159,13 @@ object ArrayTestLibrary {
 
     fun setInt(array: IntNativeArray, index: Int, value: Int) {
         setIntHandle.invokeExact(array.arc.memorySegment, index, value)
+    }
+
+    fun getUInt(array: UIntNativeArray, index: Int) =
+        (getIntHandle.invokeExact(array.arc.memorySegment, index) as Int).toUInt()
+
+    fun setUInt(array: UIntNativeArray, index: Int, value: UInt) {
+        setIntHandle.invokeExact(array.arc.memorySegment, index, value.toInt())
     }
 
     fun getLong(array: LongNativeArray, index: Int) =

@@ -31,6 +31,10 @@ API signed int get_int(signed int *arr, int index);
 
 API void set_int(signed int *arr, int index, signed int value);
 
+API unsigned int get_uint(unsigned int *arr, int index);
+
+API void set_uint(unsigned int *arr, int index, unsigned int value);
+
 API signed long long get_long(signed long long *arr, int index);
 
 API void set_long(signed long long *arr, int index, signed long long value);

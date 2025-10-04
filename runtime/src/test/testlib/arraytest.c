@@ -40,6 +40,14 @@ void set_int(signed int *arr, int index, signed int value) {
     arr[index] = value;
 }
 
+unsigned int get_uint(unsigned int *arr, int index) {
+    return arr[index];
+}
+
+void set_uint(unsigned int *arr, int index, unsigned int value) {
+    arr[index] = value;
+}
+
 signed long long get_long(signed long long *arr, int index) {
     return arr[index];
 }
