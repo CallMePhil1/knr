@@ -92,18 +92,19 @@ open class ARC(
     fun setFloat(offset: Long, value: Float) = memorySegment!!.set(ValueLayout.JAVA_FLOAT, offset, value)
     fun setDouble(offset: Long, value: Double) = memorySegment!!.set(ValueLayout.JAVA_DOUBLE, offset, value)
     fun setString(offset: Long, value: String, charset: Charset) = memorySegment!!.setString(offset, value, charset)
-    fun setBytes(offset: Long, value: ByteArray, start: Int, end: Int) {
+    fun setBytes(offset: Long, value: ByteArray, start: Long, end: Long) {
         val srcAmount = end - start
         val dstAmount = memorySegment!!.byteSize() - offset
 
         if (srcAmount > dstAmount)
             throw IndexOutOfBoundsException()
 
-        val buffer = memorySegment!!.asByteBuffer()
-        buffer.position(offset.toInt())
-        buffer.put(value)
+        val srcSegment = MemorySegment.ofArray(value).asSlice(start, srcAmount)
+        val dstSegment = memorySegment!!.asSlice(offset)
+
+        dstSegment.copyFrom(srcSegment)
     }
-    fun setBytes(value: ByteArray) = setBytes(0, value, 0, value.size)
+    fun setBytes(value: ByteArray) = setBytes(0, value, 0, value.size.toLong())
 
     companion object {
         fun auto(layout: MemoryLayout): ARC = auto(layout.byteSize())
