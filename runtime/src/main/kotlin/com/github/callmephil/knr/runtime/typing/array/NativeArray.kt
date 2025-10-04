@@ -16,7 +16,7 @@ abstract class NativeArray<T, C> internal constructor(
     abstract operator fun get(index: Int): T
     abstract fun get(): C
     abstract fun getArray(): Array<T>
-    fun getByteArray(): ByteArray = arc!!.memorySegment!!.asByteBuffer().array()
+    fun getByteArray(): ByteArray = arc.memorySegment!!.asByteBuffer().array()
 
     abstract operator fun set(index: Int, value: T)
     abstract fun set(value: C)

@@ -7,3 +7,11 @@ signed char get_byte(signed char *arr, int index) {
 void set_byte(signed char *arr, int index, signed char value) {
     arr[index] = value;
 }
+
+signed short get_short(signed short *arr, int index) {
+    return arr[index];
+}
+
+void set_short(signed short *arr, int index, signed short value) {
+    arr[index] = value;
+}
