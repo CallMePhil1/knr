@@ -3,6 +3,7 @@ package typing.array
 import com.github.callmephil.knr.runtime.ext.downcallHandle
 import com.github.callmephil.knr.runtime.typing.array.ByteNativeArray
 import com.github.callmephil.knr.runtime.typing.array.IntNativeArray
+import com.github.callmephil.knr.runtime.typing.array.LongNativeArray
 import com.github.callmephil.knr.runtime.typing.array.ShortNativeArray
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
@@ -62,6 +63,21 @@ object ArrayTestLibrary {
         ValueLayout.JAVA_INT
     )
 
+    private val getLongHandle = linker.downcallHandle(
+        segment = lookup.find("get_long").orElseThrow(),
+        retType = ValueLayout.JAVA_LONG,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT
+    )
+
+    private val setLongHandle = linker.downcallHandle(
+        segment = lookup.find("set_long").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT,
+        ValueLayout.JAVA_LONG
+    )
+
     fun getByte(array: ByteNativeArray, index: Int) =
         getByteHandle.invokeExact(array.arc.memorySegment, index) as Byte
 
@@ -81,5 +97,12 @@ object ArrayTestLibrary {
 
     fun setInt(array: IntNativeArray, index: Int, value: Int) {
         setIntHandle.invokeExact(array.arc.memorySegment, index, value)
+    }
+
+    fun getLong(array: LongNativeArray, index: Int) =
+        getLongHandle.invokeExact(array.arc.memorySegment, index) as Long
+
+    fun setLong(array: LongNativeArray, index: Int, value: Long) {
+        setLongHandle.invokeExact(array.arc.memorySegment, index, value)
     }
 }

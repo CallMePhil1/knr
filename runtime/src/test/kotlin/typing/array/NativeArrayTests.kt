@@ -3,6 +3,7 @@ package typing.array
 import com.github.callmephil.knr.runtime.typing.array.NativeArray
 import com.github.callmephil.knr.runtime.typing.array.byteNativeArray
 import com.github.callmephil.knr.runtime.typing.array.intNativeArray
+import com.github.callmephil.knr.runtime.typing.array.longNativeArray
 import com.github.callmephil.knr.runtime.typing.array.shortNativeArray
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -94,15 +95,45 @@ class NativeArrayTests {
 
     @Test
     fun `GIVEN a IntNativeArray WHEN getting its size THEN it should return correct size`() {
-        val shortArray = intNativeArray(10)
-        assertEquals(10, shortArray.size)
-        assertEquals(40, shortArray.arc.memorySegment!!.byteSize())
+        val intArray = intNativeArray(10)
+        assertEquals(10, intArray.size)
+        assertEquals(40, intArray.arc.memorySegment!!.byteSize())
     }
 
     @Test
     fun `GIVEN a IntArray WHEN constructing a IntNativeArray from the array THEN it should succeed`() {
-        val shortArray = intArrayOf(0, 10, 20, 30, 40)
-        val nativeArray = intNativeArray(shortArray)
+        val intArray = intArrayOf(0, 10, 20, 30, 40)
+        val nativeArray = intNativeArray(intArray)
+
+        assertEquals(10, nativeArray[1])
+        assertEquals(20, nativeArray[2])
+    }
+
+    @Test
+    fun `GIVEN a LongNativeArray WHEN getting and setting a value THEN it should succeed`() {
+        val longArray = longNativeArray(10)
+
+        longArray[1] = 1
+
+        assertEquals(1, longArray[1])
+
+        ArrayTestLibrary.setLong(longArray, 2, 2)
+
+        assertEquals(2, ArrayTestLibrary.getLong(longArray, 2))
+        assertEquals(2, longArray[2])
+    }
+
+    @Test
+    fun `GIVEN a LongNativeArray WHEN getting its size THEN it should return correct size`() {
+        val longArray = longNativeArray(10)
+        assertEquals(10, longArray.size)
+        assertEquals(80, longArray.arc.memorySegment!!.byteSize())
+    }
+
+    @Test
+    fun `GIVEN a LongArray WHEN constructing a IntNativeArray from the array THEN it should succeed`() {
+        val longArray = longArrayOf(0, 10, 20, 30, 40)
+        val nativeArray = longNativeArray(longArray)
 
         assertEquals(10, nativeArray[1])
         assertEquals(20, nativeArray[2])

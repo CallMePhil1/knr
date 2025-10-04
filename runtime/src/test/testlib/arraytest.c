@@ -23,3 +23,11 @@ signed int get_int(signed int *arr, int index) {
 void set_int(signed int *arr, int index, signed int value) {
     arr[index] = value;
 }
+
+signed long long get_long(signed long long *arr, int index) {
+    return arr[index];
+}
+
+void set_long(signed long long *arr, int index, signed long long value) {
+    arr[index] = value;
+}
