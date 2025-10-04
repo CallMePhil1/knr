@@ -15,6 +15,10 @@ API signed char get_byte(signed char *arr, int index);
 
 API void set_byte(signed char *arr, int index, signed char value);
 
+API unsigned char get_ubyte(unsigned char *arr, int index);
+
+API void set_ubyte(unsigned char *arr, int index, unsigned char value);
+
 API signed short get_short(signed short *arr, int index);
 
 API void set_short(signed short *arr, int index, signed short value);

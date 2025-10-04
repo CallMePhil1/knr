@@ -8,6 +8,14 @@ void set_byte(signed char *arr, int index, signed char value) {
     arr[index] = value;
 }
 
+unsigned char get_ubyte(unsigned char *arr, int index) {
+    return arr[index];
+}
+
+void set_ubyte(unsigned char *arr, int index, unsigned char value) {
+    arr[index] = value;
+}
+
 signed short get_short(signed short *arr, int index) {
     return arr[index];
 }

@@ -5,6 +5,7 @@ import com.github.callmephil.knr.runtime.typing.array.ByteNativeArray
 import com.github.callmephil.knr.runtime.typing.array.IntNativeArray
 import com.github.callmephil.knr.runtime.typing.array.LongNativeArray
 import com.github.callmephil.knr.runtime.typing.array.ShortNativeArray
+import com.github.callmephil.knr.runtime.typing.array.UByteNativeArray
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
 import java.lang.foreign.SymbolLookup
@@ -27,6 +28,21 @@ object ArrayTestLibrary {
 
     private val setByteHandle = linker.downcallHandle(
         segment = lookup.find("set_byte").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT,
+        ValueLayout.JAVA_BYTE
+    )
+
+    private val getUByteHandle = linker.downcallHandle(
+        segment = lookup.find("get_ubyte").orElseThrow(),
+        retType = ValueLayout.JAVA_BYTE,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT
+    )
+
+    private val setUByteHandle = linker.downcallHandle(
+        segment = lookup.find("set_ubyte").orElseThrow(),
         retType = null,
         ValueLayout.ADDRESS,
         ValueLayout.JAVA_INT,
@@ -83,6 +99,13 @@ object ArrayTestLibrary {
 
     fun setByte(array: ByteNativeArray, index: Int, value: Byte) {
         setByteHandle.invokeExact(array.arc.memorySegment, index, value)
+    }
+
+    fun getUByte(array: UByteNativeArray, index: Int) =
+        (getUByteHandle.invokeExact(array.arc.memorySegment, index) as Byte).toUByte()
+
+    fun setUByte(array: UByteNativeArray, index: Int, value: UByte) {
+        setUByteHandle.invokeExact(array.arc.memorySegment, index, value.toByte())
     }
 
     fun getShort(array: ShortNativeArray, index: Int) =
