@@ -7,6 +7,7 @@ import com.github.callmephil.knr.runtime.typing.array.LongNativeArray
 import com.github.callmephil.knr.runtime.typing.array.ShortNativeArray
 import com.github.callmephil.knr.runtime.typing.array.UByteNativeArray
 import com.github.callmephil.knr.runtime.typing.array.UIntNativeArray
+import com.github.callmephil.knr.runtime.typing.array.ULongNativeArray
 import com.github.callmephil.knr.runtime.typing.array.UShortNativeArray
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
@@ -126,6 +127,21 @@ object ArrayTestLibrary {
         ValueLayout.JAVA_LONG
     )
 
+    private val getULongHandle = linker.downcallHandle(
+        segment = lookup.find("get_ulong").orElseThrow(),
+        retType = ValueLayout.JAVA_LONG,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT
+    )
+
+    private val setULongHandle = linker.downcallHandle(
+        segment = lookup.find("set_ulong").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT,
+        ValueLayout.JAVA_LONG
+    )
+
     fun getByte(array: ByteNativeArray, index: Int) =
         getByteHandle.invokeExact(array.arc.memorySegment, index) as Byte
 
@@ -162,10 +178,10 @@ object ArrayTestLibrary {
     }
 
     fun getUInt(array: UIntNativeArray, index: Int) =
-        (getIntHandle.invokeExact(array.arc.memorySegment, index) as Int).toUInt()
+        (getUIntHandle.invokeExact(array.arc.memorySegment, index) as Int).toUInt()
 
     fun setUInt(array: UIntNativeArray, index: Int, value: UInt) {
-        setIntHandle.invokeExact(array.arc.memorySegment, index, value.toInt())
+        setUIntHandle.invokeExact(array.arc.memorySegment, index, value.toInt())
     }
 
     fun getLong(array: LongNativeArray, index: Int) =
@@ -173,5 +189,12 @@ object ArrayTestLibrary {
 
     fun setLong(array: LongNativeArray, index: Int, value: Long) {
         setLongHandle.invokeExact(array.arc.memorySegment, index, value)
+    }
+
+    fun getULong(array: ULongNativeArray, index: Int) =
+        (getULongHandle.invokeExact(array.arc.memorySegment, index) as Long).toULong()
+
+    fun setULong(array: ULongNativeArray, index: Int, value: ULong) {
+        setULongHandle.invokeExact(array.arc.memorySegment, index, value.toLong())
     }
 }

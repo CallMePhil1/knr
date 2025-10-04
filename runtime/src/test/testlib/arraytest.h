@@ -39,4 +39,8 @@ API signed long long get_long(signed long long *arr, int index);
 
 API void set_long(signed long long *arr, int index, signed long long value);
 
+API unsigned long long get_ulong(unsigned long long *arr, int index);
+
+API void set_ulong(unsigned long long *arr, int index, unsigned long long value);
+
 #endif

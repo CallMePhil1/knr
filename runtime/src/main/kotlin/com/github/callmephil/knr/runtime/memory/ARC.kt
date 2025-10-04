@@ -72,6 +72,7 @@ open class ARC(
     fun getInt(offset: Long) = memorySegment!!.get(ValueLayout.JAVA_INT, offset)
     fun getUInt(offset: Long) = getInt(offset).toUInt()
     fun getLong(offset: Long) = memorySegment!!.get(ValueLayout.JAVA_LONG, offset)
+    fun getULong(offset: Long) = getLong(offset).toULong()
     fun getFloat(offset: Long) = memorySegment!!.get(ValueLayout.JAVA_FLOAT, offset)
     fun getDouble(offset: Long) = memorySegment!!.get(ValueLayout.JAVA_DOUBLE, offset)
     fun getChar(offset: Long) = memorySegment!!.get(ValueLayout.JAVA_CHAR, offset)
@@ -87,6 +88,7 @@ open class ARC(
     fun setInt(offset: Long, value: Int) = memorySegment!!.set(ValueLayout.JAVA_INT, offset, value)
     fun setUInt(offset: Long, value: UInt) = setInt(offset, value.toInt())
     fun setLong(offset: Long, value: Long) = memorySegment!!.set(ValueLayout.JAVA_LONG, offset, value)
+    fun setULong(offset: Long, value: ULong) = setLong(offset, value.toLong())
     fun setFloat(offset: Long, value: Float) = memorySegment!!.set(ValueLayout.JAVA_FLOAT, offset, value)
     fun setDouble(offset: Long, value: Double) = memorySegment!!.set(ValueLayout.JAVA_DOUBLE, offset, value)
     fun setString(offset: Long, value: String, charset: Charset) = memorySegment!!.setString(offset, value, charset)
@@ -96,7 +98,6 @@ open class ARC(
 
         if (srcAmount > dstAmount)
             throw IndexOutOfBoundsException()
-
 
         val buffer = memorySegment!!.asByteBuffer()
         buffer.position(offset.toInt())
