@@ -5,6 +5,7 @@ import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
+import java.nio.ByteBuffer
 import java.nio.charset.Charset
 
 open class ARC(
@@ -22,6 +23,8 @@ open class ARC(
     var isDisposed: Boolean = false
 
     val isNull get() = memorySegment == MemorySegment.NULL
+
+    val byteSize get() = memorySegment?.byteSize() ?: 0
 
     fun copyTo(arc: ARC, start: Long, end: Long) {
         val slice = memorySegment!!.asSlice(start, end - start)
@@ -47,7 +50,7 @@ open class ARC(
         counter += 1
     }
 
-    fun setToNull() {
+    private fun setToNull() {
         try {
             arena?.close()
         } catch (_: UnsupportedOperationException) {
@@ -57,6 +60,8 @@ open class ARC(
             memorySegment = null
         }
     }
+
+    fun asByteBuffer(): ByteBuffer = memorySegment!!.asByteBuffer()
 
     fun getAddress(offset: Long): MemorySegment = memorySegment!!.get(ValueLayout.ADDRESS, offset)
     fun getBoolean(offset: Long) = memorySegment!!.get(ValueLayout.JAVA_BOOLEAN, offset)
@@ -79,6 +84,19 @@ open class ARC(
     fun setFloat(offset: Long, value: Float) = memorySegment!!.set(ValueLayout.JAVA_FLOAT, offset, value)
     fun setDouble(offset: Long, value: Double) = memorySegment!!.set(ValueLayout.JAVA_DOUBLE, offset, value)
     fun setString(offset: Long, value: String, charset: Charset) = memorySegment!!.setString(offset, value, charset)
+    fun setBytes(offset: Long, value: ByteArray, start: Int, end: Int) {
+        val srcAmount = end - start
+        val dstAmount = memorySegment!!.byteSize() - offset
+
+        if (srcAmount > dstAmount)
+            throw IndexOutOfBoundsException()
+
+
+        val buffer = memorySegment!!.asByteBuffer()
+        buffer.position(offset.toInt())
+        buffer.put(value)
+    }
+    fun setBytes(value: ByteArray) = setBytes(0, value, 0, value.size)
 
     companion object {
         fun auto(layout: MemoryLayout): ARC = auto(layout.byteSize())

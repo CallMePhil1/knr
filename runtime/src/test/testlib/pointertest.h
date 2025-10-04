@@ -10,7 +10,7 @@
     #define API __declspec(dllimport)
   #endif
 #else
-  #define API __attribute__((visibility("default")))
+  #define API __attribute__(visibility("default"))
 #endif
 
 typedef struct {
