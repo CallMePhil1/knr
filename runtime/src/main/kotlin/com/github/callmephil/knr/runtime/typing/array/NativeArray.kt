@@ -9,7 +9,7 @@ abstract class NativeArray<T, C> internal constructor(
     val size: Int = (arc.byteSize / typeByteSize).toInt()
 
     protected fun checkBounds(target: Int) {
-        if (size < target)
+        if (size <= target)
             throw IndexOutOfBoundsException()
     }
 

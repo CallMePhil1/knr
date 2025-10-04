@@ -2,6 +2,7 @@ package typing.array
 
 import com.github.callmephil.knr.runtime.ext.downcallHandle
 import com.github.callmephil.knr.runtime.typing.array.ByteNativeArray
+import com.github.callmephil.knr.runtime.typing.array.IntNativeArray
 import com.github.callmephil.knr.runtime.typing.array.ShortNativeArray
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
@@ -46,6 +47,21 @@ object ArrayTestLibrary {
         ValueLayout.JAVA_SHORT
     )
 
+    private val getIntHandle = linker.downcallHandle(
+        segment = lookup.find("get_int").orElseThrow(),
+        retType = ValueLayout.JAVA_INT,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT
+    )
+
+    private val setIntHandle = linker.downcallHandle(
+        segment = lookup.find("set_int").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT,
+        ValueLayout.JAVA_INT
+    )
+
     fun getByte(array: ByteNativeArray, index: Int) =
         getByteHandle.invokeExact(array.arc.memorySegment, index) as Byte
 
@@ -58,5 +74,12 @@ object ArrayTestLibrary {
 
     fun setShort(array: ShortNativeArray, index: Int, value: Short) {
         setShortHandle.invokeExact(array.arc.memorySegment, index, value)
+    }
+
+    fun getInt(array: IntNativeArray, index: Int) =
+        getIntHandle.invokeExact(array.arc.memorySegment, index) as Int
+
+    fun setInt(array: IntNativeArray, index: Int, value: Int) {
+        setIntHandle.invokeExact(array.arc.memorySegment, index, value)
     }
 }

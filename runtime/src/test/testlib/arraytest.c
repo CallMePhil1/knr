@@ -15,3 +15,11 @@ signed short get_short(signed short *arr, int index) {
 void set_short(signed short *arr, int index, signed short value) {
     arr[index] = value;
 }
+
+signed int get_int(signed int *arr, int index) {
+    return arr[index];
+}
+
+void set_int(signed int *arr, int index, signed int value) {
+    arr[index] = value;
+}
