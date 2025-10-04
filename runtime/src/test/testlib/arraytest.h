@@ -23,6 +23,10 @@ API signed short get_short(signed short *arr, int index);
 
 API void set_short(signed short *arr, int index, signed short value);
 
+API unsigned short get_ushort(unsigned short *arr, int index);
+
+API void set_ushort(unsigned short *arr, int index, unsigned short value);
+
 API signed int get_int(signed int *arr, int index);
 
 API void set_int(signed int *arr, int index, signed int value);

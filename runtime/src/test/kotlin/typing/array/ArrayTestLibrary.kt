@@ -6,6 +6,7 @@ import com.github.callmephil.knr.runtime.typing.array.IntNativeArray
 import com.github.callmephil.knr.runtime.typing.array.LongNativeArray
 import com.github.callmephil.knr.runtime.typing.array.ShortNativeArray
 import com.github.callmephil.knr.runtime.typing.array.UByteNativeArray
+import com.github.callmephil.knr.runtime.typing.array.UShortNativeArray
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
 import java.lang.foreign.SymbolLookup
@@ -64,6 +65,21 @@ object ArrayTestLibrary {
         ValueLayout.JAVA_SHORT
     )
 
+    private val getUShortHandle = linker.downcallHandle(
+        segment = lookup.find("get_ushort").orElseThrow(),
+        retType = ValueLayout.JAVA_SHORT,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT
+    )
+
+    private val setUShortHandle = linker.downcallHandle(
+        segment = lookup.find("set_ushort").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT,
+        ValueLayout.JAVA_SHORT
+    )
+
     private val getIntHandle = linker.downcallHandle(
         segment = lookup.find("get_int").orElseThrow(),
         retType = ValueLayout.JAVA_INT,
@@ -113,6 +129,13 @@ object ArrayTestLibrary {
 
     fun setShort(array: ShortNativeArray, index: Int, value: Short) {
         setShortHandle.invokeExact(array.arc.memorySegment, index, value)
+    }
+
+    fun getUShort(array: UShortNativeArray, index: Int) =
+        (getUShortHandle.invokeExact(array.arc.memorySegment, index) as Short).toUShort()
+
+    fun setUShort(array: UShortNativeArray, index: Int, value: UShort) {
+        setUShortHandle.invokeExact(array.arc.memorySegment, index, value.toShort())
     }
 
     fun getInt(array: IntNativeArray, index: Int) =

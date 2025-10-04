@@ -24,6 +24,14 @@ void set_short(signed short *arr, int index, signed short value) {
     arr[index] = value;
 }
 
+unsigned short get_ushort(unsigned short *arr, int index) {
+    return arr[index];
+}
+
+void set_ushort(unsigned short *arr, int index, unsigned short value) {
+    arr[index] = value;
+}
+
 signed int get_int(signed int *arr, int index) {
     return arr[index];
 }
