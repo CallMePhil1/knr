@@ -18,14 +18,16 @@ import com.github.callmephil.knr.runtime.delegates.pointers.UIntPointerDelegate
 import com.github.callmephil.knr.runtime.delegates.pointers.ULongPointerDelegate
 import com.github.callmephil.knr.runtime.delegates.pointers.UShortPointerDelegate
 import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.memory.Native
 import java.lang.foreign.Arena
 import java.lang.foreign.StructLayout
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
 
 abstract class Struct(
-    val arc: ARC
-) {
+    arc: ARC
+) : Native(arc) {
+    
     init {
         arc.incrementCount()
     }

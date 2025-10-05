@@ -21,9 +21,7 @@ open class ARC(
         protected set
 
     var isDisposed: Boolean = false
-
     val isNull get() = memorySegment == MemorySegment.NULL
-
     val byteSize get() = memorySegment?.byteSize() ?: 0
 
     fun copyTo(arc: ARC, start: Long, end: Long) {
