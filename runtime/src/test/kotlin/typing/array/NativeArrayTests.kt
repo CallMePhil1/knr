@@ -26,6 +26,13 @@ class NativeArrayTests {
     }
 
     @Test
+    fun `GIVEN a NativeArray WHEN setting bytes THEN it should succeed`() {
+        val byteArray = byteNativeArray(10) as NativeArray<Byte, ByteArray>
+
+        byteArray.set(ByteArray(10) { 0 })
+    }
+
+    @Test
     fun `GIVEN a ByteNativeArray WHEN getting and setting a value THEN it should succeed`() {
         val byteArray = byteNativeArray(10)
 

@@ -25,7 +25,7 @@ abstract class NativeArray<T, C> internal constructor(
     abstract fun set(value: C)
     abstract fun set(value: Array<T>)
     fun setByteArray(value: ByteArray) {
-        checkBounds(value.size)
+        checkBounds(value.size - 1)
         arc.setBytes(value)
     }
 }
