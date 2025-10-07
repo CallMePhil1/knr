@@ -4,7 +4,8 @@ import com.github.callmephil.knr.runtime.memory.ARC
 
 abstract class ByRef<T> internal constructor(
     arc: ARC?,
-    private val onArcUpdated: (() -> Unit)?
+    private val onArcUpdated: (() -> Unit)?,
+    val allowNull: Boolean
 ) : AutoCloseable {
 
     var arc: ARC? = arc
@@ -28,15 +29,7 @@ abstract class ByRef<T> internal constructor(
         arc = null
     }
 
-    abstract fun pointTo(arc: ARC)
-}
-
-abstract class Pointer<T> internal constructor(
-    arc: ARC?,
-    onArcUpdated: (() -> Unit)?
-) : ByRef<T>(arc, onArcUpdated) {
-
-    fun giveTo(other: Pointer<T>) {
+    open fun giveTo(other: ByRef<T>) {
         validOrThrow(this)
 
         other.arc?.decrementCount()
@@ -44,39 +37,28 @@ abstract class Pointer<T> internal constructor(
         arc = null
     }
 
-    fun giveTo(other: NullablePointer<T>) {
-        validOrThrow(this)
-
-        other.arc?.decrementCount()
-        other.arc = arc
-        arc = null
-    }
-
-    override fun pointTo(arc: ARC) {
-        if (arc.isNull)
+    open fun pointTo(arc: ARC) {
+        if (!allowNull && arc.isNull)
             throw NullPointerException("Tried to point a non-nullable Pointer to a null")
         this.arc?.decrementCount()
         this.arc = arc
     }
 
+    open fun shareWith(other: ByRef<T>) {
+        validOrThrow(this)
+
+        other.arc?.decrementCount()
+        other.arc = arc
+        arc?.incrementCount()
+    }
+}
+
+abstract class Pointer<T> internal constructor(
+    arc: ARC?,
+    onArcUpdated: (() -> Unit)?
+) : ByRef<T>(arc, onArcUpdated, false) {
+
     abstract fun shareOf(): Pointer<T>
-
-    fun shareWith(other: Pointer<T>) {
-        validOrThrow(this)
-
-        other.arc?.decrementCount()
-        other.arc = arc
-        arc?.incrementCount()
-    }
-
-    fun shareWith(other: NullablePointer<T>) {
-        validOrThrow(this)
-
-        other.arc?.decrementCount()
-        other.arc = arc
-        arc?.incrementCount()
-    }
-
     abstract fun get(): T
     abstract fun set(value: T & Any)
 }
@@ -84,30 +66,20 @@ abstract class Pointer<T> internal constructor(
 abstract class NullablePointer<T> internal constructor(
     arc: ARC?,
     onArcUpdated: (() -> Unit)?
-) : ByRef<T>(arc, onArcUpdated) {
+) : ByRef<T>(arc, onArcUpdated, true) {
 
     val isNull: Boolean get() {
         validOrThrow(this)
         return arc!!.isNull
     }
 
-    fun giveTo(other: Pointer<T>) {
+    override fun giveTo(other: ByRef<T>) {
         validOrThrow(this)
 
-        if (arc!!.isNull)
+        if (!other.allowNull && arc!!.isNull)
             throw NullPointerException("Tried to give a nullable pointer to a non-nullable pointer when the pointer is null")
 
-        other.arc?.decrementCount()
-        other.arc = arc
-        arc = null
-    }
-
-    fun giveTo(other: NullablePointer<T>) {
-        validOrThrow(this)
-
-        other.arc?.decrementCount()
-        other.arc = arc
-        arc = null
+        super.giveTo(other)
     }
 
     inline fun ifNull(block: NullablePointer<T>.() -> Unit): NullablePointer<T> {
@@ -122,32 +94,17 @@ abstract class NullablePointer<T> internal constructor(
         return this
     }
 
-    override fun pointTo(arc: ARC) {
-        this.arc?.decrementCount()
-        this.arc = arc
-    }
-
     fun setToNull() = pointTo(ARC.ofNull())
 
     abstract fun shareOf(): NullablePointer<T>
 
-    fun shareWith(other: Pointer<T>) {
+    override fun shareWith(other: ByRef<T>) {
         validOrThrow(this)
 
-        if (arc!!.isNull)
+        if (!other.allowNull && arc!!.isNull)
             throw NullPointerException("Tried to share a nullable pointer to a non-nullable pointer when the pointer is null")
 
-        other.arc?.decrementCount()
-        other.arc = arc
-        arc?.incrementCount()
-    }
-
-    fun shareWith(other: NullablePointer<T>) {
-        validOrThrow(this)
-
-        other.arc?.decrementCount()
-        other.arc = arc
-        arc?.incrementCount()
+        super.shareWith(other)
     }
 
     abstract fun get(): T
