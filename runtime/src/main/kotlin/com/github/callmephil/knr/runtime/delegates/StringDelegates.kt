@@ -11,7 +11,7 @@ import com.github.callmephil.knr.runtime.typing.nullableCStringOf
 import com.github.callmephil.knr.runtime.typing.nullableCachedCStringOf
 import java.nio.charset.Charset
 
-class StringDelegate(
+class StringDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     private val charset: Charset,
@@ -25,7 +25,7 @@ class StringDelegate(
     }
 }
 
-class NullableStringDelegate(
+class NullableStringDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     private val charset: Charset,
@@ -39,7 +39,7 @@ class NullableStringDelegate(
     }
 }
 
-class CachedStringDelegate(
+class CachedStringDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     private val charset: Charset,
@@ -53,7 +53,7 @@ class CachedStringDelegate(
     }
 }
 
-class NullableCachedStringDelegate(
+class NullableCachedStringDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     private val charset: Charset,
@@ -67,7 +67,7 @@ class NullableCachedStringDelegate(
     }
 }
 
-class CCharArrayDelegate(
+class CCharArrayDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     private val charset: Charset = Charsets.UTF_8,
@@ -87,7 +87,7 @@ class CCharArrayDelegate(
     }
 }
 
-class CachedCCharArrayDelegate(
+class CachedCCharArrayDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     private val charset: Charset = Charsets.UTF_8,

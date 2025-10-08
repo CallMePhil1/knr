@@ -12,7 +12,7 @@ import com.github.callmephil.knr.runtime.typing.pointer.nullableBytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableUBytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.ubytePointerOf
 
-class BytePointerDelegate(
+class BytePointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: Byte
@@ -25,7 +25,7 @@ class BytePointerDelegate(
     }
 }
 
-class NullableBytePointerDelegate(
+class NullableBytePointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: Byte?
@@ -38,7 +38,7 @@ class NullableBytePointerDelegate(
     }
 }
 
-class UBytePointerDelegate(
+class UBytePointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: UByte
@@ -51,7 +51,7 @@ class UBytePointerDelegate(
     }
 }
 
-class NullableUBytePointerDelegate(
+class NullableUBytePointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: UByte?

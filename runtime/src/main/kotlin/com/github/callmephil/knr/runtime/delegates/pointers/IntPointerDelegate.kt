@@ -12,7 +12,7 @@ import com.github.callmephil.knr.runtime.typing.pointer.nullableIntPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableUIntPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.uintPointerOf
 
-class IntPointerDelegate(
+class IntPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: Int
@@ -25,7 +25,7 @@ class IntPointerDelegate(
     }
 }
 
-class NullableIntPointerDelegate(
+class NullableIntPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: Int?
@@ -38,7 +38,7 @@ class NullableIntPointerDelegate(
     }
 }
 
-class UIntPointerDelegate(
+class UIntPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: UInt
@@ -51,7 +51,7 @@ class UIntPointerDelegate(
     }
 }
 
-class NullableUIntPointerDelegate(
+class NullableUIntPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: UInt?

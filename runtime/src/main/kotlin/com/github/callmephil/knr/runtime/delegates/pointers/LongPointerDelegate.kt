@@ -12,7 +12,7 @@ import com.github.callmephil.knr.runtime.typing.pointer.nullableLongPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableULongPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.ulongPointerOf
 
-class LongPointerDelegate(
+class LongPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: Long
@@ -25,7 +25,7 @@ class LongPointerDelegate(
     }
 }
 
-class NullableLongPointerDelegate(
+class NullableLongPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: Long?
@@ -38,7 +38,7 @@ class NullableLongPointerDelegate(
     }
 }
 
-class ULongPointerDelegate(
+class ULongPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: ULong
@@ -51,7 +51,7 @@ class ULongPointerDelegate(
     }
 }
 
-class NullableULongPointerDelegate(
+class NullableULongPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: ULong?

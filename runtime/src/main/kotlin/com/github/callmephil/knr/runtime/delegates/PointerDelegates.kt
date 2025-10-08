@@ -6,7 +6,7 @@ import com.github.callmephil.knr.runtime.typing.pointer.Pointer
 import com.github.callmephil.knr.runtime.typing.pointer.shareFrom
 import java.lang.foreign.MemorySegment
 
-abstract class PointerFieldDelegate<T, P : Pointer<T>>(
+abstract class PointerFieldDelegate<T, P : Pointer<T>> internal constructor(
     ownerArc: ARC,
     offset: Long,
 ) : FieldDelegate<P>(
@@ -26,7 +26,7 @@ abstract class PointerFieldDelegate<T, P : Pointer<T>>(
     }
 }
 
-abstract class NullablePointerFieldDelegate<T, P : NullablePointer<T>>(
+abstract class NullablePointerFieldDelegate<T, P : NullablePointer<T>> internal constructor(
     ownerArc: ARC,
     offset: Long,
 ) : FieldDelegate<P>(

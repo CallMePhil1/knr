@@ -142,18 +142,3 @@ infix fun <T> Pointer<T>.shareFrom(other: NullablePointer<T>): Unit = other.shar
 infix fun <T> NullablePointer<T>.shareFrom(other: Pointer<T>): Unit = other.shareWith(this)
 
 infix fun <T> NullablePointer<T>.shareFrom(other: NullablePointer<T>): Unit = other.shareWith(this)
-
-// region Struct Pointers
-
-//fun <S : Struct> nullableStructPointerOf(struct: S?) = NullableStructPointer(struct)
-//fun <S : Struct> nullableStructPointerOf(companion: StructCompanion<S>, arena: Arena = Arena.ofConfined()): NullableStructPointer<S> {
-//    val struct = companion.allocate(arena)
-//    return NullableStructPointer(struct)
-//}
-//fun <S : Struct> structPointerOf(struct: S) = StructPointer(struct)
-//fun <S : Struct> structPointerOf(companion: StructCompanion<S>, arena: Arena = Arena.ofConfined()): StructPointer<S> {
-//    val struct = companion.allocate(arena)
-//    return StructPointer(struct)
-//}
-
-// endregion

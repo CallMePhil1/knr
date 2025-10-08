@@ -2,7 +2,7 @@ package com.github.callmephil.knr.runtime.delegates
 
 import com.github.callmephil.knr.runtime.memory.ARC
 
-class BooleanDelegate(
+class BooleanDelegate internal constructor(
     arc: ARC,
     offset: Long
 ) : FieldDelegate<Boolean>(arc, offset) {
@@ -12,7 +12,7 @@ class BooleanDelegate(
     }
 }
 
-class ByteDelegate(
+class ByteDelegate internal constructor(
     arc: ARC,
     offset: Long
 ) : FieldDelegate<Byte>(arc, offset) {
@@ -20,7 +20,7 @@ class ByteDelegate(
     override fun set(value: Byte) = ownerArc.setByte(offset, value)
 }
 
-class UByteDelegate(
+class UByteDelegate internal constructor(
     arc: ARC,
     offset: Long
 ) : FieldDelegate<UByte>(arc, offset) {
@@ -28,7 +28,7 @@ class UByteDelegate(
     override fun set(value: UByte) = ownerArc.setByte(offset, value.toByte())
 }
 
-class ShortDelegate(
+class ShortDelegate internal constructor(
     arc: ARC,
     offset: Long
 ) : FieldDelegate<Short>(arc, offset) {
@@ -36,7 +36,7 @@ class ShortDelegate(
     override fun set(value: Short) = ownerArc.setShort(offset, value)
 }
 
-class UShortDelegate(
+class UShortDelegate internal constructor(
     arc: ARC,
     offset: Long
 ) : FieldDelegate<UShort>(arc, offset) {
@@ -44,7 +44,7 @@ class UShortDelegate(
     override fun set(value: UShort) = ownerArc.setShort(offset, value.toShort())
 }
 
-class IntDelegate(
+class IntDelegate internal constructor(
     arc: ARC,
     offset: Long
 ) : FieldDelegate<Int>(arc, offset) {
@@ -52,7 +52,7 @@ class IntDelegate(
     override fun set(value: Int) = ownerArc.setInt(offset, value)
 }
 
-class UIntDelegate(
+class UIntDelegate internal constructor(
     arc: ARC,
     offset: Long
 ) : FieldDelegate<UInt>(arc, offset) {
@@ -60,7 +60,7 @@ class UIntDelegate(
     override fun set(value: UInt) = ownerArc.setInt(offset, value.toInt())
 }
 
-class LongDelegate(
+class LongDelegate internal constructor(
     arc: ARC,
     offset: Long
 ) : FieldDelegate<Long>(arc, offset) {
@@ -68,7 +68,7 @@ class LongDelegate(
     override fun set(value: Long) = ownerArc.setLong(offset, value)
 }
 
-class ULongDelegate(
+class ULongDelegate internal constructor(
     arc: ARC,
     offset: Long
 ) : FieldDelegate<ULong>(arc, offset) {
@@ -76,7 +76,7 @@ class ULongDelegate(
     override fun set(value: ULong) = ownerArc.setLong(offset, value.toLong())
 }
 
-class FloatDelegate(
+class FloatDelegate internal constructor(
     arc: ARC,
     offset: Long
 ) : FieldDelegate<Float>(arc, offset) {
@@ -84,7 +84,7 @@ class FloatDelegate(
     override fun set(value: Float) = ownerArc.setFloat(offset, value)
 }
 
-class DoubleDelegate(
+class DoubleDelegate internal constructor(
     arc: ARC,
     offset: Long
 ) : FieldDelegate<Double>(arc, offset) {

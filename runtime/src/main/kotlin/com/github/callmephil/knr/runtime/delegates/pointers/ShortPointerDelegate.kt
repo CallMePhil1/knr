@@ -12,7 +12,7 @@ import com.github.callmephil.knr.runtime.typing.pointer.nullableUShortPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.shortPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.ushortPointerOf
 
-class ShortPointerDelegate(
+class ShortPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: Short
@@ -25,7 +25,7 @@ class ShortPointerDelegate(
     }
 }
 
-class NullableShortPointerDelegate(
+class NullableShortPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: Short?
@@ -38,7 +38,7 @@ class NullableShortPointerDelegate(
     }
 }
 
-class UShortPointerDelegate(
+class UShortPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: UShort
@@ -51,7 +51,7 @@ class UShortPointerDelegate(
     }
 }
 
-class NullableUShortPointerDelegate(
+class NullableUShortPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
     initialValue: UShort?
