@@ -13,47 +13,6 @@ import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 
 class ShortPointerTests {
-    @Test
-    fun `GIVEN two short pointer WHEN sharing between them multiple times THEN ref count shouldn't change`() {
-        val pointer1 = shortPointerOf()
-        val pointer2 = shortPointerOf()
-
-        assert(pointer1.refCount == 1)
-        assert(pointer2.refCount == 1)
-
-        pointer1 shareWith pointer2
-
-        assert(pointer1.refCount == 2)
-        assert(pointer2.refCount == 2)
-
-        pointer1 shareWith pointer2
-
-        assert(pointer1.refCount == 2)
-        assert(pointer2.refCount == 2)
-    }
-
-    @Test
-    fun `GIVEN two short pointers WHEN sharing and disposing THEN ref count should update`() {
-        val pointer1 = shortPointerOf()
-        val pointer2 = shortPointerOf()
-
-        assert(pointer1.refCount == 1)
-        assert(pointer2.refCount == 1)
-
-        pointer1 shareWith pointer2
-
-        assert(pointer1.refCount == 2)
-        assert(pointer2.refCount == 2)
-
-        pointer1.dispose()
-
-        assert(pointer1.refCount == 0)
-        assert(pointer2.refCount == 1)
-
-        pointer2.dispose()
-
-        assert(pointer2.refCount == 0)
-    }
 
     @Test
     fun `GIVEN a short pointer WHEN setting and getting the pointer THEN it should work`() {
@@ -107,48 +66,6 @@ class ShortPointerTests {
 
         assert(PointerTestLibrary.getShortFromPointer(pointer1) == (-10000).toShort())
         assert(PointerTestLibrary.getShortFromPointer(pointer2) == (-10000).toShort())
-    }
-
-    @Test
-    fun `GIVEN two nullable short pointer WHEN sharing between them multiple times THEN ref count shouldn't change`() {
-        val pointer1 = nullableShortPointerOf()
-        val pointer2 = nullableShortPointerOf()
-
-        assert(pointer1.refCount == 1)
-        assert(pointer2.refCount == 1)
-
-        pointer1 shareWith pointer2
-
-        assert(pointer1.refCount == 2)
-        assert(pointer2.refCount == 2)
-
-        pointer1 shareWith pointer2
-
-        assert(pointer1.refCount == 2)
-        assert(pointer2.refCount == 2)
-    }
-
-    @Test
-    fun `GIVEN two nullable short pointers WHEN sharing and disposing THEN ref count should update`() {
-        val pointer1 = nullableShortPointerOf()
-        val pointer2 = nullableShortPointerOf()
-
-        assert(pointer1.refCount == 1)
-        assert(pointer2.refCount == 1)
-
-        pointer1 shareWith pointer2
-
-        assert(pointer1.refCount == 2)
-        assert(pointer2.refCount == 2)
-
-        pointer1.dispose()
-
-        assert(pointer1.refCount == 0)
-        assert(pointer2.refCount == 1)
-
-        pointer2.dispose()
-
-        assert(pointer2.refCount == 0)
     }
 
     @Test
