@@ -110,17 +110,19 @@ class CStringTests {
         Arena.ofConfined().use {
             val struct = StringStruct.allocate(it)
             val pointer1 = cstringOf("testing")
+            val pointer1Address = pointer1.arc!!.memorySegment!!.address()
             val pointer2 = cstringOf("testing2")
+            val pointer2Address = pointer2.arc!!.memorySegment!!.address()
 
             struct.strPointer = pointer1
 
             assertEquals("testing", struct.strPointer.get())
-            assertEquals(struct.arc.getAddress(0).address(), pointer1.arc!!.memorySegment!!.address())
+            assertEquals(struct.arc.getAddress(0).address(), pointer1Address)
 
             struct.strPointer = pointer2
 
             assertEquals("testing2", struct.strPointer.get())
-            assertEquals(struct.arc.getAddress(0).address(), pointer2.arc!!.memorySegment!!.address())
+            assertEquals(struct.arc.getAddress(0).address(), pointer2Address)
         }
     }
 }

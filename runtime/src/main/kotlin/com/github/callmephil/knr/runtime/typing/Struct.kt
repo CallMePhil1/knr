@@ -20,13 +20,21 @@ import com.github.callmephil.knr.runtime.delegates.pointers.UShortPointerDelegat
 import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.memory.Native
 import com.github.callmephil.knr.runtime.typing.pointer.BytePointer
+import com.github.callmephil.knr.runtime.typing.pointer.IntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.NullableBytePointer
+import com.github.callmephil.knr.runtime.typing.pointer.NullableIntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.NullableUBytePointer
+import com.github.callmephil.knr.runtime.typing.pointer.NullableUIntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.UBytePointer
+import com.github.callmephil.knr.runtime.typing.pointer.UIntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableBytePointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.nullableIntPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableUBytePointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.nullableUIntPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.ubytePointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.uintPointerOf
 import java.lang.foreign.Arena
 import java.lang.foreign.StructLayout
 import java.nio.ByteBuffer
@@ -100,10 +108,10 @@ abstract class Struct(
     protected fun ushortPointerField(offset: Long, initialValue: UShort = 0u) = UShortPointerDelegate(arc, offset, initialValue)
     protected fun nullableUShortPointerField(offset: Long, initialValue: UShort? = null) = NullableUShortPointerDelegate(arc, offset, initialValue)
 
-    protected fun intPointerField(offset: Long, initialValue: Int = 0) = IntPointerDelegate(arc, offset, initialValue)
-    protected fun nullableIntPointerField(offset: Long, initialValue: Int? = null) = NullableIntPointerDelegate(arc, offset, initialValue)
-    protected fun uintPointerField(offset: Long, initialValue: UInt = 0u) = UIntPointerDelegate(arc, offset, initialValue)
-    protected fun nullableUIntPointerField(offset: Long, initialValue: UInt? = null) = NullableUIntPointerDelegate(arc, offset, initialValue)
+    protected fun intPointerField(offset: Long, initialValue: () -> IntPointer = { intPointerOf() }) = IntPointerDelegate(arc, offset, initialValue)
+    protected fun nullableIntPointerField(offset: Long, initialValue: () -> NullableIntPointer = { nullableIntPointerOf() }) = NullableIntPointerDelegate(arc, offset, initialValue)
+    protected fun uintPointerField(offset: Long, initialValue: () -> UIntPointer = { uintPointerOf() }) = UIntPointerDelegate(arc, offset, initialValue)
+    protected fun nullableUIntPointerField(offset: Long, initialValue: () -> NullableUIntPointer = { nullableUIntPointerOf() }) = NullableUIntPointerDelegate(arc, offset, initialValue)
 
     protected fun longPointerField(offset: Long, initialValue: Long = 0) = LongPointerDelegate(arc, offset, initialValue)
     protected fun nullableLongPointerField(offset: Long, initialValue: Long? = null) = NullableLongPointerDelegate(arc, offset, initialValue)

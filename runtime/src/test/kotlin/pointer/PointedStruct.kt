@@ -27,8 +27,8 @@ class AllPointers(
     arc: ARC
 ) : Struct(arc) {
 
-    var i by intPointerField(0, 0)
-    var ni by nullableIntPointerField(8, null)
+    var i by intPointerField(0)
+    var ni by nullableIntPointerField(8)
 
     companion object : StructCompanion<AllPointers> {
         override val layout: StructLayout = MemoryLayout.structLayout(

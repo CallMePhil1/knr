@@ -83,6 +83,25 @@ internal fun nullableIntPointerOf(
         }
     }
 }
+internal fun nullableIntPointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): NullableIntPointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_INT.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return NullableIntPointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeNullableIntPointer(
+    pointer: NullableIntPointer,
+    onArcUpdated: () -> Unit
+): NullableIntPointer {
+    val newPointer = NullableIntPointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
+}
 
 fun intPointerOf(arc: ARC = ARC.shared(ValueLayout.JAVA_INT)) = IntPointer(arc)
 fun intPointerOf(arc: ARC, offset: Long) = IntPointer(
@@ -101,6 +120,25 @@ internal fun intPointerOf(
     onArcUpdate: () -> Unit
 ) = IntPointer(ARC.shared(ValueLayout.JAVA_INT), onArcUpdate).apply {
     set(value)
+}
+internal fun intPointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): IntPointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_INT.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return IntPointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeIntPointer(
+    pointer: IntPointer,
+    onArcUpdated: () -> Unit
+): IntPointer {
+    val newPointer = IntPointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
 }
 
 // endregion
@@ -125,6 +163,25 @@ internal fun nullableUIntPointerOf(
         }
     }
 }
+internal fun nullableUIntPointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): NullableUIntPointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_INT.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return NullableUIntPointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeNullableUIntPointer(
+    pointer: NullableUIntPointer,
+    onArcUpdated: () -> Unit
+): NullableUIntPointer {
+    val newPointer = NullableUIntPointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
+}
 
 fun uintPointerOf(arc: ARC = ARC.shared(ValueLayout.JAVA_INT)) = UIntPointer(arc)
 fun uintPointerOf(arc: ARC, offset: Long) = UIntPointer(
@@ -143,6 +200,25 @@ internal fun uintPointerOf(
     onArcUpdate: () -> Unit
 ) = UIntPointer(ARC.shared(ValueLayout.JAVA_INT), onArcUpdate).apply {
     set(value)
+}
+internal fun uintPointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): UIntPointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_INT.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return UIntPointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeUIntPointer(
+    pointer: UIntPointer,
+    onArcUpdated: () -> Unit
+): UIntPointer {
+    val newPointer = UIntPointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
 }
 
 // endregion

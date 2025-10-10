@@ -107,19 +107,21 @@ class CachedCStringTests {
         Arena.ofConfined().use {
             val struct = StringStruct.allocate(it)
             val pointer1 = cachedCStringOf("testing")
+            val pointer1Address = pointer1.arc!!.memorySegment!!.address()
             val pointer2 = cachedCStringOf("testing2")
+            val pointer2Address = pointer2.arc!!.memorySegment!!.address()
 
             struct.cachedStrPointer = pointer1
             struct.cachedStrPointer.updateCache()
 
             assertEquals("testing", struct.cachedStrPointer.get())
-            assertEquals(struct.arc.getAddress(8).address(), pointer1.arc!!.memorySegment!!.address())
+            assertEquals(struct.arc.getAddress(8).address(), pointer1Address)
 
             struct.cachedStrPointer = pointer2
             struct.cachedStrPointer.updateCache()
 
             assertEquals("testing2", struct.cachedStrPointer.get())
-            assertEquals(struct.arc.getAddress(8).address(), pointer2.arc!!.memorySegment!!.address())
+            assertEquals(struct.arc.getAddress(8).address(), pointer2Address)
         }
     }
 }
