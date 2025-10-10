@@ -10,15 +10,24 @@ import com.github.callmephil.knr.runtime.typing.pointer.ULongPointer
 import com.github.callmephil.knr.runtime.typing.pointer.longPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableLongPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableULongPointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.takeLongPointer
+import com.github.callmephil.knr.runtime.typing.pointer.takeNullableLongPointer
+import com.github.callmephil.knr.runtime.typing.pointer.takeNullableULongPointer
+import com.github.callmephil.knr.runtime.typing.pointer.takeULongPointer
 import com.github.callmephil.knr.runtime.typing.pointer.ulongPointerOf
+import java.lang.foreign.MemorySegment
 
 class LongPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
-    initialValue: Long
+    initialValue: () -> LongPointer
 ) : PointerFieldDelegate<Long, LongPointer>(ownerArc, offset) {
 
-    override var pointer: LongPointer = longPointerOf(initialValue, onArcUpdate = ::updateOwnersArc)
+    override var pointer: LongPointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+        takeLongPointer(initialValue(), ::updateOwnersArc)
+    } else {
+        longPointerOf(ownerArc, offset, ::updateOwnersArc)
+    }
 
     init {
         updateOwnersArc()
@@ -28,10 +37,14 @@ class LongPointerDelegate internal constructor(
 class NullableLongPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
-    initialValue: Long?
+    initialValue: () -> NullableLongPointer
 ) : NullablePointerFieldDelegate<Long, NullableLongPointer>(ownerArc, offset) {
 
-    override var pointer: NullableLongPointer = nullableLongPointerOf(initialValue, ::updateOwnersArc)
+    override var pointer: NullableLongPointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+        takeNullableLongPointer(initialValue(), ::updateOwnersArc)
+    } else {
+        nullableLongPointerOf(ownerArc, offset, ::updateOwnersArc)
+    }
 
     init {
         updateOwnersArc()
@@ -41,10 +54,14 @@ class NullableLongPointerDelegate internal constructor(
 class ULongPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
-    initialValue: ULong
+    initialValue: () -> ULongPointer
 ) : PointerFieldDelegate<ULong, ULongPointer>(ownerArc, offset) {
 
-    override var pointer: ULongPointer = ulongPointerOf(initialValue, onArcUpdate = ::updateOwnersArc)
+    override var pointer: ULongPointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+        takeULongPointer(initialValue(), ::updateOwnersArc)
+    } else {
+        ulongPointerOf(ownerArc, offset, ::updateOwnersArc)
+    }
 
     init {
         updateOwnersArc()
@@ -54,10 +71,14 @@ class ULongPointerDelegate internal constructor(
 class NullableULongPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
-    initialValue: ULong?
+    initialValue: () -> NullableULongPointer
 ) : NullablePointerFieldDelegate<ULong, NullableULongPointer>(ownerArc, offset) {
 
-    override var pointer: NullableULongPointer = nullableULongPointerOf(initialValue, ::updateOwnersArc)
+    override var pointer: NullableULongPointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+        takeNullableULongPointer(initialValue(), ::updateOwnersArc)
+    } else {
+        nullableULongPointerOf(ownerArc, offset, ::updateOwnersArc)
+    }
 
     init {
         updateOwnersArc()

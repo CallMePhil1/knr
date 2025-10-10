@@ -83,6 +83,25 @@ internal fun nullableLongPointerOf(
         }
     }
 }
+internal fun nullableLongPointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): NullableLongPointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_LONG.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return NullableLongPointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeNullableLongPointer(
+    pointer: NullableLongPointer,
+    onArcUpdated: () -> Unit
+): NullableLongPointer {
+    val newPointer = NullableLongPointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
+}
 
 fun longPointerOf(arc: ARC = ARC.shared(ValueLayout.JAVA_LONG)) = LongPointer(arc)
 fun longPointerOf(arc: ARC, offset: Long) = LongPointer(
@@ -101,6 +120,25 @@ internal fun longPointerOf(
     onArcUpdate: () -> Unit
 ) = LongPointer(ARC.shared(ValueLayout.JAVA_LONG), onArcUpdate).apply {
     set(value)
+}
+internal fun longPointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): LongPointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_LONG.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return LongPointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeLongPointer(
+    pointer: LongPointer,
+    onArcUpdated: () -> Unit
+): LongPointer {
+    val newPointer = LongPointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
 }
 
 // endregion
@@ -125,6 +163,25 @@ internal fun nullableULongPointerOf(
         }
     }
 }
+internal fun nullableULongPointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): NullableULongPointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_LONG.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return NullableULongPointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeNullableULongPointer(
+    pointer: NullableULongPointer,
+    onArcUpdated: () -> Unit
+): NullableULongPointer {
+    val newPointer = NullableULongPointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
+}
 
 fun ulongPointerOf(arc: ARC = ARC.shared(ValueLayout.JAVA_LONG)) = ULongPointer(arc)
 fun ulongPointerOf(arc: ARC, offset: Long) = ULongPointer(
@@ -143,6 +200,25 @@ internal fun ulongPointerOf(
     onArcUpdate: () -> Unit
 ) = ULongPointer(ARC.shared(ValueLayout.JAVA_LONG), onArcUpdate).apply {
     set(value)
+}
+internal fun ulongPointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): ULongPointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_LONG.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return ULongPointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeULongPointer(
+    pointer: ULongPointer,
+    onArcUpdated: () -> Unit
+): ULongPointer {
+    val newPointer = ULongPointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
 }
 
 // endregion
