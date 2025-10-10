@@ -126,6 +126,7 @@ open class ARC(
             return ARC(arena, memorySegment)
         }
 
+        fun ofSegment(memorySegment: MemorySegment): ARC = ARC(null, memorySegment)
         fun ofNull(): ARC = ARC(null, MemorySegment.NULL)
 
         fun shared(layout: MemoryLayout): ARC = shared(layout.byteSize())

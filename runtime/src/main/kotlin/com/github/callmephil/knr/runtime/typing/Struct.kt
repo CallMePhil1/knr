@@ -19,6 +19,14 @@ import com.github.callmephil.knr.runtime.delegates.pointers.ULongPointerDelegate
 import com.github.callmephil.knr.runtime.delegates.pointers.UShortPointerDelegate
 import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.memory.Native
+import com.github.callmephil.knr.runtime.typing.pointer.BytePointer
+import com.github.callmephil.knr.runtime.typing.pointer.NullableBytePointer
+import com.github.callmephil.knr.runtime.typing.pointer.NullableUBytePointer
+import com.github.callmephil.knr.runtime.typing.pointer.UBytePointer
+import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.nullableBytePointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.nullableUBytePointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.ubytePointerOf
 import java.lang.foreign.Arena
 import java.lang.foreign.StructLayout
 import java.nio.ByteBuffer
@@ -32,27 +40,60 @@ abstract class Struct(
         arc.incrementCount()
     }
 
-    protected fun booleanField(offset: Long) = BooleanDelegate(arc, offset)
+    protected fun booleanField(offset: Long, initialValue: Boolean = false) = BooleanDelegate(arc, offset).apply {
+        if (!get())
+            set(initialValue)
+    }
 
-    protected fun byteField(offset: Long) = ByteDelegate(arc, offset)
-    protected fun uByteField(offset: Long) = UByteDelegate(arc, offset)
+    protected fun byteField(offset: Long, initialValue: Byte = 0) = ByteDelegate(arc, offset).apply {
+        if (get() != 0.toByte())
+            set(initialValue)
+    }
+    protected fun uByteField(offset: Long, initialValue: UByte = 0u) = UByteDelegate(arc, offset).apply {
+        if (get() != 0u.toUByte())
+            set(initialValue)
+    }
 
-    protected fun shortField(offset: Long) = ShortDelegate(arc, offset)
-    protected fun uShortField(offset: Long) = UShortDelegate(arc, offset)
+    protected fun shortField(offset: Long, initialValue: Short = 0) = ShortDelegate(arc, offset).apply {
+        if (get() != 0.toShort())
+            set(initialValue)
+    }
+    protected fun uShortField(offset: Long, initialValue: UShort = 0u) = UShortDelegate(arc, offset).apply {
+        if (get() != 0u.toUShort())
+            set(initialValue)
+    }
 
-    protected fun intField(offset: Long) = IntDelegate(arc, offset)
-    protected fun uIntField(offset: Long) = UIntDelegate(arc, offset)
+    protected fun intField(offset: Long, initialValue: Int = 0) = IntDelegate(arc, offset).apply {
+        if (get() != 0)
+            set(initialValue)
+    }
+    protected fun uIntField(offset: Long, initialValue: UInt = 0u) = UIntDelegate(arc, offset).apply {
+        if (get() != 0u)
+            set(initialValue)
+    }
 
-    protected fun longField(offset: Long) = LongDelegate(arc, offset)
-    protected fun uLongField(offset: Long) = ULongDelegate(arc, offset)
+    protected fun longField(offset: Long, initialValue: Long = 0L) = LongDelegate(arc, offset).apply {
+        if (get() != 0L)
+            set(initialValue)
+    }
+    protected fun uLongField(offset: Long, initialValue: ULong = 0u) = ULongDelegate(arc, offset).apply {
+        if (get() != 0u.toULong())
+            set(initialValue)
+    }
 
-    protected fun floatField(offset: Long) = FloatDelegate(arc, offset)
-    protected fun doubleField(offset: Long) = DoubleDelegate(arc, offset)
+    protected fun floatField(offset: Long, initialValue: Float = 0.0f) = FloatDelegate(arc, offset).apply {
+        if (get() != 0f)
+            set(initialValue)
+    }
+    protected fun doubleField(offset: Long, initialValue: Double = 0.0) = DoubleDelegate(arc, offset).apply {
+        if (get() != 0.0)
+            set(initialValue)
+    }
 
-    protected fun bytePointerField(offset: Long, initialValue: Byte = 0) = BytePointerDelegate(arc, offset, initialValue)
-    protected fun nullableBytePointerField(offset: Long, initialValue: Byte? = null) = NullableBytePointerDelegate(arc, offset, initialValue)
-    protected fun ubytePointerField(offset: Long, initialValue: UByte = 0u) = UBytePointerDelegate(arc, offset, initialValue)
-    protected fun nullableUBytePointerField(offset: Long, initialValue: UByte? = null) = NullableUBytePointerDelegate(arc, offset, initialValue)
+    protected fun bytePointerField(offset: Long, initialValue: () -> BytePointer = { bytePointerOf() }) = BytePointerDelegate(arc, offset, initialValue)
+    protected fun nullableBytePointerField(offset: Long, initialValue: () -> NullableBytePointer = { nullableBytePointerOf() }) = NullableBytePointerDelegate(arc, offset, initialValue)
+    protected fun ubytePointerField(offset: Long, initialValue: () -> UBytePointer = { ubytePointerOf() }) = UBytePointerDelegate(arc, offset, initialValue)
+    protected fun nullableUBytePointerField(offset: Long, initialValue: () -> NullableUBytePointer = { nullableUBytePointerOf() }) = NullableUBytePointerDelegate(arc, offset, initialValue)
 
     protected fun shortPointerField(offset: Long, initialValue: Short = 0) = ShortPointerDelegate(arc, offset, initialValue)
     protected fun nullableShortPointerField(offset: Long, initialValue: Short? = null) = NullableShortPointerDelegate(arc, offset, initialValue)

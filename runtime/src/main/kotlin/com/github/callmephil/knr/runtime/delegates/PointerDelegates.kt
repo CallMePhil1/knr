@@ -3,7 +3,7 @@ package com.github.callmephil.knr.runtime.delegates
 import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.typing.pointer.NullablePointer
 import com.github.callmephil.knr.runtime.typing.pointer.Pointer
-import com.github.callmephil.knr.runtime.typing.pointer.shareFrom
+import com.github.callmephil.knr.runtime.typing.pointer.takeFrom
 import java.lang.foreign.MemorySegment
 
 abstract class PointerFieldDelegate<T, P : Pointer<T>> internal constructor(
@@ -18,7 +18,7 @@ abstract class PointerFieldDelegate<T, P : Pointer<T>> internal constructor(
     override fun get() = pointer
 
     override fun set(value: P) {
-        pointer shareFrom value
+        pointer takeFrom value
     }
 
     protected fun updateOwnersArc() {
@@ -38,7 +38,7 @@ abstract class NullablePointerFieldDelegate<T, P : NullablePointer<T>> internal 
     override fun get() = pointer
 
     override fun set(value: P) {
-        pointer shareFrom value
+        pointer takeFrom value
     }
 
     protected fun updateOwnersArc() {

@@ -3,8 +3,8 @@ package com.github.callmephil.knr.runtime.typing.pointer
 import com.github.callmephil.knr.runtime.memory.ARC
 
 abstract class ByRef<T> internal constructor(
-    arc: ARC?,
-    private val onArcUpdated: (() -> Unit)?,
+    arc: ARC,
+    internal var onArcUpdated: (() -> Unit)?,
     val allowNull: Boolean
 ) : AutoCloseable {
 
@@ -19,7 +19,9 @@ abstract class ByRef<T> internal constructor(
     val refCount get() = arc?.counter ?: 0
 
     init {
-        arc?.incrementCount()
+        if (!allowNull && arc.isNull)
+            throw NullPointerException("Tried to construct a non nullable ByRef with a null ARC")
+        arc.incrementCount()
     }
 
     override fun close() = dispose()
@@ -31,6 +33,9 @@ abstract class ByRef<T> internal constructor(
 
     open fun giveTo(other: ByRef<T>) {
         validOrThrow(this)
+
+        if (!other.allowNull && this.arc!!.isNull)
+            throw NullPointerException("Tried to give a null pointer to a non nullable pointer")
 
         other.arc?.decrementCount()
         other.arc = arc
@@ -47,6 +52,9 @@ abstract class ByRef<T> internal constructor(
     open fun shareWith(other: ByRef<T>) {
         validOrThrow(this)
 
+        if (!other.allowNull && this.arc!!.isNull)
+            throw NullPointerException("Tried to share a null pointer with a non nullable pointer")
+
         other.arc?.decrementCount()
         other.arc = arc
         arc?.incrementCount()
@@ -54,7 +62,7 @@ abstract class ByRef<T> internal constructor(
 }
 
 abstract class Pointer<T> internal constructor(
-    arc: ARC?,
+    arc: ARC,
     onArcUpdated: (() -> Unit)?
 ) : ByRef<T>(arc, onArcUpdated, false) {
 
@@ -64,22 +72,13 @@ abstract class Pointer<T> internal constructor(
 }
 
 abstract class NullablePointer<T> internal constructor(
-    arc: ARC?,
+    arc: ARC,
     onArcUpdated: (() -> Unit)?
 ) : ByRef<T>(arc, onArcUpdated, true) {
 
     val isNull: Boolean get() {
         validOrThrow(this)
         return arc!!.isNull
-    }
-
-    override fun giveTo(other: ByRef<T>) {
-        validOrThrow(this)
-
-        if (!other.allowNull && arc!!.isNull)
-            throw NullPointerException("Tried to give a nullable pointer to a non-nullable pointer when the pointer is null")
-
-        super.giveTo(other)
     }
 
     inline fun ifNull(block: NullablePointer<T>.() -> Unit): NullablePointer<T> {
@@ -98,47 +97,14 @@ abstract class NullablePointer<T> internal constructor(
 
     abstract fun shareOf(): NullablePointer<T>
 
-    override fun shareWith(other: ByRef<T>) {
-        validOrThrow(this)
-
-        if (!other.allowNull && arc!!.isNull)
-            throw NullPointerException("Tried to share a nullable pointer to a non-nullable pointer when the pointer is null")
-
-        super.shareWith(other)
-    }
-
     abstract fun get(): T
     abstract fun set(value: T & Any)
 }
 
-infix fun <T> Pointer<T>.giveTo(other: Pointer<T>): Unit = this.giveTo(other)
+infix fun <T> ByRef<T>.giveTo(other: ByRef<T>) = this.giveTo(other)
 
-infix fun <T> Pointer<T>.giveTo(other: NullablePointer<T>): Unit = this.giveTo(other)
+infix fun <T> ByRef<T>.takeFrom(other: ByRef<T>) = other.giveTo(this)
 
-infix fun <T> NullablePointer<T>.giveTo(other: Pointer<T>): Unit = this.giveTo(other)
+infix fun <T> ByRef<T>.shareWith(other: ByRef<T>) = this.shareWith(other)
 
-infix fun <T> NullablePointer<T>.giveTo(other: NullablePointer<T>): Unit = this.giveTo(other)
-
-infix fun <T> Pointer<T>.takeFrom(other: Pointer<T>): Unit = other.giveTo(this)
-
-infix fun <T> Pointer<T>.takeFrom(other: NullablePointer<T>): Unit = other.giveTo(this)
-
-infix fun <T> NullablePointer<T>.takeFrom(other: Pointer<T>): Unit = other.giveTo(this)
-
-infix fun <T> NullablePointer<T>.takeFrom(other: NullablePointer<T>): Unit = other.giveTo(this)
-
-infix fun <T> Pointer<T>.shareWith(other: Pointer<T>): Unit = this.shareWith(other)
-
-infix fun <T> Pointer<T>.shareWith(other: NullablePointer<T>): Unit = this.shareWith(other)
-
-infix fun <T> NullablePointer<T>.shareWith(other: Pointer<T>): Unit = this.shareWith(other)
-
-infix fun <T> NullablePointer<T>.shareWith(other: NullablePointer<T>): Unit = this.shareWith(other)
-
-infix fun <T> Pointer<T>.shareFrom(other: Pointer<T>): Unit = other.shareWith(this)
-
-infix fun <T> Pointer<T>.shareFrom(other: NullablePointer<T>): Unit = other.shareWith(this)
-
-infix fun <T> NullablePointer<T>.shareFrom(other: Pointer<T>): Unit = other.shareWith(this)
-
-infix fun <T> NullablePointer<T>.shareFrom(other: NullablePointer<T>): Unit = other.shareWith(this)
+infix fun <T> ByRef<T>.shareFrom(other: ByRef<T>) = other.shareWith(this)

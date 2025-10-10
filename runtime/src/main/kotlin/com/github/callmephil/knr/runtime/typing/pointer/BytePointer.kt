@@ -85,6 +85,25 @@ internal fun nullableBytePointerOf(
         }
     }
 }
+internal fun nullableBytePointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): NullableBytePointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_BYTE.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return NullableBytePointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeNullableBytePointer(
+    pointer: NullableBytePointer,
+    onArcUpdated: () -> Unit
+): NullableBytePointer {
+    val newPointer = NullableBytePointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
+}
 
 fun bytePointerOf(arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) = BytePointer(arc)
 fun bytePointerOf(arc: ARC, offset: Long) = BytePointer(
@@ -101,6 +120,25 @@ internal fun bytePointerOf(
     onArcUpdate: () -> Unit
 ) = BytePointer(ARC.shared(ValueLayout.JAVA_BYTE), onArcUpdate).apply {
     set(value)
+}
+internal fun bytePointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): BytePointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_BYTE.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return BytePointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeBytePointer(
+    pointer: BytePointer,
+    onArcUpdated: () -> Unit
+): BytePointer {
+    val newPointer = BytePointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
 }
 
 // endregion
@@ -124,6 +162,25 @@ internal fun nullableUBytePointerOf(
         }
     }
 }
+internal fun nullableUBytePointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): NullableUBytePointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_BYTE.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return NullableUBytePointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeNullableUBytePointer(
+    pointer: NullableUBytePointer,
+    onArcUpdated: () -> Unit
+): NullableUBytePointer {
+    val newPointer = NullableUBytePointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
+}
 
 fun ubytePointerOf(arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) = UBytePointer(arc)
 fun ubytePointerOf(arc: ARC, offset: Long) = UBytePointer(
@@ -140,6 +197,25 @@ internal fun ubytePointerOf(
     onArcUpdate: () -> Unit
 ) = UBytePointer(ARC.shared(ValueLayout.JAVA_BYTE), onArcUpdate).apply {
     set(value)
+}
+internal fun ubytePointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): UBytePointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_BYTE.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return UBytePointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeUBytePointer(
+    pointer: UBytePointer,
+    onArcUpdated: () -> Unit
+): UBytePointer {
+    val newPointer = UBytePointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
 }
 
 // endregion
