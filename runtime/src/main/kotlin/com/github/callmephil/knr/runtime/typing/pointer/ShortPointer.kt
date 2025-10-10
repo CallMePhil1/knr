@@ -87,6 +87,25 @@ internal fun nullableShortPointerOf(
         }
     }
 }
+internal fun nullableShortPointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): NullableShortPointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_LONG.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return NullableShortPointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeNullableShortPointer(
+    pointer: NullableShortPointer,
+    onArcUpdated: () -> Unit
+): NullableShortPointer {
+    val newPointer = NullableShortPointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
+}
 
 fun shortPointerOf(arc: ARC = ARC.shared(ValueLayout.JAVA_SHORT)) = ShortPointer(arc)
 fun shortPointerOf(arc: ARC, offset: Long) = ShortPointer(
@@ -105,6 +124,25 @@ internal fun shortPointerOf(
     onArcUpdate: () -> Unit
 ) = ShortPointer(ARC.shared(ValueLayout.JAVA_SHORT), onArcUpdate).apply {
     set(value)
+}
+internal fun shortPointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): ShortPointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_LONG.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return ShortPointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeShortPointer(
+    pointer: ShortPointer,
+    onArcUpdated: () -> Unit
+): ShortPointer {
+    val newPointer = ShortPointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
 }
 
 // endregion
@@ -129,6 +167,25 @@ internal fun nullableUShortPointerOf(
         }
     }
 }
+internal fun nullableUShortPointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): NullableUShortPointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_LONG.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return NullableUShortPointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeNullableUShortPointer(
+    pointer: NullableUShortPointer,
+    onArcUpdated: () -> Unit
+): NullableUShortPointer {
+    val newPointer = NullableUShortPointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
+}
 
 fun ushortPointerOf(arc: ARC = ARC.shared(ValueLayout.JAVA_SHORT)) = UShortPointer(arc)
 fun ushortPointerOf(arc: ARC, offset: Long) = UShortPointer(
@@ -147,6 +204,25 @@ internal fun ushortPointerOf(
     onArcUpdate: () -> Unit
 ) = UShortPointer(ARC.shared(ValueLayout.JAVA_SHORT), onArcUpdate).apply {
     set(value)
+}
+internal fun ushortPointerOf(
+    arc: ARC,
+    offset: Long,
+    onArcUpdated: () -> Unit
+): UShortPointer {
+    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_LONG.byteSize())
+    val arc = ARC.ofSegment(segment)
+    return UShortPointer(arc).apply {
+        this.onArcUpdated = onArcUpdated
+    }
+}
+internal fun takeUShortPointer(
+    pointer: UShortPointer,
+    onArcUpdated: () -> Unit
+): UShortPointer {
+    val newPointer = UShortPointer(pointer.arc!!, onArcUpdated)
+    pointer.arc = null
+    return newPointer
 }
 
 // endregion

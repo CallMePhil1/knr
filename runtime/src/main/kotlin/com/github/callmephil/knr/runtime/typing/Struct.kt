@@ -25,24 +25,32 @@ import com.github.callmephil.knr.runtime.typing.pointer.LongPointer
 import com.github.callmephil.knr.runtime.typing.pointer.NullableBytePointer
 import com.github.callmephil.knr.runtime.typing.pointer.NullableIntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.NullableLongPointer
+import com.github.callmephil.knr.runtime.typing.pointer.NullableShortPointer
 import com.github.callmephil.knr.runtime.typing.pointer.NullableUBytePointer
 import com.github.callmephil.knr.runtime.typing.pointer.NullableUIntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.NullableULongPointer
+import com.github.callmephil.knr.runtime.typing.pointer.NullableUShortPointer
+import com.github.callmephil.knr.runtime.typing.pointer.ShortPointer
 import com.github.callmephil.knr.runtime.typing.pointer.UBytePointer
 import com.github.callmephil.knr.runtime.typing.pointer.UIntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.ULongPointer
+import com.github.callmephil.knr.runtime.typing.pointer.UShortPointer
 import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.longPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableBytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableIntPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableLongPointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.nullableShortPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableUBytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableUIntPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.nullableULongPointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.nullableUShortPointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.shortPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.ubytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.uintPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.ulongPointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.ushortPointerOf
 import java.lang.foreign.Arena
 import java.lang.foreign.StructLayout
 import java.nio.ByteBuffer
@@ -111,10 +119,10 @@ abstract class Struct(
     protected fun ubytePointerField(offset: Long, initialValue: () -> UBytePointer = { ubytePointerOf() }) = UBytePointerDelegate(arc, offset, initialValue)
     protected fun nullableUBytePointerField(offset: Long, initialValue: () -> NullableUBytePointer = { nullableUBytePointerOf() }) = NullableUBytePointerDelegate(arc, offset, initialValue)
 
-    protected fun shortPointerField(offset: Long, initialValue: Short = 0) = ShortPointerDelegate(arc, offset, initialValue)
-    protected fun nullableShortPointerField(offset: Long, initialValue: Short? = null) = NullableShortPointerDelegate(arc, offset, initialValue)
-    protected fun ushortPointerField(offset: Long, initialValue: UShort = 0u) = UShortPointerDelegate(arc, offset, initialValue)
-    protected fun nullableUShortPointerField(offset: Long, initialValue: UShort? = null) = NullableUShortPointerDelegate(arc, offset, initialValue)
+    protected fun shortPointerField(offset: Long, initialValue: () -> ShortPointer = { shortPointerOf() }) = ShortPointerDelegate(arc, offset, initialValue)
+    protected fun nullableShortPointerField(offset: Long, initialValue: () -> NullableShortPointer = { nullableShortPointerOf() }) = NullableShortPointerDelegate(arc, offset, initialValue)
+    protected fun ushortPointerField(offset: Long, initialValue: () -> UShortPointer = { ushortPointerOf() }) = UShortPointerDelegate(arc, offset, initialValue)
+    protected fun nullableUShortPointerField(offset: Long, initialValue: () -> NullableUShortPointer = { nullableUShortPointerOf() }) = NullableUShortPointerDelegate(arc, offset, initialValue)
 
     protected fun intPointerField(offset: Long, initialValue: () -> IntPointer = { intPointerOf() }) = IntPointerDelegate(arc, offset, initialValue)
     protected fun nullableIntPointerField(offset: Long, initialValue: () -> NullableIntPointer = { nullableIntPointerOf() }) = NullableIntPointerDelegate(arc, offset, initialValue)
