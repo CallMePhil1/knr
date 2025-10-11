@@ -271,4 +271,14 @@ class NativeArrayTests {
         assertEquals(10u, nativeArray[1])
         assertEquals(20u, nativeArray[2])
     }
+
+    @Test
+    fun `GIVEN a ByteNativeArray WHEN iterating over it THEN it should succeed`() {
+        val shortArray = shortArrayOf(0, 5000, 10000, 15000, 20000, 25000, 30000)
+        val nativeArray = shortNativeArray(shortArray)
+
+        nativeArray.forEachIndexed { idx, byte ->
+            assertEquals((idx * 5000).toShort(), byte)
+        }
+    }
 }
