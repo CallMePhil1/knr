@@ -70,7 +70,7 @@ class UBytePointer internal constructor(
 // region Byte Pointer
 
 fun nullableBytePointerOf(arc: ARC = ARC.ofNull()) = NullableBytePointer(arc)
-fun nullableBytePointerOf(value: Byte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) = BytePointer(arc).apply {
+fun nullableBytePointerOf(value: Byte, arc: ARC = ARC.shared(ValueLayout.JAVA_BYTE)) = NullableBytePointer(arc).apply {
     set(value)
 }
 internal fun nullableBytePointerOf(

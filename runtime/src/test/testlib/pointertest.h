@@ -4,13 +4,13 @@
 #include <stdbool.h>
 
 #ifdef _WIN32
-  #ifdef POINTERTEST_EXPORTS
-    #define API __declspec(dllexport)
-  #else
-    #define API __declspec(dllimport)
-  #endif
+    #ifdef POINTERTEST_EXPORTS
+        #define API __declspec(dllexport)
+    #else
+        #define API __declspec(dllimport)
+    #endif
 #else
-  #define API __attribute__(visibility("default"))
+    #define API __attribute__(visibility("default"))
 #endif
 
 typedef struct {
@@ -18,9 +18,27 @@ typedef struct {
 } PointedStruct;
 
 typedef struct {
+    char *b;
+    char *nb;
+    unsigned char *ub;
+    unsigned char *nub;
+
+    short *s;
+    short *ns;
+    unsigned short *us;
+    unsigned short *nus;
+
     int *i;
     int *ni;
-    PointedStruct *s;
+    unsigned int *ui;
+    unsigned int *nui;
+
+    long long *l;
+    long long *nl;
+    unsigned long long *ul;
+    unsigned long long *nul;
+
+    PointedStruct *st;
 } AllPointers;
 
 API char get_byte_from_pointer(char *l);
@@ -59,6 +77,22 @@ API int get_long_from_struct(PointedStruct *ps);
 
 API void set_long_for_struct(PointedStruct *ps, long value);
 
+API char get_byte_via_pointer_from_struct(AllPointers *ap);
+
+API void set_byte_via_pointer_from_struct(AllPointers *ap, char value);
+
+API char get_nullable_byte_via_pointer_from_struct(AllPointers *ap);
+
+API void set_nullable_byte_via_pointer_from_struct(AllPointers *ap, char value);
+
+API short get_short_via_pointer_from_struct(AllPointers *ap);
+
+API void set_short_via_pointer_from_struct(AllPointers *ap, short value);
+
+API short get_nullable_short_via_pointer_from_struct(AllPointers *ap);
+
+API void set_nullable_short_via_pointer_from_struct(AllPointers *ap, short value);
+
 API int get_int_via_pointer_from_struct(AllPointers *ap);
 
 API void set_int_via_pointer_from_struct(AllPointers *ap, int value);
@@ -66,5 +100,13 @@ API void set_int_via_pointer_from_struct(AllPointers *ap, int value);
 API int get_nullable_int_via_pointer_from_struct(AllPointers *ap);
 
 API void set_nullable_int_via_pointer_from_struct(AllPointers *ap, int value);
+
+API long long get_long_via_pointer_from_struct(AllPointers *ap);
+
+API void set_long_via_pointer_from_struct(AllPointers *ap, long long value);
+
+API long long get_nullable_long_via_pointer_from_struct(AllPointers *ap);
+
+API void set_nullable_long_via_pointer_from_struct(AllPointers *ap, long long value);
 
 #endif

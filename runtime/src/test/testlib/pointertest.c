@@ -73,6 +73,58 @@ void set_long_for_struct(PointedStruct *ps, long value) {
     ps->l = value;
 }
 
+
+
+char get_byte_via_pointer_from_struct(AllPointers *ap) {
+    if (ap == NULL)
+        return -1;
+    return *(ap->b);
+}
+
+void set_byte_via_pointer_from_struct(AllPointers *ap, char value) {
+    if (ap == NULL)
+        return;
+    *(ap->b) = value;
+}
+
+char get_nullable_byte_via_pointer_from_struct(AllPointers *ap) {
+    if (ap == NULL)
+        return -1;
+    if (ap->nb == NULL)
+        return -2;
+    
+    return *(ap->nb);
+}
+
+void set_nullable_byte_via_pointer_from_struct(AllPointers *ap, char value) {
+    *(ap->nb) = value;
+}
+
+short get_short_via_pointer_from_struct(AllPointers *ap) {
+    if (ap == NULL)
+        return -1;
+    return *(ap->s);
+}
+
+void set_short_via_pointer_from_struct(AllPointers *ap, short value) {
+    if (ap == NULL)
+        return;
+    *(ap->s) = value;
+}
+
+short get_nullable_short_via_pointer_from_struct(AllPointers *ap) {
+    if (ap == NULL)
+        return -1;
+    if (ap->ns == NULL)
+        return -2;
+    
+    return *(ap->ns);
+}
+
+void set_nullable_short_via_pointer_from_struct(AllPointers *ap, short value) {
+    *(ap->ns) = value;
+}
+
 int get_int_via_pointer_from_struct(AllPointers *ap) {
     if (ap == NULL)
         return -1;
@@ -96,4 +148,29 @@ int get_nullable_int_via_pointer_from_struct(AllPointers *ap) {
 
 void set_nullable_int_via_pointer_from_struct(AllPointers *ap, int value) {
     *(ap->ni) = value;
+}
+
+long long get_long_via_pointer_from_struct(AllPointers *ap) {
+    if (ap == NULL)
+        return -1;
+    return *(ap->l);
+}
+
+void set_long_via_pointer_from_struct(AllPointers *ap, long long value) {
+    if (ap == NULL)
+        return;
+    *(ap->l) = value;
+}
+
+long long get_nullable_long_via_pointer_from_struct(AllPointers *ap) {
+    if (ap == NULL)
+        return -1;
+    if (ap->nl == NULL)
+        return -2;
+    
+    return *(ap->nl);
+}
+
+void set_nullable_long_via_pointer_from_struct(AllPointers *ap, long long value) {
+    *(ap->nl) = value;
 }

@@ -2,15 +2,6 @@ package pointer
 
 import com.github.callmephil.knr.runtime.ext.downcallHandle
 import com.github.callmephil.knr.runtime.typing.pointer.ByRef
-import com.github.callmephil.knr.runtime.typing.pointer.BytePointer
-import com.github.callmephil.knr.runtime.typing.pointer.IntPointer
-import com.github.callmephil.knr.runtime.typing.pointer.LongPointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableIntPointer
-import com.github.callmephil.knr.runtime.typing.pointer.ShortPointer
-import com.github.callmephil.knr.runtime.typing.pointer.UBytePointer
-import com.github.callmephil.knr.runtime.typing.pointer.UIntPointer
-import com.github.callmephil.knr.runtime.typing.pointer.ULongPointer
-import com.github.callmephil.knr.runtime.typing.pointer.UShortPointer
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
 import java.lang.foreign.SymbolLookup
@@ -79,6 +70,30 @@ object PointerTestLibrary {
         ValueLayout.ADDRESS
     )
 
+    private val getByteViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("get_byte_via_pointer_from_struct").orElseThrow(),
+        retType = ValueLayout.JAVA_BYTE,
+        ValueLayout.ADDRESS
+    )
+
+    private val getNullableByteViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("get_nullable_byte_via_pointer_from_struct").orElseThrow(),
+        retType = ValueLayout.JAVA_BYTE,
+        ValueLayout.ADDRESS
+    )
+
+    private val getShortViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("get_short_via_pointer_from_struct").orElseThrow(),
+        retType = ValueLayout.JAVA_SHORT,
+        ValueLayout.ADDRESS
+    )
+
+    private val getNullableShortViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("get_nullable_short_via_pointer_from_struct").orElseThrow(),
+        retType = ValueLayout.JAVA_SHORT,
+        ValueLayout.ADDRESS
+    )
+
     private val getIntViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
         segment = lookup.find("get_int_via_pointer_from_struct").orElseThrow(),
         retType = ValueLayout.JAVA_INT,
@@ -88,6 +103,18 @@ object PointerTestLibrary {
     private val getNullableIntViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
         segment = lookup.find("get_nullable_int_via_pointer_from_struct").orElseThrow(),
         retType = ValueLayout.JAVA_INT,
+        ValueLayout.ADDRESS
+    )
+
+    private val getLongViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("get_long_via_pointer_from_struct").orElseThrow(),
+        retType = ValueLayout.JAVA_LONG,
+        ValueLayout.ADDRESS
+    )
+
+    private val getNullableLongViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("get_nullable_long_via_pointer_from_struct").orElseThrow(),
+        retType = ValueLayout.JAVA_LONG,
         ValueLayout.ADDRESS
     )
 
@@ -145,6 +172,30 @@ object PointerTestLibrary {
         ValueLayout.ADDRESS, ValueLayout.JAVA_INT
     )
 
+    private val setByteViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("set_byte_via_pointer_from_struct").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS, ValueLayout.JAVA_BYTE
+    )
+
+    private val setNullableByteViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("set_nullable_byte_via_pointer_from_struct").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS, ValueLayout.JAVA_BYTE
+    )
+
+    private val setShortViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("set_short_via_pointer_from_struct").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS, ValueLayout.JAVA_SHORT
+    )
+
+    private val setNullableShortViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("set_nullable_short_via_pointer_from_struct").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS, ValueLayout.JAVA_SHORT
+    )
+
     private val setIntViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
         segment = lookup.find("set_int_via_pointer_from_struct").orElseThrow(),
         retType = null,
@@ -155,6 +206,18 @@ object PointerTestLibrary {
         segment = lookup.find("set_nullable_int_via_pointer_from_struct").orElseThrow(),
         retType = null,
         ValueLayout.ADDRESS, ValueLayout.JAVA_INT
+    )
+
+    private val setLongViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("set_long_via_pointer_from_struct").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS, ValueLayout.JAVA_LONG
+    )
+
+    private val setNullableLongViaPointerFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("set_nullable_long_via_pointer_from_struct").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS, ValueLayout.JAVA_LONG
     )
 
     fun getByteFromPointer(pointer: ByRef<Byte>) =
@@ -184,12 +247,29 @@ object PointerTestLibrary {
     fun getLongFromStruct(struct: PointedStruct) =
         getLongFromStructHandle.invokeExact(struct.arc.memorySegment) as Int
 
+    fun getByteViaPointerFromStruct(struct: AllPointers) =
+        getByteViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment) as Byte
+
+    fun getNullableByteViaPointerFromStruct(struct: AllPointers) =
+        getNullableByteViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment) as Byte
+
+    fun getShortViaPointerFromStruct(struct: AllPointers) =
+        getShortViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment) as Short
+
+    fun getNullableShortViaPointerFromStruct(struct: AllPointers) =
+        getNullableShortViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment) as Short
+
     fun getIntViaPointerFromStruct(struct: AllPointers) =
         getIntViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment) as Int
 
-    fun getNullableIntViaPointerFromStruct(struct: AllPointers): Int {
-        return getNullableIntViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment) as Int
-    }
+    fun getNullableIntViaPointerFromStruct(struct: AllPointers) =
+        getNullableIntViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment) as Int
+
+    fun getLongViaPointerFromStruct(struct: AllPointers) =
+        getLongViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment) as Long
+
+    fun getNullableLongViaPointerFromStruct(struct: AllPointers) =
+        getNullableLongViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment) as Long
 
     fun setByteForPointer(pointer: ByRef<Byte>, value: Byte) {
         setByteForPointerHandle.invokeExact(pointer.arc!!.memorySegment, value)
@@ -227,13 +307,35 @@ object PointerTestLibrary {
         setLongForStructHandle.invokeExact(struct.arc.memorySegment, value)
     }
 
+    fun setByteViaPointerFromStruct(struct: AllPointers, value: Byte) {
+        setByteViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment, value)
+    }
+
+    fun setNullableByteViaPointerFromStruct(struct: AllPointers, value: Byte) {
+        setNullableByteViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment, value)
+    }
+
+    fun setShortViaPointerFromStruct(struct: AllPointers, value: Short) {
+        setShortViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment, value)
+    }
+
+    fun setNullableShortViaPointerFromStruct(struct: AllPointers, value: Short) {
+        setNullableShortViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment, value)
+    }
+
     fun setIntViaPointerFromStruct(struct: AllPointers, value: Int) {
         setIntViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment, value)
     }
 
     fun setNullableIntViaPointerFromStruct(struct: AllPointers, value: Int) {
-        if (struct.ni.isNull)
-            throw NullPointerException("Field 'ni' of 'AllPointers' was null")
         setNullableIntViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment, value)
+    }
+
+    fun setLongViaPointerFromStruct(struct: AllPointers, value: Long) {
+        setLongViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment, value)
+    }
+
+    fun setNullableLongViaPointerFromStruct(struct: AllPointers, value: Long) {
+        setNullableLongViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment, value)
     }
 }
