@@ -4,15 +4,9 @@ import com.github.callmephil.knr.runtime.delegates.NullablePointerFieldDelegate
 import com.github.callmephil.knr.runtime.delegates.PointerFieldDelegate
 import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.typing.pointer.IntPointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableIntPointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableUIntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.UIntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableIntPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableUIntPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.takeIntPointer
-import com.github.callmephil.knr.runtime.typing.pointer.takeNullableIntPointer
-import com.github.callmephil.knr.runtime.typing.pointer.takeNullableUIntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.takeUIntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.uintPointerOf
 import java.lang.foreign.MemorySegment
@@ -37,13 +31,16 @@ class IntPointerDelegate internal constructor(
 class NullableIntPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
-    initialValue: () -> NullableIntPointer
-) : NullablePointerFieldDelegate<Int, NullableIntPointer>(ownerArc, offset) {
+    initialValue: () -> IntPointer?
+) : NullablePointerFieldDelegate<Int, IntPointer>(ownerArc, offset) {
 
-    override var pointer: NullableIntPointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
-        takeNullableIntPointer(initialValue(), ::updateOwnersArc)
+    override var pointer: IntPointer? = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+        when (val value = initialValue()) {
+            null -> null
+            else -> takeIntPointer(value, ::updateOwnersArc)
+        }
     } else {
-        nullableIntPointerOf(ownerArc, offset, ::updateOwnersArc)
+        intPointerOf(ownerArc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -71,13 +68,16 @@ class UIntPointerDelegate internal constructor(
 class NullableUIntPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
-    initialValue: () -> NullableUIntPointer
-) : NullablePointerFieldDelegate<UInt, NullableUIntPointer>(ownerArc, offset) {
+    initialValue: () -> UIntPointer?
+) : NullablePointerFieldDelegate<UInt, UIntPointer>(ownerArc, offset) {
 
-    override var pointer: NullableUIntPointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
-        takeNullableUIntPointer(initialValue(), ::updateOwnersArc)
+    override var pointer: UIntPointer? = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+        when (val value = initialValue()) {
+            null -> null
+            else -> takeUIntPointer(value, ::updateOwnersArc)
+        }
     } else {
-        nullableUIntPointerOf(ownerArc, offset, ::updateOwnersArc)
+        uintPointerOf(ownerArc, offset, ::updateOwnersArc)
     }
 
     init {

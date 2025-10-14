@@ -22,14 +22,6 @@ import com.github.callmephil.knr.runtime.memory.Native
 import com.github.callmephil.knr.runtime.typing.pointer.BytePointer
 import com.github.callmephil.knr.runtime.typing.pointer.IntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.LongPointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableBytePointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableIntPointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableLongPointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableShortPointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableUBytePointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableUIntPointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableULongPointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableUShortPointer
 import com.github.callmephil.knr.runtime.typing.pointer.ShortPointer
 import com.github.callmephil.knr.runtime.typing.pointer.UBytePointer
 import com.github.callmephil.knr.runtime.typing.pointer.UIntPointer
@@ -38,14 +30,6 @@ import com.github.callmephil.knr.runtime.typing.pointer.UShortPointer
 import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.longPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableBytePointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableIntPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableLongPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableShortPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableUBytePointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableUIntPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableULongPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableUShortPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.shortPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.ubytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.uintPointerOf
@@ -115,24 +99,24 @@ abstract class Struct(
     }
 
     protected fun bytePointerField(offset: Long, initialValue: () -> BytePointer = { bytePointerOf() }) = BytePointerDelegate(arc, offset, initialValue)
-    protected fun nullableBytePointerField(offset: Long, initialValue: () -> NullableBytePointer = { nullableBytePointerOf() }) = NullableBytePointerDelegate(arc, offset, initialValue)
+    protected fun nullableBytePointerField(offset: Long, initialValue: () -> BytePointer? = { null }) = NullableBytePointerDelegate(arc, offset, initialValue)
     protected fun ubytePointerField(offset: Long, initialValue: () -> UBytePointer = { ubytePointerOf() }) = UBytePointerDelegate(arc, offset, initialValue)
-    protected fun nullableUBytePointerField(offset: Long, initialValue: () -> NullableUBytePointer = { nullableUBytePointerOf() }) = NullableUBytePointerDelegate(arc, offset, initialValue)
+    protected fun nullableUBytePointerField(offset: Long, initialValue: () -> UBytePointer? = { null }) = NullableUBytePointerDelegate(arc, offset, initialValue)
 
     protected fun shortPointerField(offset: Long, initialValue: () -> ShortPointer = { shortPointerOf() }) = ShortPointerDelegate(arc, offset, initialValue)
-    protected fun nullableShortPointerField(offset: Long, initialValue: () -> NullableShortPointer = { nullableShortPointerOf() }) = NullableShortPointerDelegate(arc, offset, initialValue)
+    protected fun nullableShortPointerField(offset: Long, initialValue: () -> ShortPointer? = { null }) = NullableShortPointerDelegate(arc, offset, initialValue)
     protected fun ushortPointerField(offset: Long, initialValue: () -> UShortPointer = { ushortPointerOf() }) = UShortPointerDelegate(arc, offset, initialValue)
-    protected fun nullableUShortPointerField(offset: Long, initialValue: () -> NullableUShortPointer = { nullableUShortPointerOf() }) = NullableUShortPointerDelegate(arc, offset, initialValue)
+    protected fun nullableUShortPointerField(offset: Long, initialValue: () -> UShortPointer? = { null }) = NullableUShortPointerDelegate(arc, offset, initialValue)
 
     protected fun intPointerField(offset: Long, initialValue: () -> IntPointer = { intPointerOf() }) = IntPointerDelegate(arc, offset, initialValue)
-    protected fun nullableIntPointerField(offset: Long, initialValue: () -> NullableIntPointer = { nullableIntPointerOf() }) = NullableIntPointerDelegate(arc, offset, initialValue)
+    protected fun nullableIntPointerField(offset: Long, initialValue: () -> IntPointer? = { null }) = NullableIntPointerDelegate(arc, offset, initialValue)
     protected fun uintPointerField(offset: Long, initialValue: () -> UIntPointer = { uintPointerOf() }) = UIntPointerDelegate(arc, offset, initialValue)
-    protected fun nullableUIntPointerField(offset: Long, initialValue: () -> NullableUIntPointer = { nullableUIntPointerOf() }) = NullableUIntPointerDelegate(arc, offset, initialValue)
+    protected fun nullableUIntPointerField(offset: Long, initialValue: () -> UIntPointer? = { null }) = NullableUIntPointerDelegate(arc, offset, initialValue)
 
     protected fun longPointerField(offset: Long, initialValue: () -> LongPointer = { longPointerOf() }) = LongPointerDelegate(arc, offset, initialValue)
-    protected fun nullableLongPointerField(offset: Long, initialValue: () -> NullableLongPointer = { nullableLongPointerOf() }) = NullableLongPointerDelegate(arc, offset, initialValue)
+    protected fun nullableLongPointerField(offset: Long, initialValue: () -> LongPointer? = { null }) = NullableLongPointerDelegate(arc, offset, initialValue)
     protected fun ulongPointerField(offset: Long, initialValue: () -> ULongPointer = { ulongPointerOf() }) = ULongPointerDelegate(arc, offset, initialValue)
-    protected fun nullableULongPointerField(offset: Long, initialValue: () -> NullableULongPointer = { nullableULongPointerOf() }) = NullableULongPointerDelegate(arc, offset, initialValue)
+    protected fun nullableULongPointerField(offset: Long, initialValue: () -> ULongPointer? = { null }) = NullableULongPointerDelegate(arc, offset, initialValue)
 
     protected fun cstringField(offset: Long, charset: Charset, initialValue: String = "") = StringDelegate(arc, offset, charset, initialValue)
     protected fun nullableCStringField(offset: Long, charset: Charset, initialValue: String? = null) = NullableStringDelegate(arc, offset, charset, initialValue)

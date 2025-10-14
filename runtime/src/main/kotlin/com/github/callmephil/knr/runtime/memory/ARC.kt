@@ -24,11 +24,6 @@ open class ARC(
     val isNull get() = memorySegment == MemorySegment.NULL
     val byteSize get() = memorySegment?.byteSize() ?: 0
 
-    fun copyTo(arc: ARC, start: Long, end: Long) {
-        val slice = memorySegment!!.asSlice(start, end - start)
-        arc.memorySegment!!.copyFrom(slice)
-    }
-
     open fun decrementCount() {
         counter -= 1
 
@@ -36,19 +31,7 @@ open class ARC(
             dispose()
     }
 
-    fun dispose() {
-        setToNull()
-        isDisposed = true
-    }
-
-    open fun incrementCount() {
-        if (isDisposed) {
-            throw ARCIsDisposedException()
-        }
-        counter += 1
-    }
-
-    private fun setToNull() {
+    private fun dispose() {
         try {
             arena?.close()
         } catch (_: UnsupportedOperationException) {
@@ -56,7 +39,15 @@ open class ARC(
         } finally {
             arena = null
             memorySegment = null
+            isDisposed = true
         }
+    }
+
+    open fun incrementCount() {
+        if (isDisposed) {
+            throw ARCIsDisposedException()
+        }
+        counter += 1
     }
 
     fun asByteBuffer(): ByteBuffer = memorySegment!!.asByteBuffer()
@@ -127,7 +118,6 @@ open class ARC(
         }
 
         fun ofSegment(memorySegment: MemorySegment): ARC = ARC(null, memorySegment)
-        fun ofNull(): ARC = ARC(null, MemorySegment.NULL)
 
         fun shared(layout: MemoryLayout): ARC = shared(layout.byteSize())
         fun shared(byteSize: Long): ARC {

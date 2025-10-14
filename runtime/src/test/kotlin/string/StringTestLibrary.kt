@@ -1,7 +1,7 @@
 package string
 
 import com.github.callmephil.knr.runtime.ext.downcallHandle
-import com.github.callmephil.knr.runtime.typing.pointer.ByRef
+import com.github.callmephil.knr.runtime.typing.pointer.Pointer
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
 import java.lang.foreign.SymbolLookup
@@ -29,9 +29,9 @@ object StringTestLibrary {
         ValueLayout.ADDRESS
     )
 
-    fun areStringsEqual(str1: ByRef<String>, str2: ByRef<String>) =
+    fun areStringsEqual(str1: Pointer<String>, str2: Pointer<String>) =
         areStrsEqualHandle.invokeExact(str1.arc!!.memorySegment, str2.arc!!.memorySegment) as Boolean
 
-    fun structStringEqual(stringStruct: StringStruct, str: ByRef<String>) =
+    fun structStringEqual(stringStruct: StringStruct, str: Pointer<String>) =
         structStringEqualHandle.invokeExact(stringStruct.arc.memorySegment, str.arc!!.memorySegment) as Boolean
 }

@@ -4,15 +4,9 @@ import com.github.callmephil.knr.runtime.delegates.NullablePointerFieldDelegate
 import com.github.callmephil.knr.runtime.delegates.PointerFieldDelegate
 import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.typing.pointer.BytePointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableBytePointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableUBytePointer
 import com.github.callmephil.knr.runtime.typing.pointer.UBytePointer
 import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableBytePointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableUBytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.takeBytePointer
-import com.github.callmephil.knr.runtime.typing.pointer.takeNullableBytePointer
-import com.github.callmephil.knr.runtime.typing.pointer.takeNullableUBytePointer
 import com.github.callmephil.knr.runtime.typing.pointer.takeUBytePointer
 import com.github.callmephil.knr.runtime.typing.pointer.ubytePointerOf
 import java.lang.foreign.MemorySegment
@@ -37,13 +31,16 @@ class BytePointerDelegate internal constructor(
 class NullableBytePointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
-    initialValue: () -> NullableBytePointer
-) : NullablePointerFieldDelegate<Byte, NullableBytePointer>(ownerArc, offset) {
+    initialValue: () -> BytePointer?
+) : NullablePointerFieldDelegate<Byte, BytePointer>(ownerArc, offset) {
 
-    override var pointer: NullableBytePointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
-        takeNullableBytePointer(initialValue(), ::updateOwnersArc)
+    override var pointer: BytePointer? = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+        when (val value = initialValue()) {
+            null -> null
+            else -> takeBytePointer(value, ::updateOwnersArc)
+        }
     } else {
-        nullableBytePointerOf(ownerArc, offset, ::updateOwnersArc)
+        bytePointerOf(ownerArc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -71,13 +68,16 @@ class UBytePointerDelegate internal constructor(
 class NullableUBytePointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
-    initialValue: () -> NullableUBytePointer
-) : NullablePointerFieldDelegate<UByte, NullableUBytePointer>(ownerArc, offset) {
+    initialValue: () -> UBytePointer?
+) : NullablePointerFieldDelegate<UByte, UBytePointer>(ownerArc, offset) {
 
-    override var pointer: NullableUBytePointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
-        takeNullableUBytePointer(initialValue(), ::updateOwnersArc)
+    override var pointer: UBytePointer? = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+        when (val value = initialValue()) {
+            null -> null
+            else -> takeUBytePointer(value, ::updateOwnersArc)
+        }
     } else {
-        nullableUBytePointerOf(ownerArc, offset, ::updateOwnersArc)
+        ubytePointerOf(ownerArc, offset, ::updateOwnersArc)
     }
 
     init {

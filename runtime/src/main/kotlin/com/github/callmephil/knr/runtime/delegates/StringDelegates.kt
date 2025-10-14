@@ -3,12 +3,8 @@ package com.github.callmephil.knr.runtime.delegates
 import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.typing.CString
 import com.github.callmephil.knr.runtime.typing.CachedCString
-import com.github.callmephil.knr.runtime.typing.NullableCString
-import com.github.callmephil.knr.runtime.typing.NullableCachedCString
 import com.github.callmephil.knr.runtime.typing.cachedCStringOf
 import com.github.callmephil.knr.runtime.typing.cstringOf
-import com.github.callmephil.knr.runtime.typing.nullableCStringOf
-import com.github.callmephil.knr.runtime.typing.nullableCachedCStringOf
 import java.nio.charset.Charset
 
 class StringDelegate internal constructor(
@@ -30,9 +26,9 @@ class NullableStringDelegate internal constructor(
     offset: Long,
     private val charset: Charset,
     initialValue: String?
-) : NullablePointerFieldDelegate<String, NullableCString>(ownerArc, offset) {
+) : NullablePointerFieldDelegate<String, CString>(ownerArc, offset) {
 
-    override var pointer: NullableCString = nullableCStringOf(initialValue, charset, ::updateOwnersArc)
+    override var pointer: CString? = cstringOf(initialValue!!, charset, ::updateOwnersArc)
 
     init {
         updateOwnersArc()
@@ -58,9 +54,9 @@ class NullableCachedStringDelegate internal constructor(
     offset: Long,
     private val charset: Charset,
     initialValue: String?
-) : NullablePointerFieldDelegate<String, NullableCachedCString>(ownerArc, offset) {
+) : NullablePointerFieldDelegate<String, CachedCString>(ownerArc, offset) {
 
-    override var pointer: NullableCachedCString = nullableCachedCStringOf(initialValue, charset, ::updateOwnersArc)
+    override var pointer: CachedCString? = cachedCStringOf(initialValue!!, charset, ::updateOwnersArc)
 
     init {
         updateOwnersArc()

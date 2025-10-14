@@ -1,15 +1,30 @@
 package pointer
 
-import com.github.callmephil.knr.runtime.typing.pointer.nullableBytePointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableIntPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableLongPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableShortPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.takeFrom
+import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.longPointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.shortPointerOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertFailsWith
 
 class StructPointerTests {
+    @Test
+    fun `GIVEN a struct with a pointer WHEN setting and getting to null and a value THEN it should work`() {
+        val allPointersDirect = AllPointers.allocateConfined()
+
+        allPointersDirect.ni = intPointerOf(100)
+
+        assertEquals(100, allPointersDirect.ni!!.get())
+
+        allPointersDirect.ni = null
+
+        assertFailsWith<NullPointerException> {
+            allPointersDirect.ni!!.get()
+        }
+    }
+
     @Test
     fun `GIVEN a struct with a byte pointer field WHEN setting and getting the pointer THEN it should work`() {
         val allPointersDirect = AllPointers.allocateShared()
@@ -33,20 +48,20 @@ class StructPointerTests {
     fun `GIVEN a struct with a byte nullable pointer field WHEN setting and getting the pointer THEN it should work`() {
         val allPointersDirect = AllPointers.allocateShared()
 
-        assertFails { allPointersDirect.nb.get() }
-        assertFails { allPointersDirect.nb.set(100) }
+        assertFails { allPointersDirect.nb!!.get() }
+        assertFails { allPointersDirect.nb!!.set(100) }
 
-        allPointersDirect.nb = nullableBytePointerOf(0)
+        allPointersDirect.nb = bytePointerOf(0)
 
-        assertEquals(0, allPointersDirect.nb.get())
+        assertEquals(0, allPointersDirect.nb!!.get())
         assertEquals(0, PointerTestLibrary.getNullableByteViaPointerFromStruct(allPointersDirect))
 
-        allPointersDirect.nb.set(100.toByte())
-        assertEquals(100,allPointersDirect.nb.get())
+        allPointersDirect.nb!!.set(100.toByte())
+        assertEquals(100,allPointersDirect.nb!!.get())
         assertEquals(100, PointerTestLibrary.getNullableByteViaPointerFromStruct(allPointersDirect))
 
         PointerTestLibrary.setNullableByteViaPointerFromStruct(allPointersDirect, 20)
-        assertEquals(20, allPointersDirect.nb.get())
+        assertEquals(20, allPointersDirect.nb!!.get())
         assertEquals(20, PointerTestLibrary.getNullableByteViaPointerFromStruct(allPointersDirect))
 
     }
@@ -74,20 +89,20 @@ class StructPointerTests {
     fun `GIVEN a struct with a short nullable pointer field WHEN setting and getting the pointer THEN it should work`() {
         val allPointersDirect = AllPointers.allocateShared()
 
-        assertFails { allPointersDirect.ns.get() }
-        assertFails { allPointersDirect.ns.set(100) }
+        assertFails { allPointersDirect.ns!!.get() }
+        assertFails { allPointersDirect.ns!!.set(100) }
 
-        allPointersDirect.ns = nullableShortPointerOf(0)
+        allPointersDirect.ns = shortPointerOf(0)
 
-        assertEquals(0, allPointersDirect.ns.get())
+        assertEquals(0, allPointersDirect.ns!!.get())
         assertEquals(0, PointerTestLibrary.getNullableShortViaPointerFromStruct(allPointersDirect))
 
-        allPointersDirect.ns.set(100.toShort())
-        assertEquals(100,allPointersDirect.ns.get())
+        allPointersDirect.ns!!.set(100.toShort())
+        assertEquals(100,allPointersDirect.ns!!.get())
         assertEquals(100, PointerTestLibrary.getNullableShortViaPointerFromStruct(allPointersDirect))
 
         PointerTestLibrary.setNullableShortViaPointerFromStruct(allPointersDirect, 20)
-        assertEquals(20, allPointersDirect.ns.get())
+        assertEquals(20, allPointersDirect.ns!!.get())
         assertEquals(20, PointerTestLibrary.getNullableShortViaPointerFromStruct(allPointersDirect))
 
     }
@@ -115,20 +130,20 @@ class StructPointerTests {
     fun `GIVEN a struct with a int nullable pointer field WHEN setting and getting the pointer THEN it should work`() {
         val allPointersDirect = AllPointers.allocateShared()
 
-        assertFails { allPointersDirect.ni.get() }
-        assertFails { allPointersDirect.ni.set(1000) }
+        assertFails { allPointersDirect.ni!!.get() }
+        assertFails { allPointersDirect.ni!!.set(1000) }
 
-        allPointersDirect.ni takeFrom nullableIntPointerOf(0)
+        allPointersDirect.ni = intPointerOf(0)
 
-        assertEquals(0, allPointersDirect.ni.get())
+        assertEquals(0, allPointersDirect.ni!!.get())
         assertEquals(0, PointerTestLibrary.getNullableIntViaPointerFromStruct(allPointersDirect))
 
-        allPointersDirect.ni.set(1000)
-        assertEquals(1000, allPointersDirect.ni.get())
+        allPointersDirect.ni!!.set(1000)
+        assertEquals(1000, allPointersDirect.ni!!.get())
         assertEquals(1000, PointerTestLibrary.getNullableIntViaPointerFromStruct(allPointersDirect))
 
         PointerTestLibrary.setNullableIntViaPointerFromStruct(allPointersDirect, 2000)
-        assertEquals(2000, allPointersDirect.ni.get())
+        assertEquals(2000, allPointersDirect.ni!!.get())
         assertEquals(2000, PointerTestLibrary.getNullableIntViaPointerFromStruct(allPointersDirect))
 
     }
@@ -156,20 +171,20 @@ class StructPointerTests {
     fun `GIVEN a struct with a long nullable pointer field WHEN setting and getting the pointer THEN it should work`() {
         val allPointersDirect = AllPointers.allocateShared()
 
-        assertFails { allPointersDirect.nl.get() }
-        assertFails { allPointersDirect.nl.set(1000) }
+        assertFails { allPointersDirect.nl!!.get() }
+        assertFails { allPointersDirect.nl!!.set(1000) }
 
-        allPointersDirect.nl takeFrom nullableLongPointerOf(0)
+        allPointersDirect.nl = longPointerOf(0)
 
-        assertEquals(0, allPointersDirect.nl.get())
+        assertEquals(0, allPointersDirect.nl!!.get())
         assertEquals(0, PointerTestLibrary.getNullableLongViaPointerFromStruct(allPointersDirect))
 
-        allPointersDirect.nl.set(1000)
-        assertEquals(1000, allPointersDirect.nl.get())
+        allPointersDirect.nl!!.set(1000)
+        assertEquals(1000, allPointersDirect.nl!!.get())
         assertEquals(1000, PointerTestLibrary.getNullableLongViaPointerFromStruct(allPointersDirect))
 
         PointerTestLibrary.setNullableLongViaPointerFromStruct(allPointersDirect, 2000)
-        assertEquals(2000, allPointersDirect.nl.get())
+        assertEquals(2000, allPointersDirect.nl!!.get())
         assertEquals(2000, PointerTestLibrary.getNullableLongViaPointerFromStruct(allPointersDirect))
 
     }

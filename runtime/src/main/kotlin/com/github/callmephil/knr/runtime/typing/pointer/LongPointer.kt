@@ -3,21 +3,6 @@ package com.github.callmephil.knr.runtime.typing.pointer
 import com.github.callmephil.knr.runtime.memory.ARC
 import java.lang.foreign.ValueLayout
 
-class NullableLongPointer internal constructor(
-    arc: ARC,
-    onArcUpdated: (() -> Unit)? = null
-) : NullablePointer<Long>(arc, onArcUpdated) {
-
-    override fun get() = arc!!.getLong(0)
-
-    override fun set(value: Long) = arc!!.setLong(0, value)
-
-    override fun shareOf(): NullableLongPointer {
-        validOrThrow(this)
-        return NullableLongPointer(arc!!, null)
-    }
-}
-
 class LongPointer internal constructor(
     arc: ARC,
     onArcUpdated: (() -> Unit)? = null
@@ -30,21 +15,6 @@ class LongPointer internal constructor(
     override fun shareOf(): LongPointer {
         validOrThrow(this)
         return LongPointer(arc!!, null)
-    }
-}
-
-class NullableULongPointer internal constructor(
-    arc: ARC,
-    onArcUpdated: (() -> Unit)? = null
-) : NullablePointer<ULong>(arc, onArcUpdated) {
-
-    override fun get() = arc!!.getLong(0).toULong()
-
-    override fun set(value: ULong) = arc!!.setLong(0, value.toLong())
-
-    override fun shareOf(): NullableULongPointer {
-        validOrThrow(this)
-        return NullableULongPointer(arc!!, null)
     }
 }
 
@@ -64,44 +34,6 @@ class ULongPointer internal constructor(
 }
 
 // region Long Pointer
-
-fun nullableLongPointerOf(arc: ARC = ARC.ofNull()) = NullableLongPointer(arc)
-fun nullableLongPointerOf(value: Long, arc: ARC = ARC.shared(ValueLayout.JAVA_LONG)): NullableLongPointer {
-    val pointer = NullableLongPointer(arc)
-    pointer.set(value)
-    return pointer
-}
-internal fun nullableLongPointerOf(
-    value: Long?,
-    onArcUpdate: () -> Unit
-): NullableLongPointer {
-    return if (value == null) {
-        NullableLongPointer(ARC.ofNull(), onArcUpdate)
-    } else {
-        NullableLongPointer(ARC.shared(ValueLayout.JAVA_LONG), onArcUpdate).apply {
-            set(value)
-        }
-    }
-}
-internal fun nullableLongPointerOf(
-    arc: ARC,
-    offset: Long,
-    onArcUpdated: () -> Unit
-): NullableLongPointer {
-    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_LONG.byteSize())
-    val arc = ARC.ofSegment(segment)
-    return NullableLongPointer(arc).apply {
-        this.onArcUpdated = onArcUpdated
-    }
-}
-internal fun takeNullableLongPointer(
-    pointer: NullableLongPointer,
-    onArcUpdated: () -> Unit
-): NullableLongPointer {
-    val newPointer = NullableLongPointer(pointer.arc!!, onArcUpdated)
-    pointer.arc = null
-    return newPointer
-}
 
 fun longPointerOf(arc: ARC = ARC.shared(ValueLayout.JAVA_LONG)) = LongPointer(arc)
 fun longPointerOf(arc: ARC, offset: Long) = LongPointer(
@@ -144,44 +76,6 @@ internal fun takeLongPointer(
 // endregion
 
 // region ULong Pointer
-
-fun nullableULongPointerOf(arc: ARC = ARC.ofNull()) = NullableULongPointer(arc)
-fun nullableULongPointerOf(value: ULong, arc: ARC = ARC.shared(ValueLayout.JAVA_LONG)): NullableULongPointer {
-    val pointer = NullableULongPointer(arc)
-    pointer.set(value)
-    return pointer
-}
-internal fun nullableULongPointerOf(
-    value: ULong?,
-    onArcUpdate: () -> Unit
-): NullableULongPointer {
-    return if (value == null) {
-        NullableULongPointer(ARC.ofNull(), onArcUpdate)
-    } else {
-        NullableULongPointer(ARC.shared(ValueLayout.JAVA_LONG), onArcUpdate).apply {
-            set(value)
-        }
-    }
-}
-internal fun nullableULongPointerOf(
-    arc: ARC,
-    offset: Long,
-    onArcUpdated: () -> Unit
-): NullableULongPointer {
-    val segment = arc.getAddress(offset).reinterpret(ValueLayout.JAVA_LONG.byteSize())
-    val arc = ARC.ofSegment(segment)
-    return NullableULongPointer(arc).apply {
-        this.onArcUpdated = onArcUpdated
-    }
-}
-internal fun takeNullableULongPointer(
-    pointer: NullableULongPointer,
-    onArcUpdated: () -> Unit
-): NullableULongPointer {
-    val newPointer = NullableULongPointer(pointer.arc!!, onArcUpdated)
-    pointer.arc = null
-    return newPointer
-}
 
 fun ulongPointerOf(arc: ARC = ARC.shared(ValueLayout.JAVA_LONG)) = ULongPointer(arc)
 fun ulongPointerOf(arc: ARC, offset: Long) = ULongPointer(

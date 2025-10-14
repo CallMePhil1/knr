@@ -4,14 +4,8 @@ import com.github.callmephil.knr.runtime.delegates.NullablePointerFieldDelegate
 import com.github.callmephil.knr.runtime.delegates.PointerFieldDelegate
 import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.typing.pointer.ShortPointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableShortPointer
-import com.github.callmephil.knr.runtime.typing.pointer.NullableUShortPointer
 import com.github.callmephil.knr.runtime.typing.pointer.UShortPointer
-import com.github.callmephil.knr.runtime.typing.pointer.nullableShortPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nullableUShortPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.shortPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.takeNullableShortPointer
-import com.github.callmephil.knr.runtime.typing.pointer.takeNullableUShortPointer
 import com.github.callmephil.knr.runtime.typing.pointer.takeShortPointer
 import com.github.callmephil.knr.runtime.typing.pointer.takeUShortPointer
 import com.github.callmephil.knr.runtime.typing.pointer.ushortPointerOf
@@ -37,13 +31,16 @@ class ShortPointerDelegate internal constructor(
 class NullableShortPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
-    initialValue: () -> NullableShortPointer
-) : NullablePointerFieldDelegate<Short, NullableShortPointer>(ownerArc, offset) {
+    initialValue: () -> ShortPointer?
+) : NullablePointerFieldDelegate<Short, ShortPointer>(ownerArc, offset) {
 
-    override var pointer: NullableShortPointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
-        takeNullableShortPointer(initialValue(), ::updateOwnersArc)
+    override var pointer: ShortPointer? = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+        when (val value = initialValue()) {
+            null -> null
+            else -> takeShortPointer(value, ::updateOwnersArc)
+        }
     } else {
-        nullableShortPointerOf(ownerArc, offset, ::updateOwnersArc)
+        shortPointerOf(ownerArc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -71,13 +68,16 @@ class UShortPointerDelegate internal constructor(
 class NullableUShortPointerDelegate internal constructor(
     ownerArc: ARC,
     offset: Long,
-    initialValue: () -> NullableUShortPointer
-) : NullablePointerFieldDelegate<UShort, NullableUShortPointer>(ownerArc, offset) {
+    initialValue: () -> UShortPointer?
+) : NullablePointerFieldDelegate<UShort, UShortPointer>(ownerArc, offset) {
 
-    override var pointer: NullableUShortPointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
-        takeNullableUShortPointer(initialValue(), ::updateOwnersArc)
+    override var pointer: UShortPointer? = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+        when (val value = initialValue()) {
+            null -> null
+            else -> takeUShortPointer(value, ::updateOwnersArc)
+        }
     } else {
-        nullableUShortPointerOf(ownerArc, offset, ::updateOwnersArc)
+        ushortPointerOf(ownerArc, offset, ::updateOwnersArc)
     }
 
     init {

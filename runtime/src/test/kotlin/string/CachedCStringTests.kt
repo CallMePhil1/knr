@@ -3,7 +3,6 @@ package string
 import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.native.StringLib
 import com.github.callmephil.knr.runtime.typing.cachedCStringOf
-import com.github.callmephil.knr.runtime.typing.nullableCachedCStringOf
 import java.lang.foreign.Arena
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -44,47 +43,6 @@ class CachedCStringTests {
     @Test
     fun `GIVEN a CachedCString WHEN trying to update its value THEN it should fail`() {
         val str = cachedCStringOf("testing")
-
-        assertEquals(str.get(), "testing")
-        assertFailsWith<NotImplementedError> { str.set("newValue") }
-    }
-
-    @Test
-    fun `GIVEN different NullableCachedCStrings with the same value WHEN comparing they are equal THEN it should return true`() {
-        val str1 = nullableCachedCStringOf("Hello")
-        val str2 = nullableCachedCStringOf("Hello")
-
-        assertTrue(StringLib.equal(str1, str2))
-        assertEquals(str1.get(), str2.get())
-    }
-
-    @Test
-    fun `GIVEN a NullableCachedCString WHEN getting its length THEN it should succeed`() {
-        val str = nullableCachedCStringOf("123456")
-
-        assertEquals(6L, StringLib.length(str))
-    }
-
-    @Test
-    fun `GIVEN a NullableCachedCString WHEN pointing to another ARC THEN it should succeed`() {
-        val str = nullableCachedCStringOf("")
-
-        assertEquals("", str.get())
-
-        val arc = ARC.string("testing", Charsets.UTF_8)
-
-        str.pointTo(arc)
-        str.updateCache()
-        assertEquals("testing", str.get())
-
-        str.pointTo(ARC.ofNull())
-        str.updateCache()
-        assertFailsWith<NullPointerException> { str.get() }
-    }
-
-    @Test
-    fun `GIVEN a NullableCachedCString WHEN trying to update its value THEN it should fail`() {
-        val str = nullableCachedCStringOf("testing")
 
         assertEquals(str.get(), "testing")
         assertFailsWith<NotImplementedError> { str.set("newValue") }

@@ -1,7 +1,7 @@
 package pointer
 
 import com.github.callmephil.knr.runtime.ext.downcallHandle
-import com.github.callmephil.knr.runtime.typing.pointer.ByRef
+import com.github.callmephil.knr.runtime.typing.pointer.Pointer
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
 import java.lang.foreign.SymbolLookup
@@ -220,28 +220,28 @@ object PointerTestLibrary {
         ValueLayout.ADDRESS, ValueLayout.JAVA_LONG
     )
 
-    fun getByteFromPointer(pointer: ByRef<Byte>) =
+    fun getByteFromPointer(pointer: Pointer<Byte>) =
         getByteFromPointerHandle.invokeExact(pointer.arc!!.memorySegment) as Byte
 
-    fun getUByteFromPointer(pointer: ByRef<UByte>) =
+    fun getUByteFromPointer(pointer: Pointer<UByte>) =
         getUByteFromPointerHandle.invokeExact(pointer.arc!!.memorySegment) as UByte
 
-    fun getShortFromPointer(pointer: ByRef<Short>) =
+    fun getShortFromPointer(pointer: Pointer<Short>) =
         getShortFromPointerHandle.invokeExact(pointer.arc!!.memorySegment) as Short
 
-    fun getUShortFromPointer(pointer: ByRef<UShort>) =
+    fun getUShortFromPointer(pointer: Pointer<UShort>) =
         getUShortFromPointerHandle.invokeExact(pointer.arc!!.memorySegment) as UShort
 
-    fun getIntFromPointer(pointer: ByRef<Int>) =
+    fun getIntFromPointer(pointer: Pointer<Int>) =
         getIntFromPointerHandle.invokeExact(pointer.arc!!.memorySegment) as Int
 
-    fun getUIntFromPointer(pointer: ByRef<UInt>) =
+    fun getUIntFromPointer(pointer: Pointer<UInt>) =
         getUIntFromPointerHandle.invokeExact(pointer.arc!!.memorySegment) as UInt
 
-    fun getLongFromPointer(pointer: ByRef<Long>) =
+    fun getLongFromPointer(pointer: Pointer<Long>) =
         getLongFromPointerHandle.invokeExact(pointer.arc!!.memorySegment) as Long
 
-    fun getULongFromPointer(pointer: ByRef<ULong>) =
+    fun getULongFromPointer(pointer: Pointer<ULong>) =
         getULongFromPointerHandle.invokeExact(pointer.arc!!.memorySegment) as ULong
 
     fun getLongFromStruct(struct: PointedStruct) =
@@ -271,35 +271,35 @@ object PointerTestLibrary {
     fun getNullableLongViaPointerFromStruct(struct: AllPointers) =
         getNullableLongViaPointerFromStructHandle.invokeExact(struct.arc.memorySegment) as Long
 
-    fun setByteForPointer(pointer: ByRef<Byte>, value: Byte) {
+    fun setByteForPointer(pointer: Pointer<Byte>, value: Byte) {
         setByteForPointerHandle.invokeExact(pointer.arc!!.memorySegment, value)
     }
 
-    fun setUByteForPointer(pointer: ByRef<UByte>, value: UByte) {
+    fun setUByteForPointer(pointer: Pointer<UByte>, value: UByte) {
         setUByteForPointerHandle.invokeExact(pointer.arc!!.memorySegment, value)
     }
 
-    fun setShortForPointer(pointer: ByRef<Short>, value: Short) {
+    fun setShortForPointer(pointer: Pointer<Short>, value: Short) {
         setShortForPointerHandle.invokeExact(pointer.arc!!.memorySegment, value)
     }
 
-    fun setShortForPointer(pointer: ByRef<UShort>, value: UShort) {
+    fun setShortForPointer(pointer: Pointer<UShort>, value: UShort) {
         setUShortForPointerHandle.invokeExact(pointer.arc!!.memorySegment, value)
     }
 
-    fun setIntForPointer(pointer: ByRef<Int>, value: Int) {
+    fun setIntForPointer(pointer: Pointer<Int>, value: Int) {
         setIntForPointerHandle.invokeExact(pointer.arc!!.memorySegment, value)
     }
 
-    fun setUIntForPointer(pointer: ByRef<UInt>, value: UInt) {
+    fun setUIntForPointer(pointer: Pointer<UInt>, value: UInt) {
         setUIntForPointerHandle.invokeExact(pointer.arc!!.memorySegment, value)
     }
 
-    fun setLongForPointer(pointer: ByRef<Long>, value: Long) {
+    fun setLongForPointer(pointer: Pointer<Long>, value: Long) {
         setLongLongForPointerHandle.invokeExact(pointer.arc!!.memorySegment, value)
     }
 
-    fun setULongForPointer(pointer: ByRef<ULong>, value: ULong) {
+    fun setULongForPointer(pointer: Pointer<ULong>, value: ULong) {
         setULongLongForPointerHandle.invokeExact(pointer.arc!!.memorySegment, value)
     }
 

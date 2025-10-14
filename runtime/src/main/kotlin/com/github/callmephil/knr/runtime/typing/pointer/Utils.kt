@@ -2,7 +2,7 @@ package com.github.callmephil.knr.runtime.typing.pointer
 
 import com.github.callmephil.knr.runtime.exceptions.PointerIsNotValidException
 
-inline fun <T: ByRef<*>, R> use(
+inline fun <T: Pointer<*>, R> use(
     ref: T,
     block: (ref: T) -> R
 ) {
@@ -10,7 +10,7 @@ inline fun <T: ByRef<*>, R> use(
     ref.dispose()
 }
 
-inline fun <T1: ByRef<*>, T2: ByRef<*>, R> use(
+inline fun <T1: Pointer<*>, T2: Pointer<*>, R> use(
     ref1: T1,
     ref2: T2,
     block: (ref1: T1, ref2: T2) -> R
@@ -20,7 +20,7 @@ inline fun <T1: ByRef<*>, T2: ByRef<*>, R> use(
     ref2.dispose()
 }
 
-inline fun <T1: ByRef<*>, T2: ByRef<*>, T3: ByRef<*>, R> use(
+inline fun <T1: Pointer<*>, T2: Pointer<*>, T3: Pointer<*>, R> use(
     ref1: T1,
     ref2: T2,
     ref3: T3,
@@ -32,7 +32,7 @@ inline fun <T1: ByRef<*>, T2: ByRef<*>, T3: ByRef<*>, R> use(
     ref3.dispose()
 }
 
-inline fun <T1: ByRef<*>, T2: ByRef<*>, T3: ByRef<*>, T4: ByRef<*>, R> use(
+inline fun <T1: Pointer<*>, T2: Pointer<*>, T3: Pointer<*>, T4: Pointer<*>, R> use(
     ref1: T1,
     ref2: T2,
     ref3: T3,
@@ -46,7 +46,7 @@ inline fun <T1: ByRef<*>, T2: ByRef<*>, T3: ByRef<*>, T4: ByRef<*>, R> use(
     ref4.dispose()
 }
 
-inline fun <T1: ByRef<*>, T2: ByRef<*>, T3: ByRef<*>, T4: ByRef<*>, T5: ByRef<*>, R> use(
+inline fun <T1: Pointer<*>, T2: Pointer<*>, T3: Pointer<*>, T4: Pointer<*>, T5: Pointer<*>, R> use(
     ref1: T1,
     ref2: T2,
     ref3: T3,
@@ -62,7 +62,7 @@ inline fun <T1: ByRef<*>, T2: ByRef<*>, T3: ByRef<*>, T4: ByRef<*>, T5: ByRef<*>
     ref5.dispose()
 }
 
-fun validOrThrow(pointer: ByRef<*>) {
+fun validOrThrow(pointer: Pointer<*>) {
     if (pointer.isNotValid)
         throw PointerIsNotValidException()
 }
