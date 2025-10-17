@@ -1,18 +1,21 @@
 package com.github.callmephil.knr.runtime.delegates
 
-import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.typing.Struct
 import com.github.callmephil.knr.runtime.typing.pointer.Pointer
 import com.github.callmephil.knr.runtime.typing.pointer.takeFrom
 import java.lang.foreign.MemorySegment
 
 abstract class PointerFieldDelegate<T, P : Pointer<T>> internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
 ) : FieldDelegate<P>(
-    ownerArc,
+    parent,
     offset
 ) {
     protected abstract var pointer: P
+
+    val isValid get() = pointer.isValid
+    val isNotValid get() = !isValid
 
     override fun get() = pointer
 
@@ -21,18 +24,25 @@ abstract class PointerFieldDelegate<T, P : Pointer<T>> internal constructor(
     }
 
     protected fun updateOwnersArc() {
-        ownerArc.setAddress(offset, pointer.arc!!.memorySegment!!)
+        when {
+            parent.isNotValid -> return
+            pointer.isNotValid -> return
+            else -> parent.arc.setAddress(offset, pointer.arc!!.memorySegment!!)
+        }
     }
 }
 
 abstract class NullablePointerFieldDelegate<T, P : Pointer<T>> internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
 ) : FieldDelegate<P?>(
-    ownerArc,
+    parent,
     offset
 ) {
     protected abstract var pointer: P?
+
+    val isValid get() = pointer?.isValid ?: true
+    val isNotValid get() = !isValid
 
     override fun get(): P? = pointer
 
@@ -54,9 +64,11 @@ abstract class NullablePointerFieldDelegate<T, P : Pointer<T>> internal construc
     }
 
     protected fun updateOwnersArc() {
-        if (pointer == null)
-            ownerArc.setAddress(offset, MemorySegment.NULL)
-        else
-            ownerArc.setAddress(offset, pointer!!.arc!!.memorySegment!!)
+        when {
+            parent.isNotValid -> return
+            pointer == null -> parent.arc.setAddress(offset, MemorySegment.NULL)
+            pointer!!.isNotValid -> return
+            else -> parent.arc.setAddress(offset, pointer!!.arc!!.memorySegment!!)
+        }
     }
 }

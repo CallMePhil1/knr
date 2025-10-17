@@ -64,14 +64,6 @@ internal fun shortPointerOf(
         this.onArcUpdated = onArcUpdated
     }
 }
-internal fun takeShortPointer(
-    pointer: ShortPointer,
-    onArcUpdated: () -> Unit
-): ShortPointer {
-    val newPointer = ShortPointer(pointer.arc!!, onArcUpdated)
-    pointer.arc = null
-    return newPointer
-}
 
 // endregion
 
@@ -105,14 +97,6 @@ internal fun ushortPointerOf(
     return UShortPointer(arc).apply {
         this.onArcUpdated = onArcUpdated
     }
-}
-internal fun takeUShortPointer(
-    pointer: UShortPointer,
-    onArcUpdated: () -> Unit
-): UShortPointer {
-    val newPointer = UShortPointer(pointer.arc!!, onArcUpdated)
-    pointer.arc = null
-    return newPointer
 }
 
 // endregion

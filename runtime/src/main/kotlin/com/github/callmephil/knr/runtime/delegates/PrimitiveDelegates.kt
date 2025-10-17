@@ -1,93 +1,93 @@
 package com.github.callmephil.knr.runtime.delegates
 
-import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.typing.Struct
 
 class BooleanDelegate internal constructor(
-    arc: ARC,
+    parent: Struct,
     offset: Long
-) : FieldDelegate<Boolean>(arc, offset) {
-    override fun get(): Boolean = ownerArc.getBoolean(offset)
+) : FieldDelegate<Boolean>(parent, offset) {
+    override fun get(): Boolean = parent.arc.getBoolean(offset)
     override fun set(value: Boolean) {
-        ownerArc.setBoolean(offset, value)
+        parent.arc.setBoolean(offset, value)
     }
 }
 
 class ByteDelegate internal constructor(
-    arc: ARC,
+    parent: Struct,
     offset: Long
-) : FieldDelegate<Byte>(arc, offset) {
-    override fun get(): Byte = ownerArc.getByte(offset)
-    override fun set(value: Byte) = ownerArc.setByte(offset, value)
+) : FieldDelegate<Byte>(parent, offset) {
+    override fun get(): Byte = parent.arc.getByte(offset)
+    override fun set(value: Byte) = parent.arc.setByte(offset, value)
 }
 
 class UByteDelegate internal constructor(
-    arc: ARC,
+    parent: Struct,
     offset: Long
-) : FieldDelegate<UByte>(arc, offset) {
-    override fun get(): UByte = ownerArc.getByte(offset).toUByte()
-    override fun set(value: UByte) = ownerArc.setByte(offset, value.toByte())
+) : FieldDelegate<UByte>(parent, offset) {
+    override fun get(): UByte = parent.arc.getByte(offset).toUByte()
+    override fun set(value: UByte) = parent.arc.setByte(offset, value.toByte())
 }
 
 class ShortDelegate internal constructor(
-    arc: ARC,
+    parent: Struct,
     offset: Long
-) : FieldDelegate<Short>(arc, offset) {
-    override fun get(): Short = ownerArc.getShort(offset)
-    override fun set(value: Short) = ownerArc.setShort(offset, value)
+) : FieldDelegate<Short>(parent, offset) {
+    override fun get(): Short = parent.arc.getShort(offset)
+    override fun set(value: Short) = parent.arc.setShort(offset, value)
 }
 
 class UShortDelegate internal constructor(
-    arc: ARC,
+    parent: Struct,
     offset: Long
-) : FieldDelegate<UShort>(arc, offset) {
-    override fun get(): UShort = ownerArc.getShort(offset).toUShort()
-    override fun set(value: UShort) = ownerArc.setShort(offset, value.toShort())
+) : FieldDelegate<UShort>(parent, offset) {
+    override fun get(): UShort = parent.arc.getShort(offset).toUShort()
+    override fun set(value: UShort) = parent.arc.setShort(offset, value.toShort())
 }
 
 class IntDelegate internal constructor(
-    arc: ARC,
+    parent: Struct,
     offset: Long
-) : FieldDelegate<Int>(arc, offset) {
-    override fun get(): Int = ownerArc.getInt(offset)
-    override fun set(value: Int) = ownerArc.setInt(offset, value)
+) : FieldDelegate<Int>(parent, offset) {
+    override fun get(): Int = parent.arc.getInt(offset)
+    override fun set(value: Int) = parent.arc.setInt(offset, value)
 }
 
 class UIntDelegate internal constructor(
-    arc: ARC,
+    parent: Struct,
     offset: Long
-) : FieldDelegate<UInt>(arc, offset) {
-    override fun get(): UInt = ownerArc.getInt(offset).toUInt()
-    override fun set(value: UInt) = ownerArc.setInt(offset, value.toInt())
+) : FieldDelegate<UInt>(parent, offset) {
+    override fun get(): UInt = parent.arc.getInt(offset).toUInt()
+    override fun set(value: UInt) = parent.arc.setInt(offset, value.toInt())
 }
 
 class LongDelegate internal constructor(
-    arc: ARC,
+    parent: Struct,
     offset: Long
-) : FieldDelegate<Long>(arc, offset) {
-    override fun get(): Long = ownerArc.getLong(offset)
-    override fun set(value: Long) = ownerArc.setLong(offset, value)
+) : FieldDelegate<Long>(parent, offset) {
+    override fun get(): Long = parent.arc.getLong(offset)
+    override fun set(value: Long) = parent.arc.setLong(offset, value)
 }
 
 class ULongDelegate internal constructor(
-    arc: ARC,
+    parent: Struct,
     offset: Long
-) : FieldDelegate<ULong>(arc, offset) {
-    override fun get(): ULong = ownerArc.getLong(offset).toULong()
-    override fun set(value: ULong) = ownerArc.setLong(offset, value.toLong())
+) : FieldDelegate<ULong>(parent, offset) {
+    override fun get(): ULong = parent.arc.getLong(offset).toULong()
+    override fun set(value: ULong) = parent.arc.setLong(offset, value.toLong())
 }
 
 class FloatDelegate internal constructor(
-    arc: ARC,
+    parent: Struct,
     offset: Long
-) : FieldDelegate<Float>(arc, offset) {
-    override fun get(): Float = ownerArc.getFloat(offset)
-    override fun set(value: Float) = ownerArc.setFloat(offset, value)
+) : FieldDelegate<Float>(parent, offset) {
+    override fun get(): Float = parent.arc.getFloat(offset)
+    override fun set(value: Float) = parent.arc.setFloat(offset, value)
 }
 
 class DoubleDelegate internal constructor(
-    arc: ARC,
+    parent: Struct,
     offset: Long
-) : FieldDelegate<Double>(arc, offset) {
-    override fun get(): Double = ownerArc.getDouble(offset)
-    override fun set(value: Double) = ownerArc.setDouble(offset, value)
+) : FieldDelegate<Double>(parent, offset) {
+    override fun get(): Double = parent.arc.getDouble(offset)
+    override fun set(value: Double) = parent.arc.setDouble(offset, value)
 }

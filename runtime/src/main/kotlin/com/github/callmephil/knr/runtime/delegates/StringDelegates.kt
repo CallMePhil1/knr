@@ -1,18 +1,18 @@
 package com.github.callmephil.knr.runtime.delegates
 
-import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.typing.CString
 import com.github.callmephil.knr.runtime.typing.CachedCString
+import com.github.callmephil.knr.runtime.typing.Struct
 import com.github.callmephil.knr.runtime.typing.cachedCStringOf
 import com.github.callmephil.knr.runtime.typing.cstringOf
 import java.nio.charset.Charset
 
 class StringDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     private val charset: Charset,
     initialValue: String = ""
-) : PointerFieldDelegate<String, CString>(ownerArc, offset) {
+) : PointerFieldDelegate<String, CString>(parent, offset) {
 
     override var pointer: CString = cstringOf(initialValue, charset, ::updateOwnersArc)
 
@@ -22,11 +22,11 @@ class StringDelegate internal constructor(
 }
 
 class NullableStringDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     private val charset: Charset,
     initialValue: String?
-) : NullablePointerFieldDelegate<String, CString>(ownerArc, offset) {
+) : NullablePointerFieldDelegate<String, CString>(parent, offset) {
 
     override var pointer: CString? = cstringOf(initialValue!!, charset, ::updateOwnersArc)
 
@@ -36,11 +36,11 @@ class NullableStringDelegate internal constructor(
 }
 
 class CachedStringDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     private val charset: Charset,
     initialValue: String
-) : PointerFieldDelegate<String, CachedCString>(ownerArc, offset) {
+) : PointerFieldDelegate<String, CachedCString>(parent, offset) {
 
     override var pointer: CachedCString = cachedCStringOf(initialValue, charset, ::updateOwnersArc)
 
@@ -50,11 +50,11 @@ class CachedStringDelegate internal constructor(
 }
 
 class NullableCachedStringDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     private val charset: Charset,
     initialValue: String?
-) : NullablePointerFieldDelegate<String, CachedCString>(ownerArc, offset) {
+) : NullablePointerFieldDelegate<String, CachedCString>(parent, offset) {
 
     override var pointer: CachedCString? = cachedCStringOf(initialValue!!, charset, ::updateOwnersArc)
 
@@ -64,32 +64,32 @@ class NullableCachedStringDelegate internal constructor(
 }
 
 class CCharArrayDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     private val charset: Charset = Charsets.UTF_8,
     value: String = "",
     private val length: Int
-) : FieldDelegate<String>(ownerArc, offset) {
+) : FieldDelegate<String>(parent, offset) {
 
     init {
         set(value)
     }
 
-    override fun get(): String = ownerArc.getString(offset, charset)
+    override fun get(): String = parent.arc.getString(offset, charset)
     override fun set(value: String) {
         if (value.length > length)
             throw StringIndexOutOfBoundsException("Tried to write a string of length ${value.length} to a fixed length string of $length")
-        ownerArc.setString(offset, value, charset)
+        parent.arc.setString(offset, value, charset)
     }
 }
 
 class CachedCCharArrayDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     private val charset: Charset = Charsets.UTF_8,
     private var value: String = "",
     private val length: Int
-) : FieldDelegate<String>(ownerArc, offset) {
+) : FieldDelegate<String>(parent, offset) {
 
     init {
         set(value)
@@ -99,7 +99,7 @@ class CachedCCharArrayDelegate internal constructor(
     override fun set(value: String) {
         if (value.length > length)
             throw StringIndexOutOfBoundsException("Tried to write a string of length ${value.length} to a fixed length string of $length")
-        ownerArc.setString(offset, value, charset)
+        parent.arc.setString(offset, value, charset)
         this.value = value
     }
 }

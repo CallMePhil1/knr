@@ -64,14 +64,6 @@ internal fun intPointerOf(
         this.onArcUpdated = onArcUpdated
     }
 }
-internal fun takeIntPointer(
-    pointer: IntPointer,
-    onArcUpdated: () -> Unit
-): IntPointer {
-    val newPointer = IntPointer(pointer.arc!!, onArcUpdated)
-    pointer.arc = null
-    return newPointer
-}
 
 // endregion
 
@@ -105,14 +97,6 @@ internal fun uintPointerOf(
     return UIntPointer(arc).apply {
         this.onArcUpdated = onArcUpdated
     }
-}
-internal fun takeUIntPointer(
-    pointer: UIntPointer,
-    onArcUpdated: () -> Unit
-): UIntPointer {
-    val newPointer = UIntPointer(pointer.arc!!, onArcUpdated)
-    pointer.arc = null
-    return newPointer
 }
 
 // endregion

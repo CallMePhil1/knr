@@ -62,15 +62,6 @@ internal fun bytePointerOf(
         this.onArcUpdated = onArcUpdated
     }
 }
-internal fun takeBytePointer(
-    pointer: BytePointer,
-    onArcUpdated: () -> Unit
-): BytePointer {
-    val newPointer = BytePointer(pointer.arc!!, onArcUpdated)
-    pointer.arc!!.decrementCount()
-    pointer.arc = null
-    return newPointer
-}
 
 // endregion
 
@@ -102,14 +93,6 @@ internal fun ubytePointerOf(
     return UBytePointer(arc).apply {
         this.onArcUpdated = onArcUpdated
     }
-}
-internal fun takeUBytePointer(
-    pointer: UBytePointer,
-    onArcUpdated: () -> Unit
-): UBytePointer {
-    val newPointer = UBytePointer(pointer.arc!!, onArcUpdated)
-    pointer.arc = null
-    return newPointer
 }
 
 // endregion

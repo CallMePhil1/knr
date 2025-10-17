@@ -2,25 +2,24 @@ package com.github.callmephil.knr.runtime.delegates.pointers
 
 import com.github.callmephil.knr.runtime.delegates.NullablePointerFieldDelegate
 import com.github.callmephil.knr.runtime.delegates.PointerFieldDelegate
-import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.typing.Struct
 import com.github.callmephil.knr.runtime.typing.pointer.ShortPointer
 import com.github.callmephil.knr.runtime.typing.pointer.UShortPointer
 import com.github.callmephil.knr.runtime.typing.pointer.shortPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.takeShortPointer
-import com.github.callmephil.knr.runtime.typing.pointer.takeUShortPointer
+import com.github.callmephil.knr.runtime.typing.pointer.takePointer
 import com.github.callmephil.knr.runtime.typing.pointer.ushortPointerOf
 import java.lang.foreign.MemorySegment
 
 class ShortPointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> ShortPointer
-) : PointerFieldDelegate<Short, ShortPointer>(ownerArc, offset) {
+) : PointerFieldDelegate<Short, ShortPointer>(parent, offset) {
 
-    override var pointer: ShortPointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
-        takeShortPointer(initialValue(), ::updateOwnersArc)
+    override var pointer: ShortPointer = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
+        takePointer(initialValue(), ::updateOwnersArc)
     } else {
-        shortPointerOf(ownerArc, offset, ::updateOwnersArc)
+        shortPointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -29,18 +28,18 @@ class ShortPointerDelegate internal constructor(
 }
 
 class NullableShortPointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> ShortPointer?
-) : NullablePointerFieldDelegate<Short, ShortPointer>(ownerArc, offset) {
+) : NullablePointerFieldDelegate<Short, ShortPointer>(parent, offset) {
 
-    override var pointer: ShortPointer? = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+    override var pointer: ShortPointer? = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
         when (val value = initialValue()) {
             null -> null
-            else -> takeShortPointer(value, ::updateOwnersArc)
+            else -> takePointer(value, ::updateOwnersArc)
         }
     } else {
-        shortPointerOf(ownerArc, offset, ::updateOwnersArc)
+        shortPointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -49,15 +48,15 @@ class NullableShortPointerDelegate internal constructor(
 }
 
 class UShortPointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> UShortPointer
-) : PointerFieldDelegate<UShort, UShortPointer>(ownerArc, offset) {
+) : PointerFieldDelegate<UShort, UShortPointer>(parent, offset) {
 
-    override var pointer: UShortPointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
-        takeUShortPointer(initialValue(), ::updateOwnersArc)
+    override var pointer: UShortPointer = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
+        takePointer(initialValue(), ::updateOwnersArc)
     } else {
-        ushortPointerOf(ownerArc, offset, ::updateOwnersArc)
+        ushortPointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -66,18 +65,18 @@ class UShortPointerDelegate internal constructor(
 }
 
 class NullableUShortPointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> UShortPointer?
-) : NullablePointerFieldDelegate<UShort, UShortPointer>(ownerArc, offset) {
+) : NullablePointerFieldDelegate<UShort, UShortPointer>(parent, offset) {
 
-    override var pointer: UShortPointer? = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+    override var pointer: UShortPointer? = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
         when (val value = initialValue()) {
             null -> null
-            else -> takeUShortPointer(value, ::updateOwnersArc)
+            else -> takePointer(value, ::updateOwnersArc)
         }
     } else {
-        ushortPointerOf(ownerArc, offset, ::updateOwnersArc)
+        ushortPointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {

@@ -1,6 +1,6 @@
 package com.github.callmephil.knr.runtime.memory
 
-abstract class Native(
+abstract class Native internal constructor(
     arc: ARC
 ) : AutoCloseable {
     private var _arc: ARC? = arc
@@ -14,7 +14,7 @@ abstract class Native(
 
     override fun close() = dispose()
 
-    fun dispose() {
+    open fun dispose() {
         _arc?.decrementCount()
         _arc = null
     }

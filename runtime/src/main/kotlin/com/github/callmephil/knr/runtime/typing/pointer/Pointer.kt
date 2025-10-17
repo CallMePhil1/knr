@@ -65,3 +65,18 @@ infix fun <T> Pointer<T>.takeFrom(other: Pointer<T>) = other.giveTo(this)
 infix fun <T> Pointer<T>.shareWith(other: Pointer<T>) = this.shareWith(other)
 
 infix fun <T> Pointer<T>.shareFrom(other: Pointer<T>) = other.shareWith(this)
+
+fun <T> shareOfPointer(pointer: Pointer<T>): Pointer<T> = pointer.shareOf()
+
+@Suppress("UNCHECKED_CAST")
+fun <P: Pointer<*>> takePointer(pointer: P): P {
+    val newPointer = pointer.shareOf()
+    pointer.dispose()
+    return newPointer as P
+}
+
+internal fun <P: Pointer<*>> takePointer(pointer: P, onArcUpdated: (() -> Unit)?): P {
+    val newPointer = takePointer(pointer)
+    newPointer.onArcUpdated = onArcUpdated
+    return newPointer
+}

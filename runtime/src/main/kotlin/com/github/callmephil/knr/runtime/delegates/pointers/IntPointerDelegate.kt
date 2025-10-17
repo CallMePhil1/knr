@@ -2,25 +2,24 @@ package com.github.callmephil.knr.runtime.delegates.pointers
 
 import com.github.callmephil.knr.runtime.delegates.NullablePointerFieldDelegate
 import com.github.callmephil.knr.runtime.delegates.PointerFieldDelegate
-import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.typing.Struct
 import com.github.callmephil.knr.runtime.typing.pointer.IntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.UIntPointer
 import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.takeIntPointer
-import com.github.callmephil.knr.runtime.typing.pointer.takeUIntPointer
+import com.github.callmephil.knr.runtime.typing.pointer.takePointer
 import com.github.callmephil.knr.runtime.typing.pointer.uintPointerOf
 import java.lang.foreign.MemorySegment
 
 class IntPointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> IntPointer
-) : PointerFieldDelegate<Int, IntPointer>(ownerArc, offset) {
+) : PointerFieldDelegate<Int, IntPointer>(parent, offset) {
 
-    override var pointer: IntPointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
-        takeIntPointer(initialValue(), ::updateOwnersArc)
+    override var pointer: IntPointer = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
+        takePointer(initialValue(), ::updateOwnersArc)
     } else {
-        intPointerOf(ownerArc, offset, ::updateOwnersArc)
+        intPointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -29,18 +28,18 @@ class IntPointerDelegate internal constructor(
 }
 
 class NullableIntPointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> IntPointer?
-) : NullablePointerFieldDelegate<Int, IntPointer>(ownerArc, offset) {
+) : NullablePointerFieldDelegate<Int, IntPointer>(parent, offset) {
 
-    override var pointer: IntPointer? = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+    override var pointer: IntPointer? = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
         when (val value = initialValue()) {
             null -> null
-            else -> takeIntPointer(value, ::updateOwnersArc)
+            else -> takePointer(value, ::updateOwnersArc)
         }
     } else {
-        intPointerOf(ownerArc, offset, ::updateOwnersArc)
+        intPointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -49,15 +48,15 @@ class NullableIntPointerDelegate internal constructor(
 }
 
 class UIntPointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> UIntPointer
-) : PointerFieldDelegate<UInt, UIntPointer>(ownerArc, offset) {
+) : PointerFieldDelegate<UInt, UIntPointer>(parent, offset) {
 
-    override var pointer: UIntPointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
-        takeUIntPointer(initialValue(), ::updateOwnersArc)
+    override var pointer: UIntPointer = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
+        takePointer(initialValue(), ::updateOwnersArc)
     } else {
-        uintPointerOf(ownerArc, offset, ::updateOwnersArc)
+        uintPointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -66,18 +65,18 @@ class UIntPointerDelegate internal constructor(
 }
 
 class NullableUIntPointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> UIntPointer?
-) : NullablePointerFieldDelegate<UInt, UIntPointer>(ownerArc, offset) {
+) : NullablePointerFieldDelegate<UInt, UIntPointer>(parent, offset) {
 
-    override var pointer: UIntPointer? = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+    override var pointer: UIntPointer? = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
         when (val value = initialValue()) {
             null -> null
-            else -> takeUIntPointer(value, ::updateOwnersArc)
+            else -> takePointer(value, ::updateOwnersArc)
         }
     } else {
-        uintPointerOf(ownerArc, offset, ::updateOwnersArc)
+        uintPointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {

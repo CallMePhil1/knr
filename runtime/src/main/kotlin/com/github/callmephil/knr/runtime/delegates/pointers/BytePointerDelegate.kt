@@ -2,25 +2,24 @@ package com.github.callmephil.knr.runtime.delegates.pointers
 
 import com.github.callmephil.knr.runtime.delegates.NullablePointerFieldDelegate
 import com.github.callmephil.knr.runtime.delegates.PointerFieldDelegate
-import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.typing.Struct
 import com.github.callmephil.knr.runtime.typing.pointer.BytePointer
 import com.github.callmephil.knr.runtime.typing.pointer.UBytePointer
 import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.takeBytePointer
-import com.github.callmephil.knr.runtime.typing.pointer.takeUBytePointer
+import com.github.callmephil.knr.runtime.typing.pointer.takePointer
 import com.github.callmephil.knr.runtime.typing.pointer.ubytePointerOf
 import java.lang.foreign.MemorySegment
 
 class BytePointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> BytePointer
-) : PointerFieldDelegate<Byte, BytePointer>(ownerArc, offset) {
+) : PointerFieldDelegate<Byte, BytePointer>(parent, offset) {
 
-    override var pointer: BytePointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
-        takeBytePointer(initialValue(), ::updateOwnersArc)
+    override var pointer: BytePointer = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
+        takePointer(initialValue(), ::updateOwnersArc)
     } else {
-        bytePointerOf(ownerArc, offset, ::updateOwnersArc)
+        bytePointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -29,18 +28,18 @@ class BytePointerDelegate internal constructor(
 }
 
 class NullableBytePointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> BytePointer?
-) : NullablePointerFieldDelegate<Byte, BytePointer>(ownerArc, offset) {
+) : NullablePointerFieldDelegate<Byte, BytePointer>(parent, offset) {
 
-    override var pointer: BytePointer? = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+    override var pointer: BytePointer? = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
         when (val value = initialValue()) {
             null -> null
-            else -> takeBytePointer(value, ::updateOwnersArc)
+            else -> takePointer(value, ::updateOwnersArc)
         }
     } else {
-        bytePointerOf(ownerArc, offset, ::updateOwnersArc)
+        bytePointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -49,15 +48,15 @@ class NullableBytePointerDelegate internal constructor(
 }
 
 class UBytePointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> UBytePointer
-) : PointerFieldDelegate<UByte, UBytePointer>(ownerArc, offset) {
+) : PointerFieldDelegate<UByte, UBytePointer>(parent, offset) {
 
-    override var pointer: UBytePointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
-        takeUBytePointer(initialValue(), ::updateOwnersArc)
+    override var pointer: UBytePointer = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
+        takePointer(initialValue(), ::updateOwnersArc)
     } else {
-        ubytePointerOf(ownerArc, offset, ::updateOwnersArc)
+        ubytePointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -66,18 +65,18 @@ class UBytePointerDelegate internal constructor(
 }
 
 class NullableUBytePointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> UBytePointer?
-) : NullablePointerFieldDelegate<UByte, UBytePointer>(ownerArc, offset) {
+) : NullablePointerFieldDelegate<UByte, UBytePointer>(parent, offset) {
 
-    override var pointer: UBytePointer? = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+    override var pointer: UBytePointer? = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
         when (val value = initialValue()) {
             null -> null
-            else -> takeUBytePointer(value, ::updateOwnersArc)
+            else -> takePointer(value, ::updateOwnersArc)
         }
     } else {
-        ubytePointerOf(ownerArc, offset, ::updateOwnersArc)
+        ubytePointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {

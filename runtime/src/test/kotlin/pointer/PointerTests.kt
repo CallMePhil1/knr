@@ -3,7 +3,10 @@ package pointer
 import com.github.callmephil.knr.runtime.typing.pointer.Pointer
 import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.shareWith
+import com.github.callmephil.knr.runtime.typing.pointer.takePointer
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class PointerTests {
     @Test
@@ -46,5 +49,19 @@ class PointerTests {
         pointer2.dispose()
 
         assert(pointer2.refCount == 0)
+    }
+
+    @Test
+    fun `GIVEN a pointer WHEN taking the pointer THEN the old pointer should be disposed and new pointer points to arc`() {
+        val bytePointer = bytePointerOf(100)
+
+        assertEquals(1, bytePointer.refCount)
+
+        val newBytePointer = takePointer(bytePointer)
+
+        assertEquals(0, bytePointer.refCount)
+        assertTrue(bytePointer.isNotValid)
+
+        assertEquals(1, newBytePointer.refCount)
     }
 }

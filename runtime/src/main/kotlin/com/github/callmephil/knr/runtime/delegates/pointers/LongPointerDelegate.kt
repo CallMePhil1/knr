@@ -2,26 +2,24 @@ package com.github.callmephil.knr.runtime.delegates.pointers
 
 import com.github.callmephil.knr.runtime.delegates.NullablePointerFieldDelegate
 import com.github.callmephil.knr.runtime.delegates.PointerFieldDelegate
-import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.typing.Struct
 import com.github.callmephil.knr.runtime.typing.pointer.LongPointer
 import com.github.callmephil.knr.runtime.typing.pointer.ULongPointer
 import com.github.callmephil.knr.runtime.typing.pointer.longPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.takeBytePointer
-import com.github.callmephil.knr.runtime.typing.pointer.takeLongPointer
-import com.github.callmephil.knr.runtime.typing.pointer.takeULongPointer
+import com.github.callmephil.knr.runtime.typing.pointer.takePointer
 import com.github.callmephil.knr.runtime.typing.pointer.ulongPointerOf
 import java.lang.foreign.MemorySegment
 
 class LongPointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> LongPointer
-) : PointerFieldDelegate<Long, LongPointer>(ownerArc, offset) {
+) : PointerFieldDelegate<Long, LongPointer>(parent, offset) {
 
-    override var pointer: LongPointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
-        takeLongPointer(initialValue(), ::updateOwnersArc)
+    override var pointer: LongPointer = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
+        takePointer(initialValue(), ::updateOwnersArc)
     } else {
-        longPointerOf(ownerArc, offset, ::updateOwnersArc)
+        longPointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -30,18 +28,18 @@ class LongPointerDelegate internal constructor(
 }
 
 class NullableLongPointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> LongPointer?
-) : NullablePointerFieldDelegate<Long, LongPointer>(ownerArc, offset) {
+) : NullablePointerFieldDelegate<Long, LongPointer>(parent, offset) {
 
-    override var pointer: LongPointer? = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+    override var pointer: LongPointer? = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
         when (val value = initialValue()) {
             null -> null
-            else -> takeLongPointer(value, ::updateOwnersArc)
+            else -> takePointer(value, ::updateOwnersArc)
         }
     } else {
-        longPointerOf(ownerArc, offset, ::updateOwnersArc)
+        longPointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -50,15 +48,15 @@ class NullableLongPointerDelegate internal constructor(
 }
 
 class ULongPointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> ULongPointer
-) : PointerFieldDelegate<ULong, ULongPointer>(ownerArc, offset) {
+) : PointerFieldDelegate<ULong, ULongPointer>(parent, offset) {
 
-    override var pointer: ULongPointer = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
-        takeULongPointer(initialValue(), ::updateOwnersArc)
+    override var pointer: ULongPointer = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
+        takePointer(initialValue(), ::updateOwnersArc)
     } else {
-        ulongPointerOf(ownerArc, offset, ::updateOwnersArc)
+        ulongPointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {
@@ -67,18 +65,18 @@ class ULongPointerDelegate internal constructor(
 }
 
 class NullableULongPointerDelegate internal constructor(
-    ownerArc: ARC,
+    parent: Struct,
     offset: Long,
     initialValue: () -> ULongPointer?
-) : NullablePointerFieldDelegate<ULong, ULongPointer>(ownerArc, offset) {
+) : NullablePointerFieldDelegate<ULong, ULongPointer>(parent, offset) {
 
-    override var pointer: ULongPointer? = if (ownerArc.getAddress(offset) == MemorySegment.NULL) {
+    override var pointer: ULongPointer? = if (parent.arc.getAddress(offset) == MemorySegment.NULL) {
         when (val value = initialValue()) {
             null -> null
-            else -> takeULongPointer(value, ::updateOwnersArc)
+            else -> takePointer(value, ::updateOwnersArc)
         }
     } else {
-        ulongPointerOf(ownerArc, offset, ::updateOwnersArc)
+        ulongPointerOf(parent.arc, offset, ::updateOwnersArc)
     }
 
     init {

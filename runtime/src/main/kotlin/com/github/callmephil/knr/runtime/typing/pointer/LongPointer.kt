@@ -64,14 +64,6 @@ internal fun longPointerOf(
         this.onArcUpdated = onArcUpdated
     }
 }
-internal fun takeLongPointer(
-    pointer: LongPointer,
-    onArcUpdated: () -> Unit
-): LongPointer {
-    val newPointer = LongPointer(pointer.arc!!, onArcUpdated)
-    pointer.arc = null
-    return newPointer
-}
 
 // endregion
 
@@ -105,14 +97,6 @@ internal fun ulongPointerOf(
     return ULongPointer(arc).apply {
         this.onArcUpdated = onArcUpdated
     }
-}
-internal fun takeULongPointer(
-    pointer: ULongPointer,
-    onArcUpdated: () -> Unit
-): ULongPointer {
-    val newPointer = ULongPointer(pointer.arc!!, onArcUpdated)
-    pointer.arc = null
-    return newPointer
 }
 
 // endregion
