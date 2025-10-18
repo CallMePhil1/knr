@@ -16,11 +16,11 @@ abstract class NativeArray<T, C> internal constructor(
             throw IndexOutOfBoundsException()
     }
 
+    abstract fun getUnchecked(index: Int): T
     abstract operator fun get(index: Int): T
     abstract fun get(): C
-    abstract fun getArray(): Array<T>
-    fun getByteArray(): ByteArray = arc.memorySegment!!.toArray(ValueLayout.JAVA_BYTE)
 
+    abstract fun setUnchecked(index: Int, value: T)
     abstract operator fun set(index: Int, value: T)
     abstract fun set(value: C)
     abstract fun set(value: Array<T>)
@@ -28,6 +28,8 @@ abstract class NativeArray<T, C> internal constructor(
         checkBounds(value.size - 1)
         arc.setBytes(value)
     }
+
+    fun toByteArray(): ByteArray = arc.memorySegment!!.toArray(ValueLayout.JAVA_BYTE)
 
     override operator fun iterator(): Iterator<T> = NativeArrayIterator(this)
 
@@ -44,3 +46,5 @@ abstract class NativeArray<T, C> internal constructor(
         override fun hasNext() = _index >= nativeArray.size - 1
     }
 }
+
+inline fun <reified T> NativeArray<T, *>.toTypedArray(): Array<T> = Array(this.size) { this[it] }

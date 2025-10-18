@@ -1,6 +1,8 @@
 package typing.array
 
 import com.github.callmephil.knr.runtime.typing.array.ccharNativeArray
+import com.github.callmephil.knr.runtime.typing.array.toTypedArray
+import com.github.callmephil.knr.runtime.typing.array.ubyteNativeArray
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -27,5 +29,17 @@ class CCharNativeArrayTests {
         val array = ccharNativeArray(bytes, Charsets.UTF_8)
 
         assertEquals("testing", array.getString())
+    }
+
+    @Test
+    fun `GIVEN a UByteArray when calling toTypedArray THEN it should return a typed array`() {
+        val bytes = Charsets.UTF_8.encode("testing\u0000").array()
+        val nativeArray = ccharNativeArray(bytes, Charsets.UTF_8)
+
+        val typedArray = nativeArray.toTypedArray()
+
+        for (i in 0 ..< bytes.size) {
+            assertEquals(bytes[i], typedArray[i])
+        }
     }
 }

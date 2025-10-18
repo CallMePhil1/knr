@@ -9,16 +9,17 @@ class UIntNativeArray(
     arc: ARC
 ) : NativeArray<UInt, UIntArray>(arc, UInt.SIZE_BYTES) {
 
+    override fun getUnchecked(index: Int) = arc.getUInt(index.toLong() * typeByteSize)
     override operator fun get(index: Int): UInt {
         checkBounds(index)
-        return arc.getUInt(index.toLong() * typeByteSize)
+        return getUnchecked(index)
     }
-    override fun get() = UIntArray(size) { this[it] }
-    override fun getArray() = Array(size) { this[it] }
+    override fun get() = UIntArray(size) { getUnchecked(it) }
 
+    override fun setUnchecked(index: Int, value: UInt) = arc.setUInt(index.toLong() * typeByteSize, value)
     override operator fun set(index: Int, value: UInt) {
         checkBounds(index)
-        arc.setUInt(index.toLong() * typeByteSize, value)
+        setUnchecked(index, value)
     }
     override fun set(value: UIntArray) {
         checkBounds(value.size)
@@ -27,7 +28,7 @@ class UIntNativeArray(
     override fun set(value: Array<UInt>) {
         checkBounds(value.size)
         for(i in 0 .. size) {
-            this[i] = value[i]
+            this.setUnchecked(i, value[i])
         }
     }
 }

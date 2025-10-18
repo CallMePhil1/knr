@@ -1,10 +1,9 @@
-package pointer
+package typing.pointer
 
 import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.longPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.shortPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.takeFrom
 import com.github.callmephil.knr.runtime.typing.pointer.takePointer
 import kotlin.test.Test
 import kotlin.test.assertEquals

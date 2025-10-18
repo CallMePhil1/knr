@@ -52,6 +52,8 @@ fun cachedCCharNativeArray(initialValue: String, charset: Charset): CachedCCharN
     return cachedCCharNativeArray(arc, charset, initialValue)
 }
 fun cachedCCharNativeArray(array: ByteArray, charset: Charset, initialValue: String = charset.decode(ByteBuffer.wrap(array)).toString()): CachedCCharNativeArray {
+    if (array[array.lastIndex] != 0.toByte())
+        throw IllegalStateException("Tried to construct a CachedCCharNativeArray with a ByteArray not ending in a null char")
     val arc = ARC.shared(array.size.toLong())
     arc.setBytes(array)
     return cachedCCharNativeArray(arc, charset, initialValue)

@@ -8,32 +8,24 @@ open class UByteNativeArray internal constructor(
     arc: ARC,
 ) : NativeArray<UByte, UByteArray>(arc, UByte.SIZE_BYTES) {
 
+    override fun getUnchecked(index: Int) = arc.getUByte(index.toLong())
     override operator fun get(index: Int): UByte {
         checkBounds(index)
-        return arc.getUByte(index.toLong())
+        return getUnchecked(index)
     }
-    override fun get() = getByteArray().asUByteArray()
-    override fun getArray(): Array<UByte> {
-        val buffer = arc.asByteBuffer()
-        val arraySize = (arc.byteSize / typeByteSize).toInt()
+    override fun get() = toByteArray().asUByteArray()
 
-        val array = Array<UByte>(arraySize) { 0u }
-
-        for(i in 0 .. arraySize) {
-            array[i] = buffer.get().toUByte()
-        }
-
-        return array
-    }
-
+    override fun setUnchecked(index: Int, value: UByte) = arc.setUByte(index.toLong(), value)
     override operator fun set(index: Int, value: UByte) {
         checkBounds(index)
-        arc.setUByte(index.toLong(), value)
+        setUnchecked(index, value)
     }
     override fun set(value: UByteArray) = setByteArray(value.asByteArray())
     override fun set(value: Array<UByte>) {
         checkBounds(value.size)
-        value.forEachIndexed { idx, byte -> arc.setUByte(idx.toLong(), byte) }
+        for(i in 0 .. size) {
+            this.setUnchecked(i, value[i])
+        }
     }
 }
 

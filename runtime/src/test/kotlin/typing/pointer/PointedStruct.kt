@@ -1,4 +1,4 @@
-package pointer
+package typing.pointer
 
 import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.typing.Struct

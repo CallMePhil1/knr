@@ -7,16 +7,17 @@ class ShortNativeArray(
     arc: ARC
 ) : NativeArray<Short, ShortArray>(arc, Short.SIZE_BYTES) {
 
+    override fun getUnchecked(index: Int) = arc.getShort(index.toLong() * typeByteSize)
     override operator fun get(index: Int): Short {
         checkBounds(index)
-        return arc.getShort(index.toLong() * typeByteSize)
+        return getUnchecked(index)
     }
-    override fun get() = ShortArray(size) { this[it] }
-    override fun getArray() = Array(size) { this[it] }
+    override fun get() = ShortArray(size) { getUnchecked(it) }
 
+    override fun setUnchecked(index: Int, value: Short) = arc.setShort(index.toLong() * typeByteSize, value)
     override operator fun set(index: Int, value: Short) {
         checkBounds(index)
-        arc.setShort(index.toLong() * typeByteSize, value)
+        setUnchecked(index, value)
     }
     override fun set(value: ShortArray) {
         checkBounds(value.size)
@@ -25,7 +26,7 @@ class ShortNativeArray(
     override fun set(value: Array<Short>) {
         checkBounds(value.size)
         for(i in 0 .. size) {
-            this[i] = value[i]
+            this.setUnchecked(i, value[i])
         }
     }
 }

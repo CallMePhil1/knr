@@ -9,16 +9,17 @@ class UShortNativeArray(
     arc: ARC
 ) : NativeArray<UShort, UShortArray>(arc, UShort.SIZE_BYTES) {
 
+    override fun getUnchecked(index: Int) = arc.getUShort(index.toLong() * typeByteSize)
     override operator fun get(index: Int): UShort {
         checkBounds(index)
-        return arc.getUShort(index.toLong() * typeByteSize)
+        return getUnchecked(index)
     }
-    override fun get() = UShortArray(size) { this[it] }
-    override fun getArray() = Array(size) { this[it] }
+    override fun get() = UShortArray(size) { getUnchecked(it) }
 
+    override fun setUnchecked(index: Int, value: UShort) = arc.setUShort(index.toLong() * typeByteSize, value)
     override operator fun set(index: Int, value: UShort) {
         checkBounds(index)
-        arc.setUShort(index.toLong() * typeByteSize, value)
+        setUnchecked(index, value)
     }
     override fun set(value: UShortArray) {
         checkBounds(value.size)
@@ -27,7 +28,7 @@ class UShortNativeArray(
     override fun set(value: Array<UShort>) {
         checkBounds(value.size)
         for(i in 0 .. size) {
-            this[i] = value[i]
+            this.setUnchecked(i, value[i])
         }
     }
 }

@@ -7,16 +7,17 @@ class LongNativeArray(
     arc: ARC
 ) : NativeArray<Long, LongArray>(arc, Long.SIZE_BYTES) {
 
+    override fun getUnchecked(index: Int) = arc.getLong(index.toLong() * typeByteSize)
     override operator fun get(index: Int): Long {
         checkBounds(index)
-        return arc.getLong(index.toLong() * typeByteSize)
+        return getUnchecked(index)
     }
-    override fun get() = LongArray(size) { this[it] }
-    override fun getArray() = Array(size) { this[it] }
+    override fun get() = LongArray(size) { getUnchecked(it) }
 
+    override fun setUnchecked(index: Int, value: Long) = arc.setLong(index.toLong() * typeByteSize, value)
     override operator fun set(index: Int, value: Long) {
         checkBounds(index)
-        arc.setLong(index.toLong() * typeByteSize, value)
+        setUnchecked(index, value)
     }
     override fun set(value: LongArray) {
         checkBounds(value.size)
@@ -25,7 +26,7 @@ class LongNativeArray(
     override fun set(value: Array<Long>) {
         checkBounds(value.size)
         for(i in 0 .. size) {
-            this[i] = value[i]
+            this.setUnchecked(i, value[i])
         }
     }
 }

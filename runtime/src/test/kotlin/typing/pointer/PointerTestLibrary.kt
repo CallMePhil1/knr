@@ -1,4 +1,4 @@
-package pointer
+package typing.pointer
 
 import com.github.callmephil.knr.runtime.ext.downcallHandle
 import com.github.callmephil.knr.runtime.typing.pointer.Pointer

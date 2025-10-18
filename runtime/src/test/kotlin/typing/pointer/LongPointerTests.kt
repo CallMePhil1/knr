@@ -1,4 +1,4 @@
-package pointer
+package typing.pointer
 
 import com.github.callmephil.knr.runtime.typing.pointer.longPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.takeFrom
