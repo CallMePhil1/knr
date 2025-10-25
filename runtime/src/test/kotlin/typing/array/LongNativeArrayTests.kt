@@ -24,7 +24,7 @@ class LongNativeArrayTests {
     fun `GIVEN a LongNativeArray WHEN getting its size THEN it should return correct size`() {
         val longArray = longNativeArray(10)
         assertEquals(10, longArray.size)
-        assertEquals(80, longArray.arc.memorySegment!!.byteSize())
+        assertEquals(80, longArray.memory.memorySegment!!.byteSize())
     }
 
     @Test

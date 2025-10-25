@@ -1,6 +1,6 @@
 package string
 
-import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.memory.ArenaMemory
 import com.github.callmephil.knr.runtime.native.StringLib
 import com.github.callmephil.knr.runtime.typing.cachedCStringOf
 import java.lang.foreign.Arena
@@ -28,14 +28,14 @@ class CachedCStringTests {
     }
 
     @Test
-    fun `GIVEN a CachedCString WHEN pointing to another ARC THEN it should succeed`() {
+    fun `GIVEN a CachedCString WHEN pointing to another ArenaMemory THEN it should succeed`() {
         val str = cachedCStringOf("")
 
         assertEquals("", str.get())
 
-        val arc = ARC.string("testing", Charsets.UTF_8)
+        val memory = ArenaMemory.string("testing", Charsets.UTF_8)
 
-        str.pointTo(arc)
+        str.pointTo(memory)
         str.updateCache()
         assertEquals("testing", str.get())
     }
@@ -65,21 +65,21 @@ class CachedCStringTests {
         Arena.ofConfined().use {
             val struct = StringStruct.allocate(it)
             val pointer1 = cachedCStringOf("testing")
-            val pointer1Address = pointer1.arc!!.memorySegment!!.address()
+            val pointer1Address = pointer1.memory!!.memorySegment!!.address()
             val pointer2 = cachedCStringOf("testing2")
-            val pointer2Address = pointer2.arc!!.memorySegment!!.address()
+            val pointer2Address = pointer2.memory!!.memorySegment!!.address()
 
             struct.cachedStrPointer = pointer1
             struct.cachedStrPointer.updateCache()
 
             assertEquals("testing", struct.cachedStrPointer.get())
-            assertEquals(struct.arc.getAddress(8).address(), pointer1Address)
+            assertEquals(struct.memory.getAddress(8).address(), pointer1Address)
 
             struct.cachedStrPointer = pointer2
             struct.cachedStrPointer.updateCache()
 
             assertEquals("testing2", struct.cachedStrPointer.get())
-            assertEquals(struct.arc.getAddress(8).address(), pointer2Address)
+            assertEquals(struct.memory.getAddress(8).address(), pointer2Address)
         }
     }
 }

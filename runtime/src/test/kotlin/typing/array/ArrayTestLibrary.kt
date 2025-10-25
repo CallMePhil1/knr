@@ -143,58 +143,58 @@ object ArrayTestLibrary {
     )
 
     fun getByte(array: ByteNativeArray, index: Int) =
-        getByteHandle.invokeExact(array.arc.memorySegment, index) as Byte
+        getByteHandle.invokeExact(array.memory.memorySegment, index) as Byte
 
     fun setByte(array: ByteNativeArray, index: Int, value: Byte) {
-        setByteHandle.invokeExact(array.arc.memorySegment, index, value)
+        setByteHandle.invokeExact(array.memory.memorySegment, index, value)
     }
 
     fun getUByte(array: UByteNativeArray, index: Int) =
-        (getUByteHandle.invokeExact(array.arc.memorySegment, index) as Byte).toUByte()
+        (getUByteHandle.invokeExact(array.memory.memorySegment, index) as Byte).toUByte()
 
     fun setUByte(array: UByteNativeArray, index: Int, value: UByte) {
-        setUByteHandle.invokeExact(array.arc.memorySegment, index, value.toByte())
+        setUByteHandle.invokeExact(array.memory.memorySegment, index, value.toByte())
     }
 
     fun getShort(array: ShortNativeArray, index: Int) =
-        getShortHandle.invokeExact(array.arc.memorySegment, index) as Short
+        getShortHandle.invokeExact(array.memory.memorySegment, index) as Short
 
     fun setShort(array: ShortNativeArray, index: Int, value: Short) {
-        setShortHandle.invokeExact(array.arc.memorySegment, index, value)
+        setShortHandle.invokeExact(array.memory.memorySegment, index, value)
     }
 
     fun getUShort(array: UShortNativeArray, index: Int) =
-        (getUShortHandle.invokeExact(array.arc.memorySegment, index) as Short).toUShort()
+        (getUShortHandle.invokeExact(array.memory.memorySegment, index) as Short).toUShort()
 
     fun setUShort(array: UShortNativeArray, index: Int, value: UShort) {
-        setUShortHandle.invokeExact(array.arc.memorySegment, index, value.toShort())
+        setUShortHandle.invokeExact(array.memory.memorySegment, index, value.toShort())
     }
 
     fun getInt(array: IntNativeArray, index: Int) =
-        getIntHandle.invokeExact(array.arc.memorySegment, index) as Int
+        getIntHandle.invokeExact(array.memory.memorySegment, index) as Int
 
     fun setInt(array: IntNativeArray, index: Int, value: Int) {
-        setIntHandle.invokeExact(array.arc.memorySegment, index, value)
+        setIntHandle.invokeExact(array.memory.memorySegment, index, value)
     }
 
     fun getUInt(array: UIntNativeArray, index: Int) =
-        (getUIntHandle.invokeExact(array.arc.memorySegment, index) as Int).toUInt()
+        (getUIntHandle.invokeExact(array.memory.memorySegment, index) as Int).toUInt()
 
     fun setUInt(array: UIntNativeArray, index: Int, value: UInt) {
-        setUIntHandle.invokeExact(array.arc.memorySegment, index, value.toInt())
+        setUIntHandle.invokeExact(array.memory.memorySegment, index, value.toInt())
     }
 
     fun getLong(array: LongNativeArray, index: Int) =
-        getLongHandle.invokeExact(array.arc.memorySegment, index) as Long
+        getLongHandle.invokeExact(array.memory.memorySegment, index) as Long
 
     fun setLong(array: LongNativeArray, index: Int, value: Long) {
-        setLongHandle.invokeExact(array.arc.memorySegment, index, value)
+        setLongHandle.invokeExact(array.memory.memorySegment, index, value)
     }
 
     fun getULong(array: ULongNativeArray, index: Int) =
-        (getULongHandle.invokeExact(array.arc.memorySegment, index) as Long).toULong()
+        (getULongHandle.invokeExact(array.memory.memorySegment, index) as Long).toULong()
 
     fun setULong(array: ULongNativeArray, index: Int, value: ULong) {
-        setULongHandle.invokeExact(array.arc.memorySegment, index, value.toLong())
+        setULongHandle.invokeExact(array.memory.memorySegment, index, value.toLong())
     }
 }

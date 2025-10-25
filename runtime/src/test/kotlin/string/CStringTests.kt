@@ -1,6 +1,6 @@
 package string
 
-import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.memory.ArenaMemory
 import com.github.callmephil.knr.runtime.native.StringLib
 import com.github.callmephil.knr.runtime.typing.cstringOf
 import java.lang.foreign.Arena
@@ -27,14 +27,14 @@ class CStringTests {
     }
 
     @Test
-    fun `GIVEN a CString WHEN pointing to another ARC THEN it should succeed`() {
+    fun `GIVEN a CString WHEN pointing to another ArenaMemory THEN it should succeed`() {
         val str = cstringOf("")
 
-        val arc = ARC.string("testing", Charsets.UTF_8)
+        val memory = ArenaMemory.string("testing", Charsets.UTF_8)
 
         assertEquals("", str.get())
 
-        str.pointTo(arc)
+        str.pointTo(memory)
         assertEquals("testing", str.get())
     }
 
@@ -70,19 +70,19 @@ class CStringTests {
         Arena.ofConfined().use {
             val struct = StringStruct.allocate(it)
             val pointer1 = cstringOf("testing")
-            val pointer1Address = pointer1.arc!!.memorySegment!!.address()
+            val pointer1Address = pointer1.memory!!.memorySegment!!.address()
             val pointer2 = cstringOf("testing2")
-            val pointer2Address = pointer2.arc!!.memorySegment!!.address()
+            val pointer2Address = pointer2.memory!!.memorySegment!!.address()
 
             struct.strPointer = pointer1
 
             assertEquals("testing", struct.strPointer.get())
-            assertEquals(struct.arc.getAddress(0).address(), pointer1Address)
+            assertEquals(struct.memory.getAddress(0).address(), pointer1Address)
 
             struct.strPointer = pointer2
 
             assertEquals("testing2", struct.strPointer.get())
-            assertEquals(struct.arc.getAddress(0).address(), pointer2Address)
+            assertEquals(struct.memory.getAddress(0).address(), pointer2Address)
         }
     }
 }

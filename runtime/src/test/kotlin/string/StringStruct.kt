@@ -1,17 +1,19 @@
 package string
 
-import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.memory.Memory
 import com.github.callmephil.knr.runtime.typing.Struct
 import com.github.callmephil.knr.runtime.typing.StructCompanion
+import com.github.callmephil.knr.runtime.typing.cachedCStringOf
+import com.github.callmephil.knr.runtime.typing.cstringOf
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.StructLayout
 import java.lang.foreign.ValueLayout
 
 class StringStruct(
-    arc: ARC
-) : Struct(arc) {
-    var strPointer by cstringField(0, Charsets.UTF_8, "")
-    var cachedStrPointer by cachedCStringField(8, Charsets.UTF_8, "")
+    memory: Memory
+) : Struct(memory) {
+    var strPointer by cstringField(0, cstringOf(""))
+    var cachedStrPointer by cachedCStringField(8, cachedCStringOf(""))
 
     companion object : StructCompanion<StringStruct> {
         override val layout: StructLayout = MemoryLayout.structLayout(
@@ -19,6 +21,6 @@ class StringStruct(
             ValueLayout.ADDRESS.withName("cached_str_ptr")
         )
 
-        override fun wrap(arc: ARC) = StringStruct(arc)
+        override fun wrap(memory: Memory) = StringStruct(memory)
     }
 }

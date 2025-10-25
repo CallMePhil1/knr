@@ -24,7 +24,7 @@ class UByteNativeArrayTests {
     fun `GIVEN a UByteNativeArray WHEN getting its size THEN it should return correct size`() {
         val ubyteArray = ubyteNativeArray(10)
         assertEquals(10, ubyteArray.size)
-        assertEquals(10, ubyteArray.arc.memorySegment!!.byteSize())
+        assertEquals(10, ubyteArray.memory.memorySegment!!.byteSize())
     }
 
     @Test

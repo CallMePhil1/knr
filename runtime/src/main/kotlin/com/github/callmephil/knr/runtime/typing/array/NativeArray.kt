@@ -1,15 +1,15 @@
 package com.github.callmephil.knr.runtime.typing.array
 
-import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.memory.Memory
 import com.github.callmephil.knr.runtime.memory.Native
 import java.lang.foreign.ValueLayout
 
 abstract class NativeArray<T, C> internal constructor(
-    arc: ARC,
+    memory: Memory,
     val typeByteSize: Int
-) : Native(arc), Iterable<T> {
+) : Native(memory), Iterable<T> {
 
-    val size: Int = (arc.byteSize / typeByteSize).toInt()
+    val size: Int = (memory.byteSize / typeByteSize).toInt()
 
     protected fun checkBounds(target: Int) {
         if (size <= target)
@@ -26,10 +26,10 @@ abstract class NativeArray<T, C> internal constructor(
     abstract fun set(value: Array<T>)
     fun setByteArray(value: ByteArray) {
         checkBounds(value.size - 1)
-        arc.setBytes(value)
+        memory.setBytes(value)
     }
 
-    fun toByteArray(): ByteArray = arc.memorySegment!!.toArray(ValueLayout.JAVA_BYTE)
+    fun toByteArray(): ByteArray = memory.memorySegment!!.toArray(ValueLayout.JAVA_BYTE)
 
     override operator fun iterator(): Iterator<T> = NativeArrayIterator(this)
 

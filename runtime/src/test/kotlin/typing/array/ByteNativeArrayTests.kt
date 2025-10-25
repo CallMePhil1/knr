@@ -24,7 +24,7 @@ class ByteNativeArrayTests {
     fun `GIVEN a ByteNativeArray WHEN getting its size THEN it should return correct size`() {
         val byteArray = byteNativeArray(10)
         assertEquals(10, byteArray.size)
-        assertEquals(10, byteArray.arc.memorySegment!!.byteSize())
+        assertEquals(10, byteArray.memory.memorySegment!!.byteSize())
     }
 
     @Test

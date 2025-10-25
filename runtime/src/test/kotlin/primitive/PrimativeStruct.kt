@@ -1,6 +1,7 @@
 package primitive
 
 import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.memory.Memory
 import com.github.callmephil.knr.runtime.typing.Struct
 import com.github.callmephil.knr.runtime.typing.StructCompanion
 import java.lang.foreign.MemoryLayout
@@ -8,23 +9,23 @@ import java.lang.foreign.StructLayout
 import java.lang.foreign.ValueLayout
 
 class PrimitiveStruct(
-    arc: ARC
-) : Struct(arc) {
+    memory: Memory
+) : Struct(memory) {
 
     var c by byteField(0)
-    var uc by uByteField(1)
+    var uc by ubyteField(1)
 
     var s by shortField(2)
-    var us by uShortField(4)
+    var us by ushortField(4)
 
     var i by intField(8)
-    var ui by uIntField(12)
+    var ui by uintField(12)
 
     var l by intField(16)
-    var ul by uIntField(20)
+    var ul by uintField(20)
 
     var ll by longField(24)
-    var ull by uLongField(32)
+    var ull by ulongField(32)
 
     var f by floatField(40)
     var d by doubleField(48)
@@ -51,6 +52,6 @@ class PrimitiveStruct(
             MemoryLayout.paddingLayout(7)
         )
 
-        override fun wrap(arc: ARC) = PrimitiveStruct(arc)
+        override fun wrap(memory: Memory) = PrimitiveStruct(memory)
     }
 }

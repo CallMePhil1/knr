@@ -1,27 +1,28 @@
 package com.github.callmephil.knr.runtime.typing.array
 
-import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.memory.ArenaMemory
+import com.github.callmephil.knr.runtime.memory.Memory
 import java.lang.foreign.MemorySegment
 
 class LongNativeArray(
-    arc: ARC
-) : NativeArray<Long, LongArray>(arc, Long.SIZE_BYTES) {
+    memory: Memory
+) : NativeArray<Long, LongArray>(memory, Long.SIZE_BYTES) {
 
-    override fun getUnchecked(index: Int) = arc.getLong(index.toLong() * typeByteSize)
+    override fun getUnchecked(index: Int) = memory.getLong(index.toLong() * typeByteSize)
     override operator fun get(index: Int): Long {
         checkBounds(index)
         return getUnchecked(index)
     }
     override fun get() = LongArray(size) { getUnchecked(it) }
 
-    override fun setUnchecked(index: Int, value: Long) = arc.setLong(index.toLong() * typeByteSize, value)
+    override fun setUnchecked(index: Int, value: Long) = memory.setLong(index.toLong() * typeByteSize, value)
     override operator fun set(index: Int, value: Long) {
         checkBounds(index)
         setUnchecked(index, value)
     }
     override fun set(value: LongArray) {
         checkBounds(value.size)
-        arc.memorySegment!!.copyFrom(MemorySegment.ofArray(value))
+        memory.memorySegment!!.copyFrom(MemorySegment.ofArray(value))
     }
     override fun set(value: Array<Long>) {
         checkBounds(value.size)
@@ -31,10 +32,10 @@ class LongNativeArray(
     }
 }
 
-fun longNativeArray(arc: ARC) = LongNativeArray(arc)
-fun longNativeArray(size: Long) = longNativeArray(ARC.shared(size * Long.SIZE_BYTES))
+fun longNativeArray(memory: Memory) = LongNativeArray(memory)
+fun longNativeArray(size: Long) = longNativeArray(ArenaMemory.allocate(size * Long.SIZE_BYTES))
 fun longNativeArray(array: LongArray): LongNativeArray {
-    val arc = ARC.shared((array.size * Long.SIZE_BYTES).toLong())
-    arc.memorySegment!!.copyFrom(MemorySegment.ofArray(array))
-    return longNativeArray(arc)
+    val memory = ArenaMemory.allocate((array.size * Long.SIZE_BYTES).toLong())
+    memory.memorySegment!!.copyFrom(MemorySegment.ofArray(array))
+    return longNativeArray(memory)
 }

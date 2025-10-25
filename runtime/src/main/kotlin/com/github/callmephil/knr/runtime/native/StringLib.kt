@@ -20,24 +20,24 @@ object StringLib {
 
     fun compare(cString1: Pointer<String>, cString2: Pointer<String>): Int {
         when {
-            cString1.arc!!.isNull -> throw NullPointerException("cString1 is NULL")
-            cString2.arc!!.isNull -> throw NullPointerException("cString2 is NULL")
+            cString1.memory.isNull -> throw NullPointerException("cString1 is NULL")
+            cString2.memory.isNull -> throw NullPointerException("cString2 is NULL")
         }
-        return strcmpHandle.invokeExact(cString1.arc!!.memorySegment, cString2.arc!!.memorySegment) as Int
+        return strcmpHandle.invokeExact(cString1.memory.memorySegment, cString2.memory.memorySegment) as Int
     }
 
     fun equal(cString1: Pointer<String>, cString2: Pointer<String>): Boolean {
         when {
-            cString1.arc!!.isNull -> throw NullPointerException("cString1 is NULL")
-            cString2.arc!!.isNull -> throw NullPointerException("cString2 is NULL")
+            cString1.memory.isNull -> throw NullPointerException("cString1 is NULL")
+            cString2.memory.isNull -> throw NullPointerException("cString2 is NULL")
         }
-        val result = strcmpHandle.invokeExact(cString1.arc!!.memorySegment, cString2.arc!!.memorySegment) as Int
+        val result = strcmpHandle.invokeExact(cString1.memory.memorySegment, cString2.memory.memorySegment) as Int
         return result == 0
     }
 
     fun length(cString: Pointer<String>): Long {
-        if (cString.arc?.isNull == true)
+        if (cString.memory.isNull)
             throw NullPointerException("Tried to get a null string's length via strlen")
-        return strlenHandle.invokeExact(cString.arc!!.memorySegment) as Long
+        return strlenHandle.invokeExact(cString.memory.memorySegment) as Long
     }
 }

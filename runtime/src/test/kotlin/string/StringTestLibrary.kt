@@ -30,8 +30,8 @@ object StringTestLibrary {
     )
 
     fun areStringsEqual(str1: Pointer<String>, str2: Pointer<String>) =
-        areStrsEqualHandle.invokeExact(str1.arc!!.memorySegment, str2.arc!!.memorySegment) as Boolean
+        areStrsEqualHandle.invokeExact(str1.memory.memorySegment, str2.memory.memorySegment) as Boolean
 
     fun structStringEqual(stringStruct: StringStruct, str: Pointer<String>) =
-        structStringEqualHandle.invokeExact(stringStruct.arc.memorySegment, str.arc!!.memorySegment) as Boolean
+        structStringEqualHandle.invokeExact(stringStruct.memory.memorySegment, str.memory.memorySegment) as Boolean
 }

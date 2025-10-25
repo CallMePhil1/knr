@@ -24,7 +24,7 @@ class ShortNativeArrayTests {
     fun `GIVEN a ShortNativeArray WHEN getting its size THEN it should return correct size`() {
         val shortArray = shortNativeArray(10)
         assertEquals(10, shortArray.size)
-        assertEquals(20, shortArray.arc.memorySegment!!.byteSize())
+        assertEquals(20, shortArray.memory.memorySegment!!.byteSize())
     }
 
     @Test

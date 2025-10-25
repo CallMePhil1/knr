@@ -1,21 +1,21 @@
 package com.github.callmephil.knr.runtime.memory
 
 abstract class Native internal constructor(
-    arc: ARC
+    memory: Memory
 ) : AutoCloseable {
-    private var _arc: ARC? = arc
 
-    val arc: ARC
-        get() = checkNotNull(_arc) { "Tried to access a Native object that was disposed of" }
+    internal open var innerMemory: Memory? = memory
 
-    val isValid get() = _arc != null
-    val isNotValid get() = _arc == null
-    val refCount get() = _arc?.counter ?: 0
+    val memory: Memory
+        get() = checkNotNull(innerMemory) { "Tried to access a Native object that was disposed of" }
+
+    val isValid get() = innerMemory != null
+    val isNotValid get() = !isValid
 
     override fun close() = dispose()
 
     open fun dispose() {
-        _arc?.decrementCount()
-        _arc = null
+        innerMemory?.dispose()
+        innerMemory = null
     }
 }

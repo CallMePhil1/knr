@@ -4,12 +4,10 @@ import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.longPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.shortPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.takePointer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 class StructPointerTests {
     @Test
@@ -190,37 +188,4 @@ class StructPointerTests {
         assertEquals(2000, PointerTestLibrary.getNullableLongViaPointerFromStruct(allPointersDirect))
 
     }
-
-    @Test
-    fun `GIVEN a struct WHEN disposing of the struct THEN all it should become invalid`() {
-        val struct = AllPointers.allocateConfined()
-
-        assertEquals(1, struct.refCount)
-        assertEquals(1, struct.b.refCount)
-
-        struct.dispose()
-
-        assertEquals(0, struct.refCount)
-        assertEquals(0, struct.b.refCount)
-        assertTrue(struct.isNotValid)
-
-        assertFailsWith<IllegalStateException> { struct.verifyIsValid() }
-    }
-
-    @Test
-    fun `GIVEN a struct with an invalid pointer delegate WHEN verifying the struct THEN all it should fail`() {
-        val struct = AllPointers.allocateConfined()
-
-        assertEquals(1, struct.refCount)
-        assertEquals(1, struct.b.refCount)
-
-        val bytePointer = takePointer(struct.b)
-
-        assertEquals(1, bytePointer.refCount)
-        assertEquals(1, struct.refCount)
-        assertEquals(0, struct.b.refCount)
-
-        assertFailsWith<IllegalStateException> { struct.verifyIsValid() }
-    }
-
 }

@@ -24,7 +24,7 @@ class UIntNativeArrayTests {
     fun `GIVEN a UIntNativeArray WHEN getting its size THEN it should return correct size`() {
         val uintArray = uintNativeArray(10)
         assertEquals(10, uintArray.size)
-        assertEquals(40, uintArray.arc.memorySegment!!.byteSize())
+        assertEquals(40, uintArray.memory.memorySegment!!.byteSize())
     }
 
     @Test

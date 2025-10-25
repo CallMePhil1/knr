@@ -2,20 +2,21 @@
 
 package com.github.callmephil.knr.runtime.typing.array
 
-import com.github.callmephil.knr.runtime.memory.ARC
+import com.github.callmephil.knr.runtime.memory.ArenaMemory
+import com.github.callmephil.knr.runtime.memory.Memory
 
 open class UByteNativeArray internal constructor(
-    arc: ARC,
-) : NativeArray<UByte, UByteArray>(arc, UByte.SIZE_BYTES) {
+    memory: Memory,
+) : NativeArray<UByte, UByteArray>(memory, UByte.SIZE_BYTES) {
 
-    override fun getUnchecked(index: Int) = arc.getUByte(index.toLong())
+    override fun getUnchecked(index: Int) = memory.getUByte(index.toLong())
     override operator fun get(index: Int): UByte {
         checkBounds(index)
         return getUnchecked(index)
     }
     override fun get() = toByteArray().asUByteArray()
 
-    override fun setUnchecked(index: Int, value: UByte) = arc.setUByte(index.toLong(), value)
+    override fun setUnchecked(index: Int, value: UByte) = memory.setUByte(index.toLong(), value)
     override operator fun set(index: Int, value: UByte) {
         checkBounds(index)
         setUnchecked(index, value)
@@ -29,10 +30,10 @@ open class UByteNativeArray internal constructor(
     }
 }
 
-fun ubyteNativeArray(arc: ARC) = UByteNativeArray(arc)
-fun ubyteNativeArray(size: Long) = ubyteNativeArray(ARC.shared(size))
+fun ubyteNativeArray(memory: Memory) = UByteNativeArray(memory)
+fun ubyteNativeArray(size: Long) = ubyteNativeArray(ArenaMemory.allocate(size))
 fun ubyteNativeArray(array: UByteArray): UByteNativeArray {
-    val arc = ARC.shared(array.size.toLong())
-    arc.setBytes(array.asByteArray())
-    return ubyteNativeArray(arc)
+    val memory = ArenaMemory.allocate(array.size.toLong())
+    memory.setBytes(array.asByteArray())
+    return ubyteNativeArray(memory)
 }

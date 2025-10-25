@@ -24,7 +24,7 @@ class ULongNativeArrayTests {
     fun `GIVEN a ULongNativeArray WHEN getting its size THEN it should return correct size`() {
         val ulongArray = ulongNativeArray(10)
         assertEquals(10, ulongArray.size)
-        assertEquals(80, ulongArray.arc.memorySegment!!.byteSize())
+        assertEquals(80, ulongArray.memory.memorySegment!!.byteSize())
     }
 
     @Test
