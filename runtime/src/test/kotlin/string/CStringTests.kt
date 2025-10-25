@@ -70,9 +70,9 @@ class CStringTests {
         Arena.ofConfined().use {
             val struct = StringStruct.allocate(it)
             val pointer1 = cstringOf("testing")
-            val pointer1Address = pointer1.memory!!.memorySegment!!.address()
+            val pointer1Address = pointer1.memory.memorySegment!!.address()
             val pointer2 = cstringOf("testing2")
-            val pointer2Address = pointer2.memory!!.memorySegment!!.address()
+            val pointer2Address = pointer2.memory.memorySegment!!.address()
 
             struct.strPointer = pointer1
 

@@ -1,6 +1,5 @@
 package typing.pointer
 
-import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.memory.Memory
 import com.github.callmephil.knr.runtime.typing.Struct
 import com.github.callmephil.knr.runtime.typing.StructCompanion
@@ -12,9 +11,7 @@ import com.github.callmephil.knr.runtime.typing.pointer.ubytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.uintPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.ulongPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.ushortPointerOf
-import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
-import java.lang.foreign.MemorySegment
 import java.lang.foreign.StructLayout
 import java.lang.foreign.ValueLayout
 

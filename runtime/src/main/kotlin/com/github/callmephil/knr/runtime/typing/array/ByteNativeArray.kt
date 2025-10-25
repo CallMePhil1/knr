@@ -1,6 +1,5 @@
 package com.github.callmephil.knr.runtime.typing.array
 
-import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.memory.ArenaMemory
 import com.github.callmephil.knr.runtime.memory.Memory
 

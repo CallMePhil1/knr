@@ -1,6 +1,5 @@
 package primitive
 
-import com.github.callmephil.knr.runtime.memory.ARC
 import com.github.callmephil.knr.runtime.memory.Memory
 import com.github.callmephil.knr.runtime.typing.Struct
 import com.github.callmephil.knr.runtime.typing.StructCompanion
