@@ -6,26 +6,26 @@ import java.lang.foreign.ValueLayout
 
 class BytePointer internal constructor(
     memory: Memory,
-    onArcUpdated: (() -> Unit)? = null
-) : Pointer<Byte>(memory, onArcUpdated) {
+    onPointerUpdated: (() -> Unit)? = null
+) : Pointer<Byte>(memory, onPointerUpdated) {
 
     override fun get() = memory.getByte(0)
 
     override fun set(value: Byte) = memory.setByte(0, value)
 
-    override fun copyOf() = bytePointerOf(get())
+    override fun clone() = bytePointerOf(get())
 }
 
 class UBytePointer internal constructor(
     memory: Memory,
-    onArcUpdated: (() -> Unit)? = null
-) : Pointer<UByte>(memory, onArcUpdated) {
+    onPointerUpdated: (() -> Unit)? = null
+) : Pointer<UByte>(memory, onPointerUpdated) {
 
     override fun get() = memory.getByte(0).toUByte()
 
     override fun set(value: UByte) = memory.setByte(0, value.toByte())
 
-    override fun copyOf() = ubytePointerOf(get())
+    override fun clone() = ubytePointerOf(get())
 }
 
 // region Byte Pointer
@@ -36,8 +36,8 @@ fun bytePointerOf(value: Byte, memory: Memory = ArenaMemory.allocate(ValueLayout
 }
 internal fun bytePointerOf(
     value: Byte,
-    onArcUpdate: () -> Unit
-) = BytePointer(ArenaMemory.allocate(ValueLayout.JAVA_BYTE), onArcUpdate).apply {
+    onPointerUpdated: () -> Unit
+) = BytePointer(ArenaMemory.allocate(ValueLayout.JAVA_BYTE), onPointerUpdated).apply {
     set(value)
 }
 
@@ -51,8 +51,8 @@ fun ubytePointerOf(value: UByte, memory: Memory = ArenaMemory.allocate(ValueLayo
 }
 internal fun ubytePointerOf(
     value: UByte,
-    onArcUpdate: () -> Unit
-) = UBytePointer(ArenaMemory.allocate(ValueLayout.JAVA_BYTE), onArcUpdate).apply {
+    onPointerUpdated: () -> Unit
+) = UBytePointer(ArenaMemory.allocate(ValueLayout.JAVA_BYTE), onPointerUpdated).apply {
     set(value)
 }
 

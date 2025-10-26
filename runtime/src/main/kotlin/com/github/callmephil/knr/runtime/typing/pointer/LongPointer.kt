@@ -6,26 +6,26 @@ import java.lang.foreign.ValueLayout
 
 class LongPointer internal constructor(
     arc: Memory,
-    onArcUpdated: (() -> Unit)? = null
-) : Pointer<Long>(arc, onArcUpdated) {
+    onPointerUpdated: (() -> Unit)? = null
+) : Pointer<Long>(arc, onPointerUpdated) {
 
     override fun get() = memory.getLong(0)
 
     override fun set(value: Long) = memory.setLong(0, value)
 
-    override fun copyOf() = longPointerOf(get())
+    override fun clone() = longPointerOf(get())
 }
 
 class ULongPointer internal constructor(
     arc: Memory,
-    onArcUpdated: (() -> Unit)? = null
-) : Pointer<ULong>(arc, onArcUpdated) {
+    onPointerUpdated: (() -> Unit)? = null
+) : Pointer<ULong>(arc, onPointerUpdated) {
 
     override fun get() = memory.getLong(0).toULong()
 
     override fun set(value: ULong) = memory.setLong(0, value.toLong())
 
-    override fun copyOf() = ulongPointerOf(get())
+    override fun clone() = ulongPointerOf(get())
 }
 
 // region Long Pointer

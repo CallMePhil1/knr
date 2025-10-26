@@ -6,26 +6,26 @@ import java.lang.foreign.ValueLayout
 
 class IntPointer internal constructor(
     arc: Memory,
-    onArcUpdated: (() -> Unit)? = null
-) : Pointer<Int>(arc, onArcUpdated) {
+    onPointerUpdated: (() -> Unit)? = null
+) : Pointer<Int>(arc, onPointerUpdated) {
 
     override fun get() = memory.getInt(0)
 
     override fun set(value: Int) = memory.setInt(0, value)
 
-    override fun copyOf() = intPointerOf(get())
+    override fun clone() = intPointerOf(get())
 }
 
 class UIntPointer internal constructor(
     arc: Memory,
-    onArcUpdated: (() -> Unit)? = null
-) : Pointer<UInt>(arc, onArcUpdated) {
+    onPointerUpdated: (() -> Unit)? = null
+) : Pointer<UInt>(arc, onPointerUpdated) {
 
     override fun get() = memory.getInt(0).toUInt()
 
     override fun set(value: UInt) = memory.setInt(0, value.toInt())
 
-    override fun copyOf() = uintPointerOf(get())
+    override fun clone() = uintPointerOf(get())
 }
 
 // region Int Pointer

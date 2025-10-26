@@ -18,7 +18,7 @@ open class CString internal constructor(
         throw NotImplementedError("CString is immutable")
     }
 
-    override fun copyOf() = cstringOf(get(), charset)
+    override fun clone() = cstringOf(get(), charset)
 }
 
 class CachedCString(
@@ -30,7 +30,7 @@ class CachedCString(
 
     override fun get(): String = value
 
-    override fun copyOf() = cachedCStringOf(get(), charset)
+    override fun clone() = cachedCStringOf(get(), charset)
 
     fun updateCache() {
         checkNotNull(memory.memorySegment) { "Tried to update cache for CachedCString but it's pointing to NULL" }

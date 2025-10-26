@@ -6,26 +6,26 @@ import java.lang.foreign.ValueLayout
 
 class ShortPointer internal constructor(
     arc: Memory,
-    onArcUpdated: (()-> Unit)? = null
-) : Pointer<Short>(arc, onArcUpdated) {
+    onPointerUpdated: (()-> Unit)? = null
+) : Pointer<Short>(arc, onPointerUpdated) {
 
     override fun get() = memory.getShort(0)
 
     override fun set(value: Short) = memory.setShort(0, value)
 
-    override fun copyOf() = shortPointerOf(get())
+    override fun clone() = shortPointerOf(get())
 }
 
 class UShortPointer internal constructor(
     arc: Memory,
-    onArcUpdated: (()-> Unit)? = null
-) : Pointer<UShort>(arc, onArcUpdated) {
+    onPointerUpdated: (()-> Unit)? = null
+) : Pointer<UShort>(arc, onPointerUpdated) {
 
     override fun get() = memory.getShort(0).toUShort()
 
     override fun set(value: UShort) = memory.setShort(0, value.toShort())
 
-    override fun copyOf() = ushortPointerOf(get())
+    override fun clone() = ushortPointerOf(get())
 }
 
 // region Short Pointer
