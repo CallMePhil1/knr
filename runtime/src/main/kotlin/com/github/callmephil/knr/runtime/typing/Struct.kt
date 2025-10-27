@@ -134,16 +134,12 @@ abstract class Struct(
 interface StructCompanion<T : Struct> {
     val layout: StructLayout
 
-    fun allocate(arena: Arena): T {
+    fun allocate(): T {
+        val arena = Arena.ofShared()
         val segment = arena.allocate(layout)
         val memory = ArenaMemory(arena, segment)
         return wrap(memory)
     }
-
-    fun allocateAuto() = allocate(Arena.ofAuto())
-    fun allocateConfined() = allocate(Arena.ofConfined())
-    fun allocateGlobal() = allocate(Arena.global())
-    fun allocateShared() = allocate(Arena.ofShared())
 
     fun wrap(memory: Memory): T
 }

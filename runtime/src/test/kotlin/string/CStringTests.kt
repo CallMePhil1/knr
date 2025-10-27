@@ -3,7 +3,6 @@ package string
 import com.github.callmephil.knr.runtime.memory.ArenaMemory
 import com.github.callmephil.knr.runtime.native.StringLib
 import com.github.callmephil.knr.runtime.typing.cstringOf
-import java.lang.foreign.Arena
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -48,41 +47,37 @@ class CStringTests {
 
     @Test
     fun `GIVEN a StringStruct WHEN comparing to a equal string THEN it should succeed`() {
-        Arena.ofConfined().use {
-            val struct = StringStruct.allocate(it)
+        val struct = StringStruct.allocate()
 
-            struct.strPointer = cstringOf("testing")
+        struct.strPointer = cstringOf("testing")
 
-            assertEquals("testing", struct.strPointer.get())
+        assertEquals("testing", struct.strPointer.get())
 
-            val str = cstringOf("testing")
+        val str = cstringOf("testing")
 
-            assertTrue(StringTestLibrary.structStringEqual(struct, str))
+        assertTrue(StringTestLibrary.structStringEqual(struct, str))
 
-            val str2 = cstringOf("Testing2")
+        val str2 = cstringOf("Testing2")
 
-            assertFalse(StringTestLibrary.structStringEqual(struct , str2))
-        }
+        assertFalse(StringTestLibrary.structStringEqual(struct , str2))
     }
 
     @Test
     fun `GIVEN a StringStruct WHEN setting a new CString THEN it should update the pointer`() {
-        Arena.ofConfined().use {
-            val struct = StringStruct.allocate(it)
-            val pointer1 = cstringOf("testing")
-            val pointer1Address = pointer1.memory.memorySegment!!.address()
-            val pointer2 = cstringOf("testing2")
-            val pointer2Address = pointer2.memory.memorySegment!!.address()
+        val struct = StringStruct.allocate()
+        val pointer1 = cstringOf("testing")
+        val pointer1Address = pointer1.memory.memorySegment!!.address()
+        val pointer2 = cstringOf("testing2")
+        val pointer2Address = pointer2.memory.memorySegment!!.address()
 
-            struct.strPointer = pointer1
+        struct.strPointer = pointer1
 
-            assertEquals("testing", struct.strPointer.get())
-            assertEquals(struct.memory.getAddress(0).address(), pointer1Address)
+        assertEquals("testing", struct.strPointer.get())
+        assertEquals(struct.memory.getAddress(0).address(), pointer1Address)
 
-            struct.strPointer = pointer2
+        struct.strPointer = pointer2
 
-            assertEquals("testing2", struct.strPointer.get())
-            assertEquals(struct.memory.getAddress(0).address(), pointer2Address)
-        }
+        assertEquals("testing2", struct.strPointer.get())
+        assertEquals(struct.memory.getAddress(0).address(), pointer2Address)
     }
 }

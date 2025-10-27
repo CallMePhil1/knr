@@ -12,7 +12,7 @@ import kotlin.test.assertFailsWith
 class StructPointerTests {
     @Test
     fun `GIVEN a struct with a pointer WHEN setting and getting to null and a value THEN it should work`() {
-        val allPointersDirect = AllPointers.allocateConfined()
+        val allPointersDirect = AllPointers.allocate()
 
         allPointersDirect.ni = intPointerOf(100)
 
@@ -27,12 +27,12 @@ class StructPointerTests {
 
     @Test
     fun `GIVEN a struct with a byte pointer field WHEN setting and getting the pointer THEN it should work`() {
-        val allPointersDirect = AllPointers.allocateShared()
+        val allPointersDirect = AllPointers.allocate()
 
         allPointersDirect.b.set(100)
         assertEquals(100, allPointersDirect.b.get())
 
-        val allPointersMethod = AllPointers.allocateShared()
+        val allPointersMethod = AllPointers.allocate()
 
         assertEquals(0, allPointersMethod.b.get())
         assertEquals(0, PointerTestLibrary.getByteViaPointerFromStruct(allPointersMethod))
@@ -46,7 +46,7 @@ class StructPointerTests {
 
     @Test
     fun `GIVEN a struct with a byte nullable pointer field WHEN setting and getting the pointer THEN it should work`() {
-        val allPointersDirect = AllPointers.allocateShared()
+        val allPointersDirect = AllPointers.allocate()
 
         assertFails { allPointersDirect.nb!!.get() }
         assertFails { allPointersDirect.nb!!.set(100) }
@@ -68,12 +68,12 @@ class StructPointerTests {
 
     @Test
     fun `GIVEN a struct with a short pointer field WHEN setting and getting the pointer THEN it should work`() {
-        val allPointersDirect = AllPointers.allocateShared()
+        val allPointersDirect = AllPointers.allocate()
 
         allPointersDirect.s.set(100)
         assertEquals(100, allPointersDirect.s.get())
 
-        val allPointersMethod = AllPointers.allocateShared()
+        val allPointersMethod = AllPointers.allocate()
 
         assertEquals(0, allPointersMethod.s.get())
         assertEquals(0, PointerTestLibrary.getShortViaPointerFromStruct(allPointersMethod))
@@ -87,7 +87,7 @@ class StructPointerTests {
 
     @Test
     fun `GIVEN a struct with a short nullable pointer field WHEN setting and getting the pointer THEN it should work`() {
-        val allPointersDirect = AllPointers.allocateShared()
+        val allPointersDirect = AllPointers.allocate()
 
         assertFails { allPointersDirect.ns!!.get() }
         assertFails { allPointersDirect.ns!!.set(100) }
@@ -109,12 +109,12 @@ class StructPointerTests {
 
     @Test
     fun `GIVEN a struct with a int pointer field WHEN setting and getting the pointer THEN it should work`() {
-        val allPointersDirect = AllPointers.allocateShared()
+        val allPointersDirect = AllPointers.allocate()
 
         allPointersDirect.i.set(1000)
         assertEquals(1000, allPointersDirect.i.get())
 
-        val allPointersMethod = AllPointers.allocateShared()
+        val allPointersMethod = AllPointers.allocate()
 
         assertEquals(0, allPointersMethod.i.get())
         assertEquals(0, PointerTestLibrary.getIntViaPointerFromStruct(allPointersMethod))
@@ -128,7 +128,7 @@ class StructPointerTests {
 
     @Test
     fun `GIVEN a struct with a int nullable pointer field WHEN setting and getting the pointer THEN it should work`() {
-        val allPointersDirect = AllPointers.allocateShared()
+        val allPointersDirect = AllPointers.allocate()
 
         assertFails { allPointersDirect.ni!!.get() }
         assertFails { allPointersDirect.ni!!.set(1000) }
@@ -150,12 +150,12 @@ class StructPointerTests {
 
     @Test
     fun `GIVEN a struct with a long pointer field WHEN setting and getting the pointer THEN it should work`() {
-        val allPointersDirect = AllPointers.allocateShared()
+        val allPointersDirect = AllPointers.allocate()
 
         allPointersDirect.l.set(1000)
         assertEquals(1000, allPointersDirect.l.get())
 
-        val allPointersMethod = AllPointers.allocateShared()
+        val allPointersMethod = AllPointers.allocate()
 
         assertEquals(0, allPointersMethod.l.get())
         assertEquals(0, PointerTestLibrary.getLongViaPointerFromStruct(allPointersMethod))
@@ -169,7 +169,7 @@ class StructPointerTests {
 
     @Test
     fun `GIVEN a struct with a long nullable pointer field WHEN setting and getting the pointer THEN it should work`() {
-        val allPointersDirect = AllPointers.allocateShared()
+        val allPointersDirect = AllPointers.allocate()
 
         assertFails { allPointersDirect.nl!!.get() }
         assertFails { allPointersDirect.nl!!.set(1000) }

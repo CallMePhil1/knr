@@ -3,12 +3,10 @@ package string
 import com.github.callmephil.knr.runtime.memory.ArenaMemory
 import com.github.callmephil.knr.runtime.native.StringLib
 import com.github.callmephil.knr.runtime.typing.cachedCStringOf
-import java.lang.foreign.Arena
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 import kotlin.test.Test
-import kotlin.use
 
 class CachedCStringTests {
     @Test
@@ -50,36 +48,32 @@ class CachedCStringTests {
 
     @Test
     fun `GIVEN a StringStruct WHEN comparing to a equal string THEN it should succeed`() {
-        Arena.ofConfined().use {
-            val struct = StringStruct.allocate(it)
+        val struct = StringStruct.allocate()
 
-            struct.cachedStrPointer = cachedCStringOf("testing")
-            struct.cachedStrPointer.updateCache()
+        struct.cachedStrPointer = cachedCStringOf("testing")
+        struct.cachedStrPointer.updateCache()
 
-            assertEquals("testing", struct.cachedStrPointer.get())
-        }
+        assertEquals("testing", struct.cachedStrPointer.get())
     }
 
     @Test
     fun `GIVEN a StringStruct WHEN setting a new CString THEN it should update the pointer`() {
-        Arena.ofConfined().use {
-            val struct = StringStruct.allocate(it)
-            val pointer1 = cachedCStringOf("testing")
-            val pointer1Address = pointer1.memory!!.memorySegment!!.address()
-            val pointer2 = cachedCStringOf("testing2")
-            val pointer2Address = pointer2.memory!!.memorySegment!!.address()
+        val struct = StringStruct.allocate()
+        val pointer1 = cachedCStringOf("testing")
+        val pointer1Address = pointer1.memory.memorySegment!!.address()
+        val pointer2 = cachedCStringOf("testing2")
+        val pointer2Address = pointer2.memory.memorySegment!!.address()
 
-            struct.cachedStrPointer = pointer1
-            struct.cachedStrPointer.updateCache()
+        struct.cachedStrPointer = pointer1
+        struct.cachedStrPointer.updateCache()
 
-            assertEquals("testing", struct.cachedStrPointer.get())
-            assertEquals(struct.memory.getAddress(8).address(), pointer1Address)
+        assertEquals("testing", struct.cachedStrPointer.get())
+        assertEquals(struct.memory.getAddress(8).address(), pointer1Address)
 
-            struct.cachedStrPointer = pointer2
-            struct.cachedStrPointer.updateCache()
+        struct.cachedStrPointer = pointer2
+        struct.cachedStrPointer.updateCache()
 
-            assertEquals("testing2", struct.cachedStrPointer.get())
-            assertEquals(struct.memory.getAddress(8).address(), pointer2Address)
-        }
+        assertEquals("testing2", struct.cachedStrPointer.get())
+        assertEquals(struct.memory.getAddress(8).address(), pointer2Address)
     }
 }
