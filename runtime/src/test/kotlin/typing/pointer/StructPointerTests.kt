@@ -4,6 +4,7 @@ import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.longPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.shortPointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.structPointerOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -187,5 +188,28 @@ class StructPointerTests {
         assertEquals(2000, allPointersDirect.nl!!.get())
         assertEquals(2000, PointerTestLibrary.getNullableLongViaPointerFromStruct(allPointersDirect))
 
+    }
+
+    @Test
+    fun `GIVEN a struct WHEN wrapping it in a pointer THEN it should work`() {
+        val struct = PointedStruct.allocate()
+        val pointer = structPointerOf(struct)
+
+        assertEquals(struct, pointer.get())
+        assertEquals(pointer.memory.memorySegment!!, struct.memory.memorySegment!!)
+
+        val struct2 = PointedStruct.allocate()
+        pointer.set(struct2)
+
+        assertEquals(struct2, pointer.get())
+        assertEquals(pointer.memory.memorySegment!!, struct2.memory.memorySegment!!)
+    }
+
+    @Test
+    fun `GIVEN a pointer of a struct that doesn't implement NativeCloneable WHEN calling clone THEN it should fail`() {
+        val struct = PointedStruct.allocate()
+        val pointer = structPointerOf(struct)
+
+        assertFailsWith<IllegalStateException> { pointer.clone() }
     }
 }
