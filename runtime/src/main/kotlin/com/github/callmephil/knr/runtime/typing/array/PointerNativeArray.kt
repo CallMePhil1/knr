@@ -5,7 +5,7 @@ import com.github.callmephil.knr.runtime.memory.Memory
 import com.github.callmephil.knr.runtime.typing.pointer.Pointer
 import java.lang.foreign.ValueLayout
 
-class PointerNativeArray<T : Pointer<*>> internal constructor(
+class PointerNativeArray<T : Pointer<*>?> internal constructor(
     memory: Memory,
     private val pointers: Array<T>
 ) : NativeArray<T, Array<T>>(memory, ValueLayout.ADDRESS.byteSize().toInt()) {
@@ -16,7 +16,8 @@ class PointerNativeArray<T : Pointer<*>> internal constructor(
     override fun setUnchecked(index: Int, value: T) = set(index, value)
     override fun set(index: Int, value: T) {
         pointers[index] = value
-        memory.setAddress((index * typeByteSize).toLong(), value.memory.memorySegment!!)
+        if (value != null)
+            memory.setAddress((index * typeByteSize).toLong(), value.memory.memorySegment!!)
     }
     override fun set(value: Array<T>) {
         value.forEachIndexed { idx, it ->
@@ -25,9 +26,15 @@ class PointerNativeArray<T : Pointer<*>> internal constructor(
     }
 }
 
-fun <T : Pointer<*>> pointerNativeArray(vararg values: T): PointerNativeArray<T> {
+inline fun <reified T : Pointer<*>?> pointerNativeArray(size: Int, init: (Int) -> T): PointerNativeArray<T?> {
+    val array = Array(size) { init(it) }
+    return pointerNativeArray(*array) as PointerNativeArray<T?>
+}
+
+fun <T : Pointer<*>?> pointerNativeArray(vararg values: T): PointerNativeArray<T> {
     val memory = ArenaMemory.allocate(values.size * ValueLayout.ADDRESS.byteSize())
     values.forEachIndexed { idx, it ->
+        if (it == null) return@forEachIndexed
         memory.setAddress(idx * ValueLayout.ADDRESS.byteSize(), it.memory.memorySegment!!)
     }
     return PointerNativeArray(memory, values) as PointerNativeArray<T>

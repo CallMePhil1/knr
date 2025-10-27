@@ -2,6 +2,7 @@ package typing.array
 
 import com.github.callmephil.knr.runtime.typing.array.pointerNativeArray
 import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
+import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -14,11 +15,31 @@ class PointerNativeArrayTests {
         val pointer3 = bytePointerOf(3)
         val pointer4 = bytePointerOf(4)
 
-        val array = pointerNativeArray(pointer1, pointer2, pointer3, pointer4)
+        val array = pointerNativeArray(pointer1, pointer2, pointer3, pointer4, null)
 
         array.forEachIndexed { idx, it ->
             val itemAddress = array.memory.getAddress(idx * ValueLayout.ADDRESS.byteSize())
-            assertEquals(itemAddress, it.memory.memorySegment!!)
+
+            if (it != null)
+                assertEquals(itemAddress, it.memory.memorySegment!!)
+            else
+                assertEquals(itemAddress, MemorySegment.NULL)
+        }
+    }
+
+    @Test
+    fun `GIVEN WHEN instantiating a new pointer with a fixed size THEN it should work`() {
+        val array = pointerNativeArray(5) {
+            if (it % 2 == 0) bytePointerOf(1)
+            else null
+        }
+
+        array.forEachIndexed { idx, it ->
+            val itemAddress = array.memory.getAddress(idx * ValueLayout.ADDRESS.byteSize())
+            if (it != null)
+                assertEquals(itemAddress, it.memory.memorySegment!!)
+            else
+                assertEquals(itemAddress, MemorySegment.NULL)
         }
     }
 }
