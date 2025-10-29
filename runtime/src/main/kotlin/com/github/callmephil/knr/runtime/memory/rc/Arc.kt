@@ -4,7 +4,7 @@ import com.github.callmephil.knr.runtime.memory.Native
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
-open class Arc<T : Native> internal constructor(
+open class Arc<T : Native<T>> internal constructor(
     shared: Shared<T>
 ): AutoCloseable {
 
@@ -34,13 +34,13 @@ open class Arc<T : Native> internal constructor(
     fun weakArc(): WeakArc<T> = WeakArc(requireShared())
 
     companion object {
-        fun <R: Native> of(native: R): Arc<R> {
+        fun <T: Native<T>> of(native: T): Arc<T> {
             val shared = Shared(native)
             return Arc(shared)
         }
     }
 
-    internal class Shared<T : Native>(value: T) {
+    internal class Shared<T : Native<T>>(value: T) {
         internal var refCount = AtomicInteger(1)
         internal var value = AtomicReference<T?>(value)
         internal val isValid: Boolean get() = value.get() != null
@@ -68,7 +68,7 @@ open class Arc<T : Native> internal constructor(
     }
 }
 
-class WeakArc<T : Native> internal constructor(
+class WeakArc<T : Native<T>> internal constructor(
     shared: Shared<T>
 ) : Arc<T>(shared) {
     override fun clone(): WeakArc<T> {

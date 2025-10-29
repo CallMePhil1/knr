@@ -5,7 +5,7 @@ import com.github.callmephil.knr.runtime.typing.pointer.Pointer
 import java.lang.foreign.MemorySegment
 
 open class PointerFieldDelegate<T, P : Pointer<T>?> internal constructor(
-    parent: Struct,
+    parent: Struct<*>,
     offset: Long,
     initialValue: P
 ) : FieldDelegate<P>(

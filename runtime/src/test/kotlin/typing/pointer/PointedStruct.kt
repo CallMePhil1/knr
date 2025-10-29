@@ -17,7 +17,7 @@ import java.lang.foreign.ValueLayout
 
 class PointedStruct(
     memory: Memory
-) : Struct(memory) {
+) : Struct<PointedStruct>(memory) {
 
     var l by intField(0)
 
@@ -32,7 +32,7 @@ class PointedStruct(
 
 class AllPointers(
     memory: Memory
-) : Struct(memory) {
+) : Struct<AllPointers>(memory) {
 
     var b by bytePointerField(0, bytePointerOf())
     var nb by nullableBytePointerField(8, null)

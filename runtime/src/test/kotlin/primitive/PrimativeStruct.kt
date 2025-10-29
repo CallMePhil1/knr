@@ -9,7 +9,7 @@ import java.lang.foreign.ValueLayout
 
 class PrimitiveStruct(
     memory: Memory
-) : Struct(memory) {
+) : Struct<PrimitiveStruct>(memory) {
 
     var c by byteField(0)
     var uc by ubyteField(1)

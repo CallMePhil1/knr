@@ -5,13 +5,13 @@ import com.github.callmephil.knr.runtime.memory.Memory
 import com.github.callmephil.knr.runtime.typing.pointer.Pointer
 import java.lang.foreign.ValueLayout
 
-class PointerNativeArray<T : Pointer<*>?> internal constructor(
+class PointerNativeArray<T : Pointer<*>?>(
     memory: Memory,
     private val pointers: Array<T>
 ) : NativeArray<T, Array<T>>(memory, ValueLayout.ADDRESS.byteSize().toInt()) {
     override fun getUnchecked(index: Int) = pointers[index]
     override fun get(index: Int) = pointers[index]
-    override fun get() = pointers
+    override fun get() = pointers.copyOf()
 
     override fun setUnchecked(index: Int, value: T) = set(index, value)
     override fun set(index: Int, value: T) {
@@ -20,23 +20,31 @@ class PointerNativeArray<T : Pointer<*>?> internal constructor(
             memory.setAddress((index * typeByteSize).toLong(), value.memory.memorySegment!!)
     }
     override fun set(value: Array<T>) {
+        if (value.size > pointers.size) {
+            val clsName = this::class.java.simpleName
+            throw IndexOutOfBoundsException("Tried setting an Array for '$clsName' but was larger than the backing array")
+        }
         value.forEachIndexed { idx, it ->
             this[idx] = it
         }
     }
 }
 
-inline fun <reified T : Pointer<*>?> pointerNativeArray(size: Int, init: (Int) -> T): PointerNativeArray<T?> {
-    val array = Array(size) { init(it) }
-    return pointerNativeArray(*array) as PointerNativeArray<T?>
+inline fun <reified T : Pointer<*>?> pointerNativeArray(size: Int, noinline init: (Int) -> T?): PointerNativeArray<T?> {
+    val addressByteSize = ValueLayout.ADDRESS.byteSize()
+    val memory = ArenaMemory.allocate(size * addressByteSize)
+    val array = Array(size, init)
+    return PointerNativeArray(memory, array)
 }
 
-fun <T : Pointer<*>?> pointerNativeArray(vararg values: T): PointerNativeArray<T> {
-    val memory = ArenaMemory.allocate(values.size * ValueLayout.ADDRESS.byteSize())
-    values.forEachIndexed { idx, it ->
-        if (it == null) return@forEachIndexed
-        memory.setAddress(idx * ValueLayout.ADDRESS.byteSize(), it.memory.memorySegment!!)
+inline fun <reified T : Pointer<*>?> pointerNativeArray(vararg values: T): PointerNativeArray<T> {
+    val addressByteSize = ValueLayout.ADDRESS.byteSize()
+    val memory = ArenaMemory.allocate(values.size * addressByteSize)
+    val array = Array(values.size) {
+        val value = values[it]
+        if (value != null)
+            memory.setAddress(it * addressByteSize, value.memory.memorySegment!!)
+        value
     }
-    return PointerNativeArray(memory, values) as PointerNativeArray<T>
+    return PointerNativeArray(memory, array)
 }
-

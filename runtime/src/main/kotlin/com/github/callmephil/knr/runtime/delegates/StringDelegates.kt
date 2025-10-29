@@ -4,7 +4,7 @@ import com.github.callmephil.knr.runtime.typing.Struct
 import java.nio.charset.Charset
 
 class CCharArrayDelegate internal constructor(
-    parent: Struct,
+    parent: Struct<*>,
     offset: Long,
     private val charset: Charset = Charsets.UTF_8,
     value: String = "",
@@ -24,7 +24,7 @@ class CCharArrayDelegate internal constructor(
 }
 
 class CachedCCharArrayDelegate internal constructor(
-    parent: Struct,
+    parent: Struct<*>,
     offset: Long,
     private val charset: Charset = Charsets.UTF_8,
     private var value: String = "",

@@ -11,7 +11,7 @@ import java.lang.foreign.ValueLayout
 
 class StringStruct(
     memory: Memory
-) : Struct(memory) {
+) : Struct<StringStruct>(memory) {
     var strPointer by cstringField(0, cstringOf(""))
     var cachedStrPointer by cachedCStringField(8, cachedCStringOf(""))
 

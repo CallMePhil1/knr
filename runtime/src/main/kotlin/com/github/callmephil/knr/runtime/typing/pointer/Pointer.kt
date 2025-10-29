@@ -2,12 +2,11 @@ package com.github.callmephil.knr.runtime.typing.pointer
 
 import com.github.callmephil.knr.runtime.memory.Memory
 import com.github.callmephil.knr.runtime.memory.Native
-import com.github.callmephil.knr.runtime.typing.NativeCloneable
 
 abstract class Pointer<T> internal constructor(
     memory: Memory,
     internal var onPointerUpdated: (() -> Unit)?
-) : Native(memory), NativeCloneable<Pointer<T>> {
+) : Native<Pointer<T>>(memory) {
 
     override var innerMemory: Memory? = memory
         set(value) {

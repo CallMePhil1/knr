@@ -12,12 +12,22 @@ abstract class Memory (
     var memorySegment: MemorySegment? = memorySegment
         protected set
 
+    open val isSlice: Boolean = false
+
     val byteSize get() = memorySegment?.byteSize() ?: 0
     val isNull get() = memorySegment == MemorySegment.NULL
 
     abstract fun dispose()
 
     fun asByteBuffer(): ByteBuffer = memorySegment!!.asByteBuffer()
+    fun asSlice(offset: Long, byteSize: Long): Memory {
+        val memorySegment = memorySegment!!.asSlice(offset, byteSize)
+        return MemorySlice(memorySegment)
+    }
+
+    fun copyTo(memory: Memory) {
+        memory.memorySegment!!.copyFrom(memorySegment!!)
+    }
 
     fun getAddress(offset: Long): MemorySegment = memorySegment!!.get(ValueLayout.ADDRESS, offset)
     fun getBoolean(offset: Long) = memorySegment!!.get(ValueLayout.JAVA_BOOLEAN, offset)
@@ -94,5 +104,16 @@ class ArenaMemory(
             val segment = arena.allocateFrom(value, charset)
             return ArenaMemory(arena, segment)
         }
+    }
+}
+
+internal class MemorySlice(
+    memorySegment: MemorySegment
+) : Memory(memorySegment) {
+
+    override val isSlice: Boolean = true
+
+    override fun dispose() {
+        memorySegment = null
     }
 }

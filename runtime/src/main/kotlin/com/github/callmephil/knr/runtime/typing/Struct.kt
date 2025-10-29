@@ -16,12 +16,11 @@ import com.github.callmephil.knr.runtime.typing.pointer.UShortPointer
 import java.lang.foreign.Arena
 import java.lang.foreign.StructLayout
 
-abstract class Struct(
+abstract class Struct<T : Struct<T>>(
     memory: Memory
-) : Native(memory) {
+) : Native<T>(memory) {
 
     private val _verifyFuncs = mutableListOf<() -> Unit>()
-    private val _disposeFuncs = mutableListOf<() -> Unit>()
 
     private fun addPointerDelegate(delegate: PointerFieldDelegate<*, *>) {
         _verifyFuncs.add {
@@ -31,12 +30,6 @@ abstract class Struct(
                 throw IllegalStateException("Tried to use struct '$structName' but it contained an invalid '$delegateType'.")
             }
         }
-        _disposeFuncs.add { delegate.get()?.dispose() }
-    }
-
-    override fun dispose() {
-        super.dispose()
-        _disposeFuncs.forEach { it() }
     }
 
     fun verifyIsValid() {
@@ -131,7 +124,7 @@ abstract class Struct(
     protected fun nullableCachedCStringField(offset: Long, initialValue: CachedCString?) = pointerField(offset, initialValue)
 }
 
-interface StructCompanion<T : Struct> {
+interface StructCompanion<T : Struct<T>> {
     val layout: StructLayout
 
     fun allocate(): T {

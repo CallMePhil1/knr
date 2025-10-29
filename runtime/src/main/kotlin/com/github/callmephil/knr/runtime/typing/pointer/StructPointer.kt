@@ -1,18 +1,14 @@
 package com.github.callmephil.knr.runtime.typing.pointer
 
 import com.github.callmephil.knr.runtime.typing.Struct
-import com.github.callmephil.knr.runtime.typing.NativeCloneable
 
-class StructPointer<S : Struct> internal constructor(
+class StructPointer<S : Struct<S>> internal constructor(
     private var struct: S,
     onPointerUpdated: (() -> Unit)? = null
 ) : Pointer<S>(struct.memory, onPointerUpdated) {
 
     override fun clone(): Pointer<S> {
-        val newStruct = when(struct) {
-            is NativeCloneable<*> -> (struct as NativeCloneable<*>).clone() as S
-            else -> error("Tried to clone a Struct that doesn't implement NativeCloneable")
-        }
+        val newStruct = struct.clone()
         return StructPointer(newStruct)
     }
 
@@ -28,5 +24,5 @@ class StructPointer<S : Struct> internal constructor(
     }
 }
 
-fun <T : Struct> structPointerOf(struct: T) = StructPointer(struct)
-internal fun <T : Struct> structPointerOf(struct: T, onPointerUpdated: () -> Unit) = StructPointer(struct, onPointerUpdated)
+fun <T : Struct<T>> structPointerOf(struct: T) = StructPointer(struct)
+internal fun <T : Struct<T>> structPointerOf(struct: T, onPointerUpdated: () -> Unit) = StructPointer(struct, onPointerUpdated)

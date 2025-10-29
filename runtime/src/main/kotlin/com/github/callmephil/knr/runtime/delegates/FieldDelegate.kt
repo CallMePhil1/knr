@@ -4,7 +4,7 @@ import com.github.callmephil.knr.runtime.typing.Struct
 import kotlin.reflect.KProperty
 
 abstract class FieldDelegate<T> internal constructor(
-    protected val parent: Struct,
+    protected val parent: Struct<*>,
     protected val offset: Long
 ) {
     abstract fun get(): T

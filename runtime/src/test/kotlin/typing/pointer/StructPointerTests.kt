@@ -210,6 +210,6 @@ class StructPointerTests {
         val struct = PointedStruct.allocate()
         val pointer = structPointerOf(struct)
 
-        assertFailsWith<IllegalStateException> { pointer.clone() }
+        assertFailsWith<NotImplementedError> { pointer.clone() }
     }
 }

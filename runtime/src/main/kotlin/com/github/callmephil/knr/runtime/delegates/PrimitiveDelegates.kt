@@ -3,7 +3,7 @@ package com.github.callmephil.knr.runtime.delegates
 import com.github.callmephil.knr.runtime.typing.Struct
 
 class BooleanDelegate internal constructor(
-    parent: Struct,
+    parent: Struct<*>,
     offset: Long
 ) : FieldDelegate<Boolean>(parent, offset) {
     override fun get(): Boolean = parent.memory.getBoolean(offset)
@@ -13,7 +13,7 @@ class BooleanDelegate internal constructor(
 }
 
 class ByteDelegate internal constructor(
-    parent: Struct,
+    parent: Struct<*>,
     offset: Long
 ) : FieldDelegate<Byte>(parent, offset) {
     override fun get(): Byte = parent.memory.getByte(offset)
@@ -21,7 +21,7 @@ class ByteDelegate internal constructor(
 }
 
 class UByteDelegate internal constructor(
-    parent: Struct,
+    parent: Struct<*>,
     offset: Long
 ) : FieldDelegate<UByte>(parent, offset) {
     override fun get(): UByte = parent.memory.getByte(offset).toUByte()
@@ -29,7 +29,7 @@ class UByteDelegate internal constructor(
 }
 
 class ShortDelegate internal constructor(
-    parent: Struct,
+    parent: Struct<*>,
     offset: Long
 ) : FieldDelegate<Short>(parent, offset) {
     override fun get(): Short = parent.memory.getShort(offset)
@@ -37,7 +37,7 @@ class ShortDelegate internal constructor(
 }
 
 class UShortDelegate internal constructor(
-    parent: Struct,
+    parent: Struct<*>,
     offset: Long
 ) : FieldDelegate<UShort>(parent, offset) {
     override fun get(): UShort = parent.memory.getShort(offset).toUShort()
@@ -45,7 +45,7 @@ class UShortDelegate internal constructor(
 }
 
 class IntDelegate internal constructor(
-    parent: Struct,
+    parent: Struct<*>,
     offset: Long
 ) : FieldDelegate<Int>(parent, offset) {
     override fun get(): Int = parent.memory.getInt(offset)
@@ -53,7 +53,7 @@ class IntDelegate internal constructor(
 }
 
 class UIntDelegate internal constructor(
-    parent: Struct,
+    parent: Struct<*>,
     offset: Long
 ) : FieldDelegate<UInt>(parent, offset) {
     override fun get(): UInt = parent.memory.getInt(offset).toUInt()
@@ -61,7 +61,7 @@ class UIntDelegate internal constructor(
 }
 
 class LongDelegate internal constructor(
-    parent: Struct,
+    parent: Struct<*>,
     offset: Long
 ) : FieldDelegate<Long>(parent, offset) {
     override fun get(): Long = parent.memory.getLong(offset)
@@ -69,7 +69,7 @@ class LongDelegate internal constructor(
 }
 
 class ULongDelegate internal constructor(
-    parent: Struct,
+    parent: Struct<*>,
     offset: Long
 ) : FieldDelegate<ULong>(parent, offset) {
     override fun get(): ULong = parent.memory.getLong(offset).toULong()
@@ -77,7 +77,7 @@ class ULongDelegate internal constructor(
 }
 
 class FloatDelegate internal constructor(
-    parent: Struct,
+    parent: Struct<*>,
     offset: Long
 ) : FieldDelegate<Float>(parent, offset) {
     override fun get(): Float = parent.memory.getFloat(offset)
@@ -85,7 +85,7 @@ class FloatDelegate internal constructor(
 }
 
 class DoubleDelegate internal constructor(
-    parent: Struct,
+    parent: Struct<*>,
     offset: Long
 ) : FieldDelegate<Double>(parent, offset) {
     override fun get(): Double = parent.memory.getDouble(offset)

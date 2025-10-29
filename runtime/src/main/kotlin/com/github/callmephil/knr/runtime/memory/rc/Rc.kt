@@ -2,7 +2,7 @@ package com.github.callmephil.knr.runtime.memory.rc
 
 import com.github.callmephil.knr.runtime.memory.Native
 
-open class Rc<T : Native> internal constructor(
+open class Rc<T : Native<T>> internal constructor(
     shared: Shared<T>
 ) : AutoCloseable {
 
@@ -30,13 +30,13 @@ open class Rc<T : Native> internal constructor(
     fun weakRc(): WeakRc<T> = WeakRc(requireShared())
 
     companion object {
-        fun <R: Native> of(native: R): Rc<R> {
+        fun <T: Native<T>> of(native: T): Rc<T> {
             val shared = Shared(native)
             return Rc(shared)
         }
     }
 
-    internal class Shared<T : Native>(value: T) {
+    internal class Shared<T : Native<T>>(value: T) {
         internal var refCount = 1
         internal var value: T? = value
         internal val isValid: Boolean get() = value != null
@@ -59,7 +59,7 @@ open class Rc<T : Native> internal constructor(
     }
 }
 
-class WeakRc<T : Native> internal constructor(shared: Rc.Shared<T>) : Rc<T>(shared) {
+class WeakRc<T : Native<T>> internal constructor(shared: Rc.Shared<T>) : Rc<T>(shared) {
     override fun clone(): WeakRc<T> {
         val nonNullShared = requireShared()
         nonNullShared.increment()
