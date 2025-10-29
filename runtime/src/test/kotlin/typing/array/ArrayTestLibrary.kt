@@ -5,6 +5,7 @@ import com.github.callmephil.knr.runtime.typing.array.ByteNativeArray
 import com.github.callmephil.knr.runtime.typing.array.IntNativeArray
 import com.github.callmephil.knr.runtime.typing.array.LongNativeArray
 import com.github.callmephil.knr.runtime.typing.array.ShortNativeArray
+import com.github.callmephil.knr.runtime.typing.array.StructNativeArray
 import com.github.callmephil.knr.runtime.typing.array.UByteNativeArray
 import com.github.callmephil.knr.runtime.typing.array.UIntNativeArray
 import com.github.callmephil.knr.runtime.typing.array.ULongNativeArray
@@ -13,6 +14,7 @@ import java.lang.foreign.Arena
 import java.lang.foreign.Linker
 import java.lang.foreign.SymbolLookup
 import java.lang.foreign.ValueLayout
+import java.lang.invoke.MethodHandle
 
 object ArrayTestLibrary {
     private val arena: Arena = Arena.global()
@@ -20,6 +22,21 @@ object ArrayTestLibrary {
     private val lookup: SymbolLookup = SymbolLookup.libraryLookup(
         "src/test/testlib/build/Debug/arraytest",
         arena
+    )
+
+    private val getIntFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("get_int_from_struct").orElseThrow(),
+        retType = ValueLayout.JAVA_INT,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT
+    )
+
+    private val setIntForStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("set_int_for_struct").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT,
+        ValueLayout.JAVA_INT
     )
 
     private val getByteHandle = linker.downcallHandle(
@@ -141,6 +158,13 @@ object ArrayTestLibrary {
         ValueLayout.JAVA_INT,
         ValueLayout.JAVA_LONG
     )
+
+    fun getIntFromStruct(array: StructNativeArray<*>, index: Int) =
+        getIntFromStructHandle.invokeExact(array.memory.memorySegment, index) as Int
+
+    fun setIntForStruct(array: StructNativeArray<*>, index: Int, value: Int) {
+        setIntForStructHandle.invokeExact(array.memory.memorySegment, index, value)
+    }
 
     fun getByte(array: ByteNativeArray, index: Int) =
         getByteHandle.invokeExact(array.memory.memorySegment, index) as Byte

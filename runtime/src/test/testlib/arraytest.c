@@ -1,5 +1,13 @@
 #include "arraytest.h"
 
+int get_int_from_struct(ArrayStruct* arr, int index) {
+    return arr[index].i;
+}
+
+void set_int_for_struct(ArrayStruct* arr, int index, int value) {
+    arr[index].i = value;
+}
+
 signed char get_byte(signed char *arr, int index) {
     return arr[index];
 }

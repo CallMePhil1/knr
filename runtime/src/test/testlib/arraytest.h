@@ -11,6 +11,15 @@
     #define API __attribute__(visibility("default"))
 #endif
 
+typedef struct {
+    int i;
+    int* p;
+} ArrayStruct;
+
+API int get_int_from_struct(ArrayStruct* arr, int index);
+
+API void set_int_for_struct(ArrayStruct* arr, int index, int value);
+
 API signed char get_byte(signed char *arr, int index);
 
 API void set_byte(signed char *arr, int index, signed char value);

@@ -30,12 +30,12 @@ class StructNativeArray<T : Struct<T>>(
     }
 }
 
-inline fun <reified T: Struct<T>> structNativeArray(size: Int, layout: StructLayout, init: (Memory) -> T) = structNativeArray(size, layout.byteSize(), init)
-inline fun <reified T: Struct<T>> structNativeArray(size: Int, structByteSize: Long, init: (Memory) -> T): StructNativeArray<T> {
+inline fun <reified T: Struct<T>> structNativeArray(size: Int, layout: StructLayout, init: (Int, Memory) -> T) = structNativeArray(size, layout.byteSize(), init)
+inline fun <reified T: Struct<T>> structNativeArray(size: Int, structByteSize: Long, init: (Int, Memory) -> T): StructNativeArray<T> {
     val memory = ArenaMemory.allocate(structByteSize * size)
     val array = Array(size) {
         val slice = memory.asSlice(it * structByteSize, structByteSize)
-        init(slice)
+        init(it, slice)
     }
     return StructNativeArray(memory, structByteSize.toInt(), array)
 }
