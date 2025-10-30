@@ -3,14 +3,14 @@ package typing.pointer
 import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.longPointerOf
+import com.github.callmephil.knr.runtime.typing.pointer.nativePointerOf
 import com.github.callmephil.knr.runtime.typing.pointer.shortPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.structPointerOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 
-class StructPointerTests {
+class NativePointerTests {
     @Test
     fun `GIVEN a struct with a pointer WHEN setting and getting to null and a value THEN it should work`() {
         val allPointersDirect = AllPointers.allocate()
@@ -193,7 +193,7 @@ class StructPointerTests {
     @Test
     fun `GIVEN a struct WHEN wrapping it in a pointer THEN it should work`() {
         val struct = PointedStruct.allocate()
-        val pointer = structPointerOf(struct)
+        val pointer = nativePointerOf(struct)
 
         assertEquals(struct, pointer.get())
         assertEquals(pointer.memory.memorySegment!!, struct.memory.memorySegment!!)
@@ -208,7 +208,7 @@ class StructPointerTests {
     @Test
     fun `GIVEN a pointer of a struct that doesn't implement NativeCloneable WHEN calling clone THEN it should fail`() {
         val struct = PointedStruct.allocate()
-        val pointer = structPointerOf(struct)
+        val pointer = nativePointerOf(struct)
 
         assertFailsWith<NotImplementedError> { pointer.clone() }
     }
