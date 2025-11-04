@@ -1,6 +1,7 @@
 package knr.libgen.processor
 
 import com.github.callmephil.knr.runtime.memory.Native
+import com.github.callmephil.knr.runtime.typing.flags.BitFlagSet
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.processing.CodeGenerator
@@ -31,6 +32,8 @@ import knr.libgen.processor.ext.inherits
 import knr.libgen.processor.ext.inheritsNative
 import knr.libgen.processor.ext.isPrimitive
 import knr.libgen.processor.ext.pascalToSnakecase
+import knr.libgen.processor.ext.qualifiedName
+import knr.libgen.processor.ext.simpleName
 import knr.libgen.processor.ext.toValueLayoutString
 import org.tinylog.Level
 import org.tinylog.configuration.Configuration
@@ -58,11 +61,25 @@ internal class LibraryProcessor(
         val invokeParamsList = mutableListOf<String>()
 
         func.parameters.forEach { param ->
+            val type = param.type.resolve()
+            val paramName = param.name!!.asString()
+
             when {
-                param.isPrimitive -> invokeParamsList.add(param.name!!.asString())
-                param.type.resolve().inherits<Native<*>>(resolver) -> {
-                    funcBody.addStatement("%L.verifyIsValid()", param.name!!.asString())
-                    invokeParamsList.add("${param.name!!.asString()}.memory.memorySegment")
+                param.isPrimitive -> {
+                    val typeName = type.simpleName.asString()
+                    val conversionCall = when {
+                        typeName.startsWith("U") -> ".to" + typeName.slice(1..typeName.lastIndex) + "()"
+                        else -> ""
+                    }
+
+                    invokeParamsList.add("$paramName$conversionCall")
+                }
+                type.inherits<Native<*>>(resolver) -> {
+                    funcBody.addStatement("%L.verifyIsValid()", paramName)
+                    invokeParamsList.add("${paramName}.memory.memorySegment")
+                }
+                type.inherits<BitFlagSet<*, *>>(resolver) -> {
+                    invokeParamsList.add("$paramName.mask")
                 }
             }
         }
@@ -209,8 +226,8 @@ internal class LibraryProcessor(
         func.parameters.forEach {
             val type = it.type.resolve()
 
-            if (!type.isPrimitive && !type.inheritsNative(resolver))
-                throw IllegalStateException("Parameter '${it.name!!.asString()}' for function '${func.simpleName.asString()}' is neither primitive or inherits Native")
+            if (!type.isPrimitive && !type.inheritsNative(resolver) && !type.inherits<BitFlagSet<*, *>>(resolver))
+                throw IllegalStateException("Parameter '${it.name!!.asString()}: ${type.qualifiedName!!.asString()}' for function '${func.simpleName.asString()}' is not a supported type")
         }
 
         val returnType = func.returnType!!.resolve()

@@ -1,8 +1,10 @@
 package knr.libgen.processor.ext
 
 import com.github.callmephil.knr.runtime.memory.Native
+import com.github.callmephil.knr.runtime.typing.flags.BitFlagSet
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import knr.libgen.processor.util.valueLayoutMap
 
@@ -23,6 +25,9 @@ internal val KSType.isPrimitive: Boolean
 internal val KSType.qualifiedName
     get() = this.declaration.qualifiedName
 
+internal val KSType.simpleName
+    get() = this.declaration.simpleName
+
 internal fun KSType.inheritsNative(resolver: Resolver) = getNativeType(resolver).isAssignableFrom(this)
 
 internal inline fun <reified T> KSType.inherits(resolver: Resolver) =
@@ -31,6 +36,10 @@ internal inline fun <reified T> KSType.inherits(resolver: Resolver) =
 internal fun KSType.toValueLayoutString(resolver: Resolver): String {
     return when {
         this.isPrimitive -> valueLayoutMap[this.declaration.qualifiedName!!.asString()]!!
+        this.inherits<BitFlagSet<*, *>>(resolver) -> {
+            val property = (this.declaration as KSClassDeclaration).getAllProperties().first { it.simpleName.asString() == "mask" }
+            return valueLayoutMap[property.type.resolve().qualifiedName!!.asString()]!!
+        }
         this.inheritsNative(resolver) -> "ValueLayout.ADDRESS"
         else -> error("Couldn't convert type '${this.qualifiedName}' to ValueLayout")
     }
