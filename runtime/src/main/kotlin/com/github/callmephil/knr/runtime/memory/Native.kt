@@ -14,18 +14,25 @@ abstract class Native<T> internal constructor(
 
     open fun clone(): T {
         val name = this::class.java.simpleName
-        throw NotImplementedError("Tried to clone '$name' that doesn't override 'clone'")
+        throw NotImplementedError("Tried to clone '$name' but it that doesn't override 'clone'")
     }
 
     override fun close() = dispose()
 
     open fun copyTo(native: T) {
         val name = this::class.java.simpleName
-        throw NotImplementedError("Tried to copy '$name' that doesn't override 'copyTo'")
+        throw NotImplementedError("Tried to copy '$name' but it that doesn't override 'copyTo'")
     }
 
     open fun dispose() {
         innerMemory?.dispose()
         innerMemory = null
+    }
+
+    open fun verifyIsValid() {
+        if (isNotValid) {
+            val nativeName = this::class.java.simpleName
+            throw IllegalStateException("Tried to use native '$nativeName' but it's been disposed")
+        }
     }
 }

@@ -1,0 +1,37 @@
+package knr.libgen.processor.ext
+
+import com.github.callmephil.knr.runtime.memory.Native
+import com.google.devtools.ksp.getClassDeclarationByName
+import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.symbol.KSType
+import knr.libgen.processor.util.valueLayoutMap
+
+private var nativeType: KSType? = null
+
+internal fun getKSTypeFromClass(resolver: Resolver, cls: Class<*>) =
+    resolver.getClassDeclarationByName(cls.name)!!.asStarProjectedType()
+
+private fun getNativeType(resolver: Resolver): KSType {
+    if (nativeType == null)
+        nativeType = getKSTypeFromClass(resolver, Native::class.java)
+    return nativeType!!
+}
+
+internal val KSType.isPrimitive: Boolean
+    get() = this.declaration.isPrimitive
+
+internal val KSType.qualifiedName
+    get() = this.declaration.qualifiedName
+
+internal fun KSType.inheritsNative(resolver: Resolver) = getNativeType(resolver).isAssignableFrom(this)
+
+internal inline fun <reified T> KSType.inherits(resolver: Resolver) =
+    getKSTypeFromClass(resolver, T::class.java).isAssignableFrom(this)
+
+internal fun KSType.toValueLayoutString(resolver: Resolver): String {
+    return when {
+        this.isPrimitive -> valueLayoutMap[this.declaration.qualifiedName!!.asString()]!!
+        this.inheritsNative(resolver) -> "ValueLayout.ADDRESS"
+        else -> error("Couldn't convert type '${this.qualifiedName}' to ValueLayout")
+    }
+}

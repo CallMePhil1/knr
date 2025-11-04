@@ -1,5 +1,15 @@
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
-}
 rootProject.name = "knr"
 include("runtime")
+include("libgen-annotations")
+include("libgen-processor")
+
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+
+    plugins {
+        kotlin("jvm") version "2.2.20"
+    }
+}

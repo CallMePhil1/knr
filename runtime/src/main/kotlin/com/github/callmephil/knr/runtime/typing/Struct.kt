@@ -32,11 +32,8 @@ abstract class Struct<T : Struct<T>>(
         }
     }
 
-    fun verifyIsValid() {
-        if (isNotValid) {
-            val structName = this::class.java.simpleName
-            throw IllegalStateException("Tried to use struct '$structName' but it's been disposed")
-        }
+    override fun verifyIsValid() {
+        super.verifyIsValid()
         _verifyFuncs.forEach {
             it()
         }
