@@ -27,8 +27,9 @@ import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import knr.libgen.annotations.Library
 import knr.libgen.annotations.Method
+import knr.libgen.annotations.NoVerify
 import knr.libgen.processor.ext.addClsImport
-import knr.libgen.processor.ext.inherits
+import knr.libgen.processor.ext.assignableTo
 import knr.libgen.processor.ext.inheritsNative
 import knr.libgen.processor.ext.isPrimitive
 import knr.libgen.processor.ext.pascalToSnakecase
@@ -59,6 +60,7 @@ internal class LibraryProcessor(
     private fun addFunctionBody(func: KSFunctionDeclaration, builder: FunSpec.Builder, methodHandle: PropertySpec, resolver: Resolver) {
         val funcBody = CodeBlock.builder()
         val invokeParamsList = mutableListOf<String>()
+        val noVerifyMethod = func.annotations.any { it.annotationType.resolve().assignableTo<NoVerify>(resolver) }
 
         func.parameters.forEach { param ->
             val type = param.type.resolve()
@@ -74,11 +76,12 @@ internal class LibraryProcessor(
 
                     invokeParamsList.add("$paramName$conversionCall")
                 }
-                type.inherits<Native<*>>(resolver) -> {
-                    funcBody.addStatement("%L.verifyIsValid()", paramName)
+                type.inheritsNative(resolver) -> {
+                    if (!noVerifyMethod && !param.annotations.any { it.annotationType.resolve().assignableTo<NoVerify>(resolver) })
+                        funcBody.addStatement("%L.verifyIsValid()", paramName)
                     invokeParamsList.add("${paramName}.memory.memorySegment")
                 }
-                type.inherits<BitFlagSet<*, *>>(resolver) -> {
+                type.assignableTo<BitFlagSet<*, *>>(resolver) -> {
                     invokeParamsList.add("$paramName.mask")
                 }
             }
@@ -181,7 +184,7 @@ internal class LibraryProcessor(
     }
 
     private fun getNativeFunctionName(func: KSFunctionDeclaration, resolver: Resolver): String {
-        val methodAnnotation = func.annotations.firstOrNull { it.annotationType.resolve().inherits<Method>(resolver) }
+        val methodAnnotation = func.annotations.firstOrNull { it.annotationType.resolve().assignableTo<Method>(resolver) }
 
         return when {
             methodAnnotation == null -> func.simpleName.asString().pascalToSnakecase()
@@ -226,7 +229,7 @@ internal class LibraryProcessor(
         func.parameters.forEach {
             val type = it.type.resolve()
 
-            if (!type.isPrimitive && !type.inheritsNative(resolver) && !type.inherits<BitFlagSet<*, *>>(resolver))
+            if (!type.isPrimitive && !type.inheritsNative(resolver) && !type.assignableTo<BitFlagSet<*, *>>(resolver))
                 throw IllegalStateException("Parameter '${it.name!!.asString()}: ${type.qualifiedName!!.asString()}' for function '${func.simpleName.asString()}' is not a supported type")
         }
 

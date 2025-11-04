@@ -30,13 +30,13 @@ internal val KSType.simpleName
 
 internal fun KSType.inheritsNative(resolver: Resolver) = getNativeType(resolver).isAssignableFrom(this)
 
-internal inline fun <reified T> KSType.inherits(resolver: Resolver) =
+internal inline fun <reified T> KSType.assignableTo(resolver: Resolver) =
     getKSTypeFromClass(resolver, T::class.java).isAssignableFrom(this)
 
 internal fun KSType.toValueLayoutString(resolver: Resolver): String {
     return when {
         this.isPrimitive -> valueLayoutMap[this.declaration.qualifiedName!!.asString()]!!
-        this.inherits<BitFlagSet<*, *>>(resolver) -> {
+        this.assignableTo<BitFlagSet<*, *>>(resolver) -> {
             val property = (this.declaration as KSClassDeclaration).getAllProperties().first { it.simpleName.asString() == "mask" }
             return valueLayoutMap[property.type.resolve().qualifiedName!!.asString()]!!
         }
