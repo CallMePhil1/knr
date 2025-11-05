@@ -8,6 +8,7 @@ import com.github.callmephil.knr.runtime.typing.flags.IntBitFlagSet
 import knr.libgen.annotations.Library
 import knr.libgen.annotations.Method
 import knr.libgen.annotations.NoVerify
+import knr.libgen.annotations.StringParam
 
 class TestClass(
     memory: Memory
@@ -29,4 +30,6 @@ interface TestLibrary {
 
     @Method("this_is_the_name")
     fun namedMethod()
+
+    fun stringMethod(@StringParam string: String, @StringParam("nonstandard") string2: String)
 }

@@ -1,6 +1,6 @@
 package knr.libgen.processor
 
-import com.github.callmephil.knr.runtime.memory.Native
+import com.github.callmephil.knr.runtime.typing.CString
 import com.github.callmephil.knr.runtime.typing.flags.BitFlagSet
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
@@ -19,6 +19,7 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
@@ -28,14 +29,19 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import knr.libgen.annotations.Library
 import knr.libgen.annotations.Method
 import knr.libgen.annotations.NoVerify
+import knr.libgen.annotations.StringParam
 import knr.libgen.processor.ext.addClsImport
 import knr.libgen.processor.ext.assignableTo
+import knr.libgen.processor.ext.get
+import knr.libgen.processor.ext.has
 import knr.libgen.processor.ext.inheritsNative
 import knr.libgen.processor.ext.isPrimitive
+import knr.libgen.processor.ext.isString
 import knr.libgen.processor.ext.pascalToSnakecase
 import knr.libgen.processor.ext.qualifiedName
 import knr.libgen.processor.ext.simpleName
 import knr.libgen.processor.ext.toValueLayoutString
+import knr.libgen.processor.util.standardCharsets
 import org.tinylog.Level
 import org.tinylog.configuration.Configuration
 import java.lang.foreign.Arena
@@ -43,6 +49,7 @@ import java.lang.foreign.Linker
 import java.lang.foreign.SymbolLookup
 import java.lang.foreign.ValueLayout
 import java.lang.invoke.MethodHandle
+import java.nio.charset.StandardCharsets
 import kotlin.collections.listOf
 
 private val functionIgnoreList = setOf(
@@ -57,10 +64,16 @@ internal class LibraryProcessor(
 
     private val logger = KotlinLogging.logger {  }
 
-    private fun addFunctionBody(func: KSFunctionDeclaration, builder: FunSpec.Builder, methodHandle: PropertySpec, resolver: Resolver) {
+    private fun addFunctionBody(
+        func: KSFunctionDeclaration,
+        builder: FunSpec.Builder,
+        methodHandle: PropertySpec,
+        caches: Map<String, PropertySpec>,
+        resolver: Resolver
+    ) {
         val funcBody = CodeBlock.builder()
         val invokeParamsList = mutableListOf<String>()
-        val noVerifyMethod = func.annotations.any { it.annotationType.resolve().assignableTo<NoVerify>(resolver) }
+        val noVerifyMethod = func.annotations.has<NoVerify>(resolver)
 
         func.parameters.forEach { param ->
             val type = param.type.resolve()
@@ -73,11 +86,23 @@ internal class LibraryProcessor(
                         typeName.startsWith("U") -> ".to" + typeName.slice(1..typeName.lastIndex) + "()"
                         else -> ""
                     }
-
                     invokeParamsList.add("$paramName$conversionCall")
                 }
+                type.isString -> {
+                    val stringParamAnno = param.annotations.get<StringParam>(resolver)
+                    val annoCharsetName = stringParamAnno.get<String>(StringParam::charset.name)
+                    val charset = standardCharsets[annoCharsetName]
+
+                    val charsetString = if (charset != null) "StandardCharsets.$charset" else "charset(\"$annoCharsetName\")"
+
+                    val cacheName = caches[paramName]!!.name
+
+                    funcBody.addStatement("%L?.dispose()", cacheName)
+                    funcBody.addStatement("%L = cstringOf(%L, %L)", cacheName, paramName, charsetString)
+                    invokeParamsList.add("${cacheName}!!.memory.memorySegment")
+                }
                 type.inheritsNative(resolver) -> {
-                    if (!noVerifyMethod && !param.annotations.any { it.annotationType.resolve().assignableTo<NoVerify>(resolver) })
+                    if (!noVerifyMethod && !param.annotations.has<NoVerify>(resolver))
                         funcBody.addStatement("%L.verifyIsValid()", paramName)
                     invokeParamsList.add("${paramName}.memory.memorySegment")
                 }
@@ -133,14 +158,27 @@ internal class LibraryProcessor(
         val fileSpec = FileSpec.builder(packageName, clsName)
 
         fileSpec.addImport("com.github.callmephil.knr.runtime.ext", "downcallHandle")
+        fileSpec.addImport("com.github.callmephil.knr.runtime.typing", "cstringOf")
         fileSpec.addClsImport(ValueLayout::class.java)
+        fileSpec.addClsImport(StandardCharsets::class.java)
 
         logger.debug { "Created FileSpec[Path: ${fileSpec.packageName}.${fileSpec.name} | ClassName: $clsName]" }
         return fileSpec
     }
 
-    private fun createMethodHandleProperty(func: KSFunctionDeclaration, resolver: Resolver): PropertySpec {
-        val nativeName = getNativeFunctionName(func, resolver)
+    private fun createCaches(func: KSFunctionDeclaration, resolver: Resolver): Map<String, PropertySpec> =
+        func.parameters
+            .filter { it.isString }
+            .associate {
+                val name = func.simpleName.asString() + it.name!!.asString()
+                val property = PropertySpec.builder(name, CString::class.asClassName().copy(nullable = true), KModifier.PRIVATE)
+                    .mutable(true)
+                    .initializer("null")
+                    .build()
+                it.name!!.asString() to property
+            }
+
+    private fun createMethodHandleProperty(func: KSFunctionDeclaration, nativeName: String, resolver: Resolver): PropertySpec {
         val params = func.parameters.map { it.type.resolve().toValueLayoutString(resolver) }
         val paramsString = params.joinToString(",\n    ")
         val returnType = func.returnType!!.resolve().toValueLayoutString(resolver)
@@ -206,15 +244,19 @@ internal class LibraryProcessor(
                 .filter { it.qualifiedName!!.asString() !in functionIgnoreList }
                 .forEach { func ->
                     validateFunc(func, resolver)
-                    val methodHandle = createMethodHandleProperty(func, resolver)
+                    val funcNativeName = getNativeFunctionName(func, resolver)
+
+                    val caches = createCaches(func, resolver)
+                    val methodHandle = createMethodHandleProperty(func, funcNativeName,resolver)
 
                     val funcSpecBuilder = FunSpec.builder(func.simpleName.asString())
                     addFunctionHeader(func, funcSpecBuilder, resolver)
-                    addFunctionBody(func, funcSpecBuilder, methodHandle, resolver)
+                    addFunctionBody(func, funcSpecBuilder, methodHandle, caches, resolver)
 
                     val overrideFunc = funcSpecBuilder.build()
 
                     objectSpec.addProperty(methodHandle)
+                    objectSpec.addProperties(caches.values)
                     objectSpec.addFunction(overrideFunc)
                 }
 
@@ -226,17 +268,24 @@ internal class LibraryProcessor(
     }
 
     private fun validateFunc(func: KSFunctionDeclaration, resolver: Resolver) {
+        val funcName = func.simpleName.asString()
+
         func.parameters.forEach {
             val type = it.type.resolve()
+            val paramName = it.name!!.asString()
 
-            if (!type.isPrimitive && !type.inheritsNative(resolver) && !type.assignableTo<BitFlagSet<*, *>>(resolver))
-                throw IllegalStateException("Parameter '${it.name!!.asString()}: ${type.qualifiedName!!.asString()}' for function '${func.simpleName.asString()}' is not a supported type")
+            if (type.isString) {
+                if (!it.annotations.has<StringParam>(resolver))
+                    throw IllegalStateException("Parameter '$paramName: String' for function '$funcName' does not have a 'StringParam' annotation")
+            }
+            else if (!type.isPrimitive && !type.inheritsNative(resolver) && !type.assignableTo<BitFlagSet<*, *>>(resolver))
+                throw IllegalStateException("Parameter '$paramName: ${type.qualifiedName!!.asString()}' for function '$funcName' is not a supported type")
         }
 
         val returnType = func.returnType!!.resolve()
         if (!returnType.isPrimitive) {
             val returnTypeName = returnType.declaration.qualifiedName!!.asString()
-            throw IllegalStateException("Return type '${returnTypeName}' for function '${func.simpleName.asString()}' is not a primitive")
+            throw IllegalStateException("Return type '${returnTypeName}' for function '$funcName' is not a primitive")
         }
     }
 }

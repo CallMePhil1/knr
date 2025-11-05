@@ -22,6 +22,9 @@ private fun getNativeType(resolver: Resolver): KSType {
 internal val KSType.isPrimitive: Boolean
     get() = this.declaration.isPrimitive
 
+internal val KSType.isString: Boolean
+    get() = this.declaration.isString
+
 internal val KSType.qualifiedName
     get() = this.declaration.qualifiedName
 
@@ -40,7 +43,8 @@ internal fun KSType.toValueLayoutString(resolver: Resolver): String {
             val property = (this.declaration as KSClassDeclaration).getAllProperties().first { it.simpleName.asString() == "mask" }
             return valueLayoutMap[property.type.resolve().qualifiedName!!.asString()]!!
         }
+        this.isString ||
         this.inheritsNative(resolver) -> "ValueLayout.ADDRESS"
-        else -> error("Couldn't convert type '${this.qualifiedName}' to ValueLayout")
+        else -> error("Couldn't convert type '${this.qualifiedName!!.asString()}' to ValueLayout")
     }
 }
