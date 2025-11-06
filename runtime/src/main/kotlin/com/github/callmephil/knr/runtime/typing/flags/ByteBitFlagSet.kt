@@ -5,7 +5,8 @@ import kotlin.experimental.inv
 import kotlin.experimental.or
 import kotlin.experimental.xor
 
-class ByteBitFlagSet<T: BitFlag<Byte>>(override val mask: Byte = 0): BitFlagSet<Byte, T> {
+@JvmInline
+value class ByteBitFlagSet<T: BitFlag<Byte>>(override val mask: Byte = 0): BitFlagSet<Byte, T> {
     override fun has(vararg others: T) = others.all {
         (mask and it.mask) == it.mask
     }
@@ -78,7 +79,8 @@ class ByteBitFlagSet<T: BitFlag<Byte>>(override val mask: Byte = 0): BitFlagSet<
     }
 }
 
-class UByteBitFlagSet<T: BitFlag<UByte>>(override val mask: UByte = 0u): BitFlagSet<UByte, T> {
+@JvmInline
+value class UByteBitFlagSet<T: BitFlag<UByte>>(override val mask: UByte = 0u): BitFlagSet<UByte, T> {
     override fun has(vararg others: T) = others.all {
         (mask and it.mask) == it.mask
     }

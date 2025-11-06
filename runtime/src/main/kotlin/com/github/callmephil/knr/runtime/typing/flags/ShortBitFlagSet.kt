@@ -5,7 +5,8 @@ import kotlin.experimental.inv
 import kotlin.experimental.or
 import kotlin.experimental.xor
 
-class ShortBitFlagSet<T: BitFlag<Short>>(override val mask: Short = 0): BitFlagSet<Short, T> {
+@JvmInline
+value class ShortBitFlagSet<T: BitFlag<Short>>(override val mask: Short = 0): BitFlagSet<Short, T> {
     override fun has(vararg others: T) = others.all {
         (mask and it.mask) == it.mask
     }
@@ -78,7 +79,8 @@ class ShortBitFlagSet<T: BitFlag<Short>>(override val mask: Short = 0): BitFlagS
     }
 }
 
-class UShortBitFlagSet<T: BitFlag<UShort>>(override val mask: UShort = 0u): BitFlagSet<UShort, T> {
+@JvmInline
+value class UShortBitFlagSet<T: BitFlag<UShort>>(override val mask: UShort = 0u): BitFlagSet<UShort, T> {
     override fun has(vararg others: T) = others.all {
         (mask and it.mask) == it.mask
     }

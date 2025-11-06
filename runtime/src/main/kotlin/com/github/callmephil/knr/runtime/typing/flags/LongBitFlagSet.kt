@@ -1,6 +1,7 @@
 package com.github.callmephil.knr.runtime.typing.flags
 
-class LongBitFlagSet<T: BitFlag<Long>>(override val mask: Long = 0): BitFlagSet<Long, T> {
+@JvmInline
+value class LongBitFlagSet<T: BitFlag<Long>>(override val mask: Long = 0): BitFlagSet<Long, T> {
     override fun has(vararg others: T) = others.all {
         (mask and it.mask) == it.mask
     }
@@ -73,7 +74,8 @@ class LongBitFlagSet<T: BitFlag<Long>>(override val mask: Long = 0): BitFlagSet<
     }
 }
 
-class ULongBitFlagSet<T: BitFlag<ULong>>(override val mask: ULong = 0u): BitFlagSet<ULong, T> {
+@JvmInline
+value class ULongBitFlagSet<T: BitFlag<ULong>>(override val mask: ULong = 0u): BitFlagSet<ULong, T> {
     override fun has(vararg others: T) = others.all {
         (mask and it.mask) == it.mask
     }

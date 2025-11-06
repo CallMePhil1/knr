@@ -1,6 +1,7 @@
 package com.github.callmephil.knr.runtime.typing.flags
 
-class IntBitFlagSet<T: BitFlag<Int>>(override val mask: Int = 0): BitFlagSet<Int, T> {
+@JvmInline
+value class IntBitFlagSet<T: BitFlag<Int>>(override val mask: Int = 0): BitFlagSet<Int, T> {
     override fun has(vararg others: T) = others.all {
         (mask and it.mask) == it.mask
     }
@@ -73,7 +74,8 @@ class IntBitFlagSet<T: BitFlag<Int>>(override val mask: Int = 0): BitFlagSet<Int
     }
 }
 
-class UIntBitFlagSet<T: BitFlag<UInt>>(override val mask: UInt = 0u): BitFlagSet<UInt, T> {
+@JvmInline
+value class UIntBitFlagSet<T: BitFlag<UInt>>(override val mask: UInt = 0u): BitFlagSet<UInt, T> {
     override fun has(vararg others: T) = others.all {
         (mask and it.mask) == it.mask
     }
