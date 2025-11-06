@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/libgen-annotations" />
             <option value="$PROJECT_DIR$/libgen-processor" />
+            <option value="$PROJECT_DIR$/libgen-processor-test" />
             <option value="$PROJECT_DIR$/runtime" />
           </set>
         </option>

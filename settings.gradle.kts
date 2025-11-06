@@ -13,3 +13,5 @@ pluginManagement {
         kotlin("jvm") version "2.2.20"
     }
 }
+
+include("libgen-processor-test")

@@ -261,7 +261,7 @@ internal class LibraryProcessor(
                 }
 
             fileSpec.addType(objectSpec.build())
-            fileSpec.build().writeTo(codeGenerator, aggregating = false)
+            fileSpec.build().writeTo(codeGenerator, aggregating = false, originatingKSFiles = listOf(lib.containingFile!!))
         }
 
         return emptyList()
