@@ -1,5 +1,6 @@
 package com.github.callmephil.knr.runtime.memory
 
+import com.github.callmephil.knr.runtime.native.Stdlib
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
@@ -11,8 +12,6 @@ abstract class Memory (
 ) {
     var memorySegment: MemorySegment? = memorySegment
         protected set
-
-    open val isSlice: Boolean = false
 
     val byteSize get() = memorySegment?.byteSize() ?: 0
     val isNull get() = memorySegment == MemorySegment.NULL
@@ -111,9 +110,24 @@ internal class MemorySlice(
     memorySegment: MemorySegment
 ) : Memory(memorySegment) {
 
-    override val isSlice: Boolean = true
-
     override fun dispose() {
         memorySegment = null
+    }
+}
+
+class NativeMemory internal constructor(
+    memorySegment: MemorySegment,
+    private var disposeFunc: (() -> Unit)?
+) : Memory(memorySegment) {
+
+    override fun dispose() {
+        disposeFunc?.invoke()
+        disposeFunc = null
+        memorySegment = null
+    }
+
+    companion object {
+        fun wrap(memorySegment: MemorySegment) = NativeMemory(memorySegment) { Stdlib.free(memorySegment) }
+        fun wrap(memorySegment: MemorySegment, disposeFunc: () -> Unit) = NativeMemory(memorySegment, disposeFunc)
     }
 }

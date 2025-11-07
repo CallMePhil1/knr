@@ -1,5 +1,6 @@
 package knr.libgen.processor
 
+import com.github.callmephil.knr.runtime.memory.NativeMemory
 import com.github.callmephil.knr.runtime.typing.CString
 import com.github.callmephil.knr.runtime.typing.flags.BitFlagSet
 import com.google.devtools.ksp.KspExperimental
@@ -12,6 +13,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
@@ -26,9 +28,11 @@ import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
+import knr.libgen.annotations.IgnoreReturnsNative
 import knr.libgen.annotations.Library
 import knr.libgen.annotations.Method
 import knr.libgen.annotations.NoVerify
+import knr.libgen.annotations.ReturnsNative
 import knr.libgen.annotations.StringParam
 import knr.libgen.processor.ext.addClsImport
 import knr.libgen.processor.ext.assignableTo
@@ -46,6 +50,7 @@ import org.tinylog.Level
 import org.tinylog.configuration.Configuration
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
+import java.lang.foreign.MemorySegment
 import java.lang.foreign.SymbolLookup
 import java.lang.foreign.ValueLayout
 import java.lang.invoke.MethodHandle
@@ -64,6 +69,7 @@ internal class LibraryProcessor(
 
     private val logger = KotlinLogging.logger {  }
 
+    @OptIn(KspExperimental::class)
     private fun addFunctionBody(
         func: KSFunctionDeclaration,
         builder: FunSpec.Builder,
@@ -73,7 +79,7 @@ internal class LibraryProcessor(
     ) {
         val funcBody = CodeBlock.builder()
         val invokeParamsList = mutableListOf<String>()
-        val noVerifyMethod = func.annotations.has<NoVerify>(resolver)
+        val noVerifyMethod = func.annotations.has<NoVerify>()
 
         func.parameters.forEach { param ->
             val type = param.type.resolve()
@@ -89,7 +95,7 @@ internal class LibraryProcessor(
                     invokeParamsList.add("$paramName$conversionCall")
                 }
                 type.isString -> {
-                    val stringParamAnno = param.annotations.get<StringParam>(resolver)
+                    val stringParamAnno = param.annotations.get<StringParam>()
                     val annoCharsetName = stringParamAnno.get<String>(StringParam::charset.name)
                     val charset = standardCharsets[annoCharsetName]
 
@@ -102,7 +108,7 @@ internal class LibraryProcessor(
                     invokeParamsList.add("${cacheName}!!.memory.memorySegment")
                 }
                 type.inheritsNative(resolver) -> {
-                    if (!noVerifyMethod && !param.annotations.has<NoVerify>(resolver))
+                    if (!noVerifyMethod && !param.annotations.has<NoVerify>())
                         funcBody.addStatement("%L.verifyIsValid()", paramName)
                     invokeParamsList.add("${paramName}.memory.memorySegment")
                 }
@@ -117,11 +123,42 @@ internal class LibraryProcessor(
 
         when {
             returnType.toClassName() == Unit::class.java.asTypeName() -> {
-                funcBody.addStatement("%L.invokeExact(%L)", methodHandle.name, invokeParams)
+                funcBody.add("%L.invokeExact(%L)", methodHandle.name, invokeParams)
             }
             returnType.isPrimitive -> {
                 val returnTypeString = returnType.toClassName().simpleName
-                funcBody.addStatement("return %L.invokeExact(%L) as %L", methodHandle.name, invokeParams, returnTypeString)
+                funcBody.add("return %L.invokeExact(%L) as %L", methodHandle.name, invokeParams, returnTypeString)
+            }
+            returnType.inheritsNative(resolver) -> {
+                val annotation = when {
+                    func.annotations.has<IgnoreReturnsNative>() -> null
+                    func.annotations.has<ReturnsNative>() -> func.annotations.get<ReturnsNative>()
+                    func.parentDeclaration?.annotations?.has<ReturnsNative>() ?: false -> func.parentDeclaration!!.annotations.get<ReturnsNative>()
+                    else -> null
+                }
+
+                if (annotation != null) {
+                    val cls = annotation.get<KSType>("cls")
+                    val funcName = annotation.get<String>("disposeFunName")
+                    val clsImplPackage = "${cls.declaration.packageName.asString()}.generated"
+                    val clsImplName = "${cls.simpleName.asString()}Impl"
+                    val invokeCall = "$clsImplPackage.$clsImplName.$funcName"
+
+                    funcBody.add("""val result = ${methodHandle.name}.invokeExact($invokeParams) as MemorySegment
+                        |var struct: ${returnType.simpleName.asString()}? = null
+                        |val disposeFun = { $invokeCall(struct!!) }
+                        |val memory = NativeMemory.wrap(result, disposeFun)
+                        |struct = ${returnType.simpleName.asString()}.wrap(memory)
+                        |return struct
+                    """.trimMargin())
+
+                } else {
+                    funcBody.add(
+                        """val result = ${methodHandle.name}.invokeExact($invokeParams) as MemorySegment
+                        |val memory = NativeMemory.wrap(result)
+                        |return ${returnType.simpleName.asString()}.wrap(memory)
+                    """.trimMargin())
+                }
             }
             else -> {}
         }
@@ -159,8 +196,10 @@ internal class LibraryProcessor(
 
         fileSpec.addImport("com.github.callmephil.knr.runtime.ext", "downcallHandle")
         fileSpec.addImport("com.github.callmephil.knr.runtime.typing", "cstringOf")
-        fileSpec.addClsImport(ValueLayout::class.java)
+        fileSpec.addClsImport(MemorySegment::class.java)
+        fileSpec.addClsImport(NativeMemory::class.java)
         fileSpec.addClsImport(StandardCharsets::class.java)
+        fileSpec.addClsImport(ValueLayout::class.java)
 
         logger.debug { "Created FileSpec[Path: ${fileSpec.packageName}.${fileSpec.name} | ClassName: $clsName]" }
         return fileSpec
@@ -183,15 +222,17 @@ internal class LibraryProcessor(
         val paramsString = params.joinToString(",\n    ")
         val returnType = func.returnType!!.resolve().toValueLayoutString(resolver)
 
+        val initializer = CodeBlock.builder()
+        initializer.add("""linker.downcallHandle(
+            |segment = lookup.find(%S).orElseThrow(),
+            |retType = %L,
+            |%L
+            |)""".trimMargin(), nativeName, returnType, paramsString)
+
         val propertySpec = PropertySpec
             .builder("${func.simpleName.asString()}Handle", MethodHandle::class, KModifier.PRIVATE)
             .mutable(false)
-            .initializer("""linker.downcallHandle(
-                |    segment = lookup.find(%S).orElseThrow(),
-                |    retType = %L,
-                |    %L
-                |)
-            """.trimMargin(), nativeName, returnType, paramsString)
+            .initializer(initializer.build())
             .build()
 
         logger.debug { "Create MethodHandle PropertySpec[Name: ${propertySpec.name}, Params: {$paramsString}, Return: $returnType]" }
@@ -275,7 +316,7 @@ internal class LibraryProcessor(
             val paramName = it.name!!.asString()
 
             if (type.isString) {
-                if (!it.annotations.has<StringParam>(resolver))
+                if (!it.annotations.has<StringParam>())
                     throw IllegalStateException("Parameter '$paramName: String' for function '$funcName' does not have a 'StringParam' annotation")
             }
             else if (!type.isPrimitive && !type.inheritsNative(resolver) && !type.assignableTo<BitFlagSet<*, *>>(resolver))
@@ -283,9 +324,9 @@ internal class LibraryProcessor(
         }
 
         val returnType = func.returnType!!.resolve()
-        if (!returnType.isPrimitive) {
+        if (!returnType.isPrimitive && !returnType.inheritsNative(resolver)) {
             val returnTypeName = returnType.declaration.qualifiedName!!.asString()
-            throw IllegalStateException("Return type '${returnTypeName}' for function '$funcName' is not a primitive")
+            throw IllegalStateException("Return type '${returnTypeName}' for function '$funcName' is not a primitive or inherits 'Native'")
         }
     }
 }
@@ -294,7 +335,7 @@ class LibraryProcessorProvider : SymbolProcessorProvider {
     private lateinit var logger: KLogger
 
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-        val logLevelProp = environment.options["libgen.logLevel"] ?: "info"
+        val logLevelProp = environment.options["knr.libgen.logLevel"] ?: "info"
         val level = Level.valueOf(logLevelProp.uppercase())
         Configuration.set("level", level.name)
 

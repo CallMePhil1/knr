@@ -2,23 +2,35 @@ package knr.libgen.processor
 
 import com.github.callmephil.knr.runtime.memory.Memory
 import com.github.callmephil.knr.runtime.typing.Struct
+import com.github.callmephil.knr.runtime.typing.StructCompanion
 import com.github.callmephil.knr.runtime.typing.array.IntNativeArray
 import com.github.callmephil.knr.runtime.typing.flags.BitFlag
 import com.github.callmephil.knr.runtime.typing.flags.IntBitFlagSet
+import knr.libgen.annotations.IgnoreReturnsNative
 import knr.libgen.annotations.Library
 import knr.libgen.annotations.Method
 import knr.libgen.annotations.NoVerify
+import knr.libgen.annotations.ReturnsNative
 import knr.libgen.annotations.StringParam
+import java.lang.foreign.MemoryLayout
+import java.lang.foreign.StructLayout
 
 class TestClass(
     memory: Memory
-) : Struct<TestClass>(memory)
+) : Struct<TestClass>(memory) {
+    companion object : StructCompanion<TestClass> {
+        override val layout: StructLayout = MemoryLayout.structLayout()
+
+        override fun wrap(memory: Memory) = TestClass(memory)
+    }
+}
 
 enum class TestBitFlags(override val mask: Int): BitFlag<Int> {
     FIRST(1)
 }
 
 @Library("test/path")
+@ReturnsNative(TestLibrary::class, "disposeTestClass")
 interface TestLibrary {
     fun primitiveFunc(byte: Byte, short: UShort, int: Int, long: Long): Int
     fun nativeFunc(cls: TestClass, array: IntNativeArray, bitMask: IntBitFlagSet<TestBitFlags>): Int
@@ -32,4 +44,16 @@ interface TestLibrary {
     fun namedMethod()
 
     fun stringMethod(@StringParam string: String, @StringParam("nonstandard") string2: String)
+
+    @ReturnsNative(TestLibrary::class, "disposeTestClass2")
+    fun createTestClass(): TestClass
+
+    fun createTestClass2(): TestClass
+
+    @IgnoreReturnsNative
+    fun createTestClass3(): TestClass
+
+    fun disposeTestClass(cls: TestClass)
+
+    fun disposeTestClass2(cls: TestClass)
 }

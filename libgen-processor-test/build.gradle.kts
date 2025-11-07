@@ -22,6 +22,10 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
+ksp {
+    arg("knr.libgen.logLevel", "debug")
+}
+
 tasks.test {
     useJUnitPlatform()
 }
