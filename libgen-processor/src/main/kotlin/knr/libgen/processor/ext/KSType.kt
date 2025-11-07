@@ -1,7 +1,7 @@
 package knr.libgen.processor.ext
 
-import com.github.callmephil.knr.runtime.memory.Native
-import com.github.callmephil.knr.runtime.typing.flags.BitFlagSet
+import knr.runtime.memory.Native
+import knr.runtime.typing.flags.BitFlagSet
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration

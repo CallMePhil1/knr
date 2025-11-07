@@ -1,8 +1,8 @@
 package knr.libgen.processor
 
-import com.github.callmephil.knr.runtime.memory.NativeMemory
-import com.github.callmephil.knr.runtime.typing.CString
-import com.github.callmephil.knr.runtime.typing.flags.BitFlagSet
+import knr.runtime.memory.NativeMemory
+import knr.runtime.typing.CString
+import knr.runtime.typing.flags.BitFlagSet
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.processing.CodeGenerator
@@ -194,8 +194,8 @@ internal class LibraryProcessor(
         val clsName = cls.simpleName.asString() + "Impl"
         val fileSpec = FileSpec.builder(packageName, clsName)
 
-        fileSpec.addImport("com.github.callmephil.knr.runtime.ext", "downcallHandle")
-        fileSpec.addImport("com.github.callmephil.knr.runtime.typing", "cstringOf")
+        fileSpec.addImport("knr.runtime.ext", "downcallHandle")
+        fileSpec.addImport("knr.runtime.typing", "cstringOf")
         fileSpec.addClsImport(MemorySegment::class.java)
         fileSpec.addClsImport(NativeMemory::class.java)
         fileSpec.addClsImport(StandardCharsets::class.java)

@@ -1,11 +1,11 @@
 package knr.libgen.processor
 
-import com.github.callmephil.knr.runtime.memory.Memory
-import com.github.callmephil.knr.runtime.typing.Struct
-import com.github.callmephil.knr.runtime.typing.StructCompanion
-import com.github.callmephil.knr.runtime.typing.array.IntNativeArray
-import com.github.callmephil.knr.runtime.typing.flags.BitFlag
-import com.github.callmephil.knr.runtime.typing.flags.IntBitFlagSet
+import knr.runtime.memory.Memory
+import knr.runtime.typing.Struct
+import knr.runtime.typing.StructCompanion
+import knr.runtime.typing.array.IntNativeArray
+import knr.runtime.typing.flags.BitFlag
+import knr.runtime.typing.flags.IntBitFlagSet
 import knr.libgen.annotations.IgnoreReturnsNative
 import knr.libgen.annotations.Library
 import knr.libgen.annotations.Method
