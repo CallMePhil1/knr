@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.callmephil.knr.libgen-processor"
-version = "unspecified"
+version = "0.1"
 
 repositories {
     mavenCentral()
@@ -22,11 +22,4 @@ dependencies {
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
     implementation("org.tinylog:slf4j-tinylog:2.7.0")
     implementation("org.tinylog:tinylog-impl:2.7.0")
-
-    kspTest(project(":libgen-processor"))
-    testImplementation(kotlin("test"))
-}
-
-ksp {
-    arg("libgen.logLevel", "debug")
 }

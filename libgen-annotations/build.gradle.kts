@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.github.callmephil.knr.libgen"
-version = "unspecified"
+version = "0.1"
 
 repositories {
     mavenCentral()
