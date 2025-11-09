@@ -205,7 +205,7 @@ internal class LibraryProcessor(
         return fileSpec
     }
 
-    private fun createCaches(func: KSFunctionDeclaration, resolver: Resolver): Map<String, PropertySpec> =
+    private fun createCaches(func: KSFunctionDeclaration): Map<String, PropertySpec> =
         func.parameters
             .filter { it.isString }
             .associate {
@@ -287,7 +287,7 @@ internal class LibraryProcessor(
                     validateFunc(func, resolver)
                     val funcNativeName = getNativeFunctionName(func, resolver)
 
-                    val caches = createCaches(func, resolver)
+                    val caches = createCaches(func)
                     val methodHandle = createMethodHandleProperty(func, funcNativeName,resolver)
 
                     val funcSpecBuilder = FunSpec.builder(func.simpleName.asString())

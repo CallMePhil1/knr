@@ -5,8 +5,9 @@ import knr.runtime.memory.Memory
 import java.lang.foreign.MemorySegment
 
 class LongNativeArray(
-    memory: Memory
-) : NativeArray<Long, LongArray>(memory, Long.SIZE_BYTES) {
+    memory: Memory,
+    size: Int
+) : NativeArray<Long, LongArray>(memory, size, Long.SIZE_BYTES) {
 
     override fun getUnchecked(index: Int) = memory.getLong(index.toLong() * typeByteSize)
     override operator fun get(index: Int): Long {
@@ -32,7 +33,8 @@ class LongNativeArray(
     }
 }
 
-fun longNativeArray(memory: Memory) = LongNativeArray(memory)
+fun longNativeArray(memory: Memory, size: Int) = LongNativeArray(memory, size)
+fun longNativeArray(memory: Memory) = longNativeArray(memory, memory.byteSize.toInt() / Long.SIZE_BYTES)
 fun longNativeArray(size: Long) = longNativeArray(ArenaMemory.allocate(size * Long.SIZE_BYTES))
 fun longNativeArray(array: LongArray): LongNativeArray {
     val memory = ArenaMemory.allocate((array.size * Long.SIZE_BYTES).toLong())

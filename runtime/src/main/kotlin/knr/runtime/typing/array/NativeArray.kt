@@ -6,10 +6,9 @@ import java.lang.foreign.ValueLayout
 
 abstract class NativeArray<T, C> internal constructor(
     memory: Memory,
+    val size: Int,
     val typeByteSize: Int
 ) : Native<T>(memory), Iterable<T> {
-
-    val size: Int = (memory.byteSize / typeByteSize).toInt()
 
     protected fun checkBounds(target: Int) {
         if (size <= target)

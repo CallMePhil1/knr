@@ -7,7 +7,8 @@ import knr.runtime.memory.Memory
 
 open class UByteNativeArray internal constructor(
     memory: Memory,
-) : NativeArray<UByte, UByteArray>(memory, UByte.SIZE_BYTES) {
+    size: Int
+) : NativeArray<UByte, UByteArray>(memory, size, UByte.SIZE_BYTES) {
 
     override fun getUnchecked(index: Int) = memory.getUByte(index.toLong())
     override operator fun get(index: Int): UByte {
@@ -30,7 +31,8 @@ open class UByteNativeArray internal constructor(
     }
 }
 
-fun ubyteNativeArray(memory: Memory) = UByteNativeArray(memory)
+fun ubyteNativeArray(memory: Memory, size: Int) = UByteNativeArray(memory, size)
+fun ubyteNativeArray(memory: Memory) = ubyteNativeArray(memory, memory.byteSize.toInt())
 fun ubyteNativeArray(size: Long) = ubyteNativeArray(ArenaMemory.allocate(size))
 fun ubyteNativeArray(array: UByteArray): UByteNativeArray {
     val memory = ArenaMemory.allocate(array.size.toLong())

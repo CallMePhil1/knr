@@ -7,13 +7,15 @@ import java.nio.charset.Charset
 
 open class CCharNativeArray internal constructor(
     memory: Memory,
+    size: Int,
     val charset: Charset
-) : ByteNativeArray(memory) {
+) : ByteNativeArray(memory, size) {
     open fun getString() = memory.getString(0, charset)
     open fun set(value: String) = set(charset.encode(value).array())
 }
 
-fun ccharNativeArray(memory: Memory, charset: Charset) = CCharNativeArray(memory, charset)
+fun ccharNativeArray(memory: Memory, size: Int, charset: Charset) = CCharNativeArray(memory, size, charset)
+fun ccharNativeArray(memory: Memory, charset: Charset) = ccharNativeArray(memory, memory.byteSize.toInt(), charset)
 fun ccharNativeArray(size: Long, charset: Charset) = ccharNativeArray(ArenaMemory.allocate(size), charset)
 fun ccharNativeArray(value: String, charset: Charset): CCharNativeArray {
     val memory = ArenaMemory.string(value, charset)
@@ -29,9 +31,10 @@ fun ccharNativeArray(array: ByteArray, charset: Charset): CCharNativeArray {
 
 class CachedCCharNativeArray internal constructor(
     memory: Memory,
+    size: Int,
     charset: Charset,
     initialValue: String
-) : CCharNativeArray(memory, charset) {
+) : CCharNativeArray(memory, size, charset) {
 
     var value: String = initialValue
         private set
@@ -46,7 +49,8 @@ class CachedCCharNativeArray internal constructor(
     }
 }
 
-fun cachedCCharNativeArray(memory: Memory, charset: Charset, initialValue: String) = CachedCCharNativeArray(memory, charset, initialValue)
+fun cachedCCharNativeArray(memory: Memory, size: Int, charset: Charset, initialValue: String) = CachedCCharNativeArray(memory, size, charset, initialValue)
+fun cachedCCharNativeArray(memory: Memory, charset: Charset, initialValue: String) = cachedCCharNativeArray(memory, memory.byteSize.toInt(), charset, initialValue)
 fun cachedCCharNativeArray(size: Long, charset: Charset, initialValue: String) = cachedCCharNativeArray(ArenaMemory.allocate(size), charset, initialValue)
 fun cachedCCharNativeArray(initialValue: String, charset: Charset): CachedCCharNativeArray {
     val memory = ArenaMemory.string(initialValue, charset)

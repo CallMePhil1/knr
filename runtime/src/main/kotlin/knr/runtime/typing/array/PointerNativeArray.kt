@@ -7,8 +7,9 @@ import java.lang.foreign.ValueLayout
 
 class PointerNativeArray<T : Pointer<*>?>(
     memory: Memory,
+    size: Int,
     private val pointers: Array<T>
-) : NativeArray<T, Array<T>>(memory, ValueLayout.ADDRESS.byteSize().toInt()) {
+) : NativeArray<T, Array<T>>(memory, size, ValueLayout.ADDRESS.byteSize().toInt()) {
     override fun getUnchecked(index: Int) = pointers[index]
     override fun get(index: Int) = pointers[index]
     override fun get() = pointers.copyOf()
@@ -34,7 +35,7 @@ inline fun <reified T : Pointer<*>?> pointerNativeArray(size: Int, noinline init
     val addressByteSize = ValueLayout.ADDRESS.byteSize()
     val memory = ArenaMemory.allocate(size * addressByteSize)
     val array = Array(size, init)
-    return PointerNativeArray(memory, array)
+    return PointerNativeArray(memory, size, array)
 }
 
 inline fun <reified T : Pointer<*>?> pointerNativeArray(vararg values: T): PointerNativeArray<T> {
@@ -46,5 +47,5 @@ inline fun <reified T : Pointer<*>?> pointerNativeArray(vararg values: T): Point
             memory.setAddress(it * addressByteSize, value.memory.memorySegment!!)
         value
     }
-    return PointerNativeArray(memory, array)
+    return PointerNativeArray(memory, values.size,array)
 }

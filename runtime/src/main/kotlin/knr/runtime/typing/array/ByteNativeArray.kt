@@ -5,7 +5,8 @@ import knr.runtime.memory.Memory
 
 open class ByteNativeArray internal constructor(
     memory: Memory,
-) : NativeArray<Byte, ByteArray>(memory, Byte.SIZE_BYTES) {
+    size: Int
+) : NativeArray<Byte, ByteArray>(memory, size,Byte.SIZE_BYTES) {
 
     override fun getUnchecked(index: Int) = memory.getByte(index.toLong())
     override operator fun get(index: Int): Byte {
@@ -28,7 +29,8 @@ open class ByteNativeArray internal constructor(
     }
 }
 
-fun byteNativeArray(memory: Memory) = ByteNativeArray(memory)
+fun byteNativeArray(memory: Memory, size: Int) = ByteNativeArray(memory, size)
+fun byteNativeArray(memory: Memory) = byteNativeArray(memory, memory.byteSize.toInt())
 fun byteNativeArray(size: Long) = byteNativeArray(ArenaMemory.allocate(size))
 fun byteNativeArray(array: ByteArray): ByteNativeArray {
     val memory = ArenaMemory.allocate(array.size.toLong())

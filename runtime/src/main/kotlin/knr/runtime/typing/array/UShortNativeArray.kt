@@ -7,8 +7,9 @@ import knr.runtime.memory.Memory
 import java.lang.foreign.MemorySegment
 
 class UShortNativeArray(
-    memory: Memory
-) : NativeArray<UShort, UShortArray>(memory, UShort.SIZE_BYTES) {
+    memory: Memory,
+    size: Int
+) : NativeArray<UShort, UShortArray>(memory, size, UShort.SIZE_BYTES) {
 
     override fun getUnchecked(index: Int) = memory.getUShort(index.toLong() * typeByteSize)
     override operator fun get(index: Int): UShort {
@@ -34,7 +35,8 @@ class UShortNativeArray(
     }
 }
 
-fun ushortNativeArray(memory: Memory) = UShortNativeArray(memory)
+fun ushortNativeArray(memory: Memory, size: Int) = UShortNativeArray(memory, size)
+fun ushortNativeArray(memory: Memory) = ushortNativeArray(memory, memory.byteSize.toInt() / UShort.SIZE_BYTES)
 fun ushortNativeArray(size: Long) = ushortNativeArray(ArenaMemory.allocate(size * UShort.SIZE_BYTES))
 fun ushortNativeArray(array: UShortArray): UShortNativeArray {
     val memory = ArenaMemory.allocate((array.size * Short.SIZE_BYTES).toLong())

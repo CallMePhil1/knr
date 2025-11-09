@@ -7,9 +7,10 @@ import java.lang.foreign.StructLayout
 
 class StructNativeArray<T : Struct<T>>(
     memory: Memory,
+    size: Int,
     byteSize: Int,
     private val structs: Array<T>
-) : NativeArray<T, Array<T>>(memory, byteSize) {
+) : NativeArray<T, Array<T>>(memory, size, byteSize) {
     override fun getUnchecked(index: Int) = structs[index]
     override fun get(index: Int) = structs[index]
     override fun get(): Array<T> = structs.copyOf()
@@ -37,11 +38,11 @@ inline fun <reified T: Struct<T>> structNativeArray(size: Int, structByteSize: L
         val slice = memory.asSlice(it * structByteSize, structByteSize)
         init(it, slice)
     }
-    return StructNativeArray(memory, structByteSize.toInt(), array)
+    return StructNativeArray(memory, size, structByteSize.toInt(), array)
 }
 inline fun <reified T: Struct<T>> structNativeArray(vararg values: T, init: (Memory) -> T): StructNativeArray<T> {
     return if (values.isEmpty())
-        StructNativeArray(ArenaMemory.allocate(0), 0, arrayOf())
+        StructNativeArray(ArenaMemory.allocate(0), 0, 0, arrayOf())
     else {
         val byteSize = values[0].memory.byteSize
         val memory = ArenaMemory.allocate(byteSize * values.size)
@@ -51,6 +52,6 @@ inline fun <reified T: Struct<T>> structNativeArray(vararg values: T, init: (Mem
             values[it].copyTo(struct)
             struct
         }
-        StructNativeArray(memory, byteSize.toInt(), array)
+        StructNativeArray(memory, values.size, byteSize.toInt(), array)
     }
 }
