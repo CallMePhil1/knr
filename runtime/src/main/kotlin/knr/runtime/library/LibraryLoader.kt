@@ -1,7 +1,7 @@
 package knr.runtime.library
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import knr.libgen.annotations.Library
+import knr.annotations.Library
 
 object LibraryLoader {
     private val logger = KotlinLogging.logger {  }

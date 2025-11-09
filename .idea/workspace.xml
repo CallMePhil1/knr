@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1c6745c1-a76a-46b4-aa0a-fefb0c0e4d74" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-annotations/build.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-annotations/src/main/kotlin/knr.libgen.annotations/Library.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-annotations/src/main/kotlin/knr.libgen.annotations/Method.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-annotations/src/main/kotlin/knr.libgen.annotations/NoVerify.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-annotations/src/main/kotlin/knr.libgen.annotations/ReturnsNative.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-annotations/src/main/kotlin/knr.libgen.annotations/StringParam.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor-test/build.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor-test/src/main/kotlin/knr/libgen/processor/PrimativeStruct.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor-test/src/main/kotlin/knr/libgen/processor/PrimitiveTestLibrary.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor-test/src/main/kotlin/knr/libgen/processor/ProcessorTests.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor-test/src/main/kotlin/knr/libgen/processor/TestLibrary.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor-test/src/main/testlib/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor-test/src/main/testlib/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor-test/src/main/testlib/primitivetest.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor-test/src/main/testlib/primitivetest.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor/build.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor/gradle.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor/src/main/kotlin/knr/libgen/processor/LibraryProcessor.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor/src/main/kotlin/knr/libgen/processor/ext/FileSpec.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor/src/main/kotlin/knr/libgen/processor/ext/KSAnnotation.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor/src/main/kotlin/knr/libgen/processor/ext/KSClassDeclaration.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor/src/main/kotlin/knr/libgen/processor/ext/KSType.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor/src/main/kotlin/knr/libgen/processor/ext/KSValueParameter.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor/src/main/kotlin/knr/libgen/processor/ext/String.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor/src/main/kotlin/knr/libgen/processor/util/Charset.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor/src/main/kotlin/knr/libgen/processor/util/Types.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor/src/main/resources/META-INF/services/com.google.devtools.ksp.processing.SymbolProcessorProvider" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgen-processor/src/main/resources/tinylog.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/library/LibraryLoader.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/library/LibraryLoader.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GradleScriptDefinitionsStorage" workingDir="$PROJECT_DIR$" gradleHome="C:\Users\asljb\.gradle\wrapper\dists\gradle-8.14-bin\38aieal9i53h9rfe7vjup95b9\gradle-8.14" javaHome="C:\Users\asljb\.jdks\openjdk-22" gradleVersion="8.14">
+    <option name="jvmArguments">
+      <list>
+        <option value="-Dandroid.home=C:\Users\asljb\AppData\Local\Android\Sdk" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="35D3MzDRLFIcwYLUC1DjI3QlaTV" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.knr:processors-test [:processors-test:knr.libgen.processor.ProcessorTestsKt.main()].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "develop",
+    "kotlin-language-version-configured": "true",
+    "show.migrate.to.gradle.popup": "false"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="knr.annotations" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="ProcessorTestsKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="knr.libgen.processor.ProcessorTestsKt" />
+      <module name="knr.processors-test.main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="knr.annotations.main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="knr.annotations.main" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Kotlin.ProcessorTestsKt" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1c6745c1-a76a-46b4-aa0a-fefb0c0e4d74" name="Changes" comment="" />
+      <created>1762630771541</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1762630771541</updated>
+    </task>
+    <servers />
+  </component>
+</project>

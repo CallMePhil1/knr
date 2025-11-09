@@ -1,8 +1,8 @@
 rootProject.name = "knr"
 include("runtime")
-include("libgen-annotations")
-include("libgen-processor")
-include("libgen-processor-test")
+include("annotations")
+include("processors")
+include("processors-test")
 
 pluginManagement {
     repositories {
