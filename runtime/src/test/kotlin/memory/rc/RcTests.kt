@@ -1,7 +1,7 @@
 package memory.rc
 
-import com.github.callmephil.knr.runtime.memory.rc.Rc
-import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
+import knr.runtime.memory.rc.Rc
+import knr.runtime.typing.pointer.bytePointerOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

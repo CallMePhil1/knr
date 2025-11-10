@@ -1,6 +1,6 @@
 package knr.runtime.memory.rc
 
-import knr.runtime.memory.Native
+import knr.runtime.typing.Native
 
 open class Rc<T : Native<T>> internal constructor(
     shared: Shared<T>

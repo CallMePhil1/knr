@@ -3,7 +3,6 @@ package knr.runtime.typing
 import knr.runtime.delegates.*
 import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
-import knr.runtime.memory.Native
 import knr.runtime.typing.pointer.BytePointer
 import knr.runtime.typing.pointer.IntPointer
 import knr.runtime.typing.pointer.LongPointer

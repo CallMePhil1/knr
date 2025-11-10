@@ -1,6 +1,6 @@
 package typing.pointer
 
-import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
+import knr.runtime.typing.pointer.bytePointerOf
 import kotlin.test.Test
 
 class BytePointerTests {

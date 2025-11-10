@@ -1,6 +1,6 @@
 package knr.processors.ext
 
-import knr.runtime.memory.Native
+import knr.runtime.typing.Native
 import knr.runtime.typing.flags.BitFlagSet
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Resolver

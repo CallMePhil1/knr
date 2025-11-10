@@ -2,9 +2,9 @@
 
 package typing.array
 
-import com.github.callmephil.knr.runtime.typing.array.NativeArray
-import com.github.callmephil.knr.runtime.typing.array.byteNativeArray
-import com.github.callmephil.knr.runtime.typing.array.shortNativeArray
+import knr.runtime.typing.array.NativeArray
+import knr.runtime.typing.array.byteNativeArray
+import knr.runtime.typing.array.shortNativeArray
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

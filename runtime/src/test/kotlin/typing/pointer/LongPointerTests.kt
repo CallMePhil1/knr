@@ -1,6 +1,6 @@
 package typing.pointer
 
-import com.github.callmephil.knr.runtime.typing.pointer.longPointerOf
+import knr.runtime.typing.pointer.longPointerOf
 import kotlin.test.Test
 
 class LongPointerTests {

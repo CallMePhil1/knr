@@ -1,7 +1,7 @@
 package string
 
-import com.github.callmephil.knr.runtime.ext.downcallHandle
-import com.github.callmephil.knr.runtime.typing.pointer.Pointer
+import knr.runtime.ext.downcallHandle
+import knr.runtime.typing.pointer.Pointer
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
 import java.lang.foreign.SymbolLookup

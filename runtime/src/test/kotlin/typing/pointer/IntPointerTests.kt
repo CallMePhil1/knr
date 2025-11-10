@@ -1,6 +1,6 @@
 package typing.pointer
 
-import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
+import knr.runtime.typing.pointer.intPointerOf
 import kotlin.test.Test
 
 class IntPointerTests {

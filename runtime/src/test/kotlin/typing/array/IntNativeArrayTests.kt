@@ -1,7 +1,7 @@
 package typing.array
 
-import com.github.callmephil.knr.runtime.typing.array.intNativeArray
-import com.github.callmephil.knr.runtime.typing.array.toTypedArray
+import knr.runtime.typing.array.intNativeArray
+import knr.runtime.typing.array.toTypedArray
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

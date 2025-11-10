@@ -1,6 +1,6 @@
 package typing.pointer
 
-import com.github.callmephil.knr.runtime.typing.pointer.shortPointerOf
+import knr.runtime.typing.pointer.shortPointerOf
 import kotlin.test.Test
 
 class ShortPointerTests {

@@ -1,8 +1,8 @@
 package string
 
-import com.github.callmephil.knr.runtime.memory.ArenaMemory
-import com.github.callmephil.knr.runtime.native.StringLib
-import com.github.callmephil.knr.runtime.typing.cstringOf
+import knr.runtime.memory.ArenaMemory
+import knr.runtime.native.StringLib
+import knr.runtime.typing.cstringOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

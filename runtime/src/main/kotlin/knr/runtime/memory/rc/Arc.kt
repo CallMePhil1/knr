@@ -1,6 +1,6 @@
 package knr.runtime.memory.rc
 
-import knr.runtime.memory.Native
+import knr.runtime.typing.Native
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 

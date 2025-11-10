@@ -1,7 +1,7 @@
 package knr.runtime.typing.array
 
 import knr.runtime.memory.Memory
-import knr.runtime.memory.Native
+import knr.runtime.typing.Native
 import java.lang.foreign.ValueLayout
 
 abstract class NativeArray<T, C> internal constructor(

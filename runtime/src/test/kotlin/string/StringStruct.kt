@@ -1,10 +1,10 @@
 package string
 
-import com.github.callmephil.knr.runtime.memory.Memory
-import com.github.callmephil.knr.runtime.typing.Struct
-import com.github.callmephil.knr.runtime.typing.StructCompanion
-import com.github.callmephil.knr.runtime.typing.cachedCStringOf
-import com.github.callmephil.knr.runtime.typing.cstringOf
+import knr.runtime.memory.Memory
+import knr.runtime.typing.Struct
+import knr.runtime.typing.StructCompanion
+import knr.runtime.typing.cachedCStringOf
+import knr.runtime.typing.cstringOf
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.StructLayout
 import java.lang.foreign.ValueLayout

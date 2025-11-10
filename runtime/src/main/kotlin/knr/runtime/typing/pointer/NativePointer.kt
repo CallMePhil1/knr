@@ -1,6 +1,6 @@
 package knr.runtime.typing.pointer
 
-import knr.runtime.memory.Native
+import knr.runtime.typing.Native
 
 class NativePointer<T : Native<T>> internal constructor(
     private var value: T,

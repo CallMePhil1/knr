@@ -1,15 +1,15 @@
 package typing.array
 
-import com.github.callmephil.knr.runtime.ext.downcallHandle
-import com.github.callmephil.knr.runtime.typing.array.ByteNativeArray
-import com.github.callmephil.knr.runtime.typing.array.IntNativeArray
-import com.github.callmephil.knr.runtime.typing.array.LongNativeArray
-import com.github.callmephil.knr.runtime.typing.array.ShortNativeArray
-import com.github.callmephil.knr.runtime.typing.array.StructNativeArray
-import com.github.callmephil.knr.runtime.typing.array.UByteNativeArray
-import com.github.callmephil.knr.runtime.typing.array.UIntNativeArray
-import com.github.callmephil.knr.runtime.typing.array.ULongNativeArray
-import com.github.callmephil.knr.runtime.typing.array.UShortNativeArray
+import knr.runtime.ext.downcallHandle
+import knr.runtime.typing.array.ByteNativeArray
+import knr.runtime.typing.array.IntNativeArray
+import knr.runtime.typing.array.LongNativeArray
+import knr.runtime.typing.array.ShortNativeArray
+import knr.runtime.typing.array.StructNativeArray
+import knr.runtime.typing.array.UByteNativeArray
+import knr.runtime.typing.array.UIntNativeArray
+import knr.runtime.typing.array.ULongNativeArray
+import knr.runtime.typing.array.UShortNativeArray
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
 import java.lang.foreign.SymbolLookup

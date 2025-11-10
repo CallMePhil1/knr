@@ -2,8 +2,8 @@
 
 package typing.array
 
-import com.github.callmephil.knr.runtime.typing.array.toTypedArray
-import com.github.callmephil.knr.runtime.typing.array.uintNativeArray
+import knr.runtime.typing.array.toTypedArray
+import knr.runtime.typing.array.uintNativeArray
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

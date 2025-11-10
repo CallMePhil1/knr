@@ -1,6 +1,6 @@
 package primitive
 
-import com.github.callmephil.knr.runtime.ext.downcallHandle
+import knr.runtime.ext.downcallHandle
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
 import java.lang.foreign.SymbolLookup

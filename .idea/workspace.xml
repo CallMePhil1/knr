@@ -4,21 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c6745c1-a76a-46b4-aa0a-fefb0c0e4d74" name="Changes" comment="Remove libgen from two module packagenames">
+    <list default="true" id="1c6745c1-a76a-46b4-aa0a-fefb0c0e4d74" name="Changes" comment="Change arrays to take in a size for use with non arena memory">
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/processors-test/src/main/kotlin/knr/libgen/processor/ProcessorTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/processors-test/src/main/kotlin/knr/libgen/processor/ProcessorTests.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/processors/src/main/kotlin/knr/processors/LibraryProcessor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/processors/src/main/kotlin/knr/processors/LibraryProcessor.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/ByteNativeArray.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/ByteNativeArray.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/CCharNativeArray.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/CCharNativeArray.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/IntNativeArray.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/IntNativeArray.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/LongNativeArray.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/LongNativeArray.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/processors/src/main/kotlin/knr/processors/ext/KSType.kt" beforeDir="false" afterPath="$PROJECT_DIR$/processors/src/main/kotlin/knr/processors/ext/KSType.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/FieldDelegate.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/FieldDelegate.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/PointerFieldDelegate.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/PointerFieldDelegate.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/PrimitiveDelegates.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/PrimitiveDelegates.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/memory/Native.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/memory/rc/Arc.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/memory/rc/Arc.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/memory/rc/Rc.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/memory/rc/Rc.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/Struct.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/Struct.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/NativeArray.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/NativeArray.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/PointerNativeArray.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/PointerNativeArray.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/ShortNativeArray.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/ShortNativeArray.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/StructNativeArray.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/StructNativeArray.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/UByteNativeArray.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/UByteNativeArray.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/UIntNativeArray.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/UIntNativeArray.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/ULongNativeArray.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/ULongNativeArray.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/pointer/NativePointer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/pointer/NativePointer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/pointer/Pointer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/pointer/Pointer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/test/kotlin/primitive/PrimativeStruct.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/test/kotlin/primitive/PrimativeStruct.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/test/kotlin/typing/array/ArrayTestLibrary.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/test/kotlin/typing/array/ArrayTestLibrary.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/test/kotlin/typing/array/StructNativeArrayTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/test/kotlin/typing/array/StructNativeArrayTests.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/test/testlib/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/test/testlib/CMakeLists.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +33,13 @@
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -43,33 +54,61 @@
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 2
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 2
+}</component>
   <component name="ProjectId" id="35D3MzDRLFIcwYLUC1DjI3QlaTV" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.knr:processors-test [:processors-test:knr.libgen.processor.ProcessorTestsKt.main()].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "develop",
-    "kotlin-language-version-configured": "true",
-    "show.migrate.to.gradle.popup": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.knr:processors-test [:processors-test:knr.libgen.processor.ProcessorTestsKt.main()].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="knr.runtime.typing" />
+      <recent name="knr.runtime.typing.union" />
+      <recent name="knr.runtime.typing.struct.delegates" />
+      <recent name="knr.runtime.typing.struct" />
       <recent name="knr.annotations" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifing its fields THEN it should succeed">
+    <configuration name="UnionTests.GIVEN a UnionStruct WHEN accessing or modifing its fields THEN it should succeed" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":runtime:test" />
+            <option value="--tests" />
+            <option value="&quot;typing.union.UnionTests.GIVEN a UnionStruct WHEN accessing or modifing its fields THEN it should succeed&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
     <configuration name="ProcessorTestsKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="knr.libgen.processor.ProcessorTestsKt" />
       <module name="knr.processors-test.main" />
@@ -90,6 +129,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifing its fields THEN it should succeed" />
         <item itemvalue="Kotlin.ProcessorTestsKt" />
       </list>
     </recent_temporary>

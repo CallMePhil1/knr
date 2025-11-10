@@ -1,8 +1,8 @@
 package typing.flags
 
-import com.github.callmephil.knr.runtime.typing.flags.BitFlag
-import com.github.callmephil.knr.runtime.typing.flags.ByteBitFlagSet
-import com.github.callmephil.knr.runtime.typing.flags.entries
+import knr.runtime.typing.flags.BitFlag
+import knr.runtime.typing.flags.ByteBitFlagSet
+import knr.runtime.typing.flags.entries
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertTrue

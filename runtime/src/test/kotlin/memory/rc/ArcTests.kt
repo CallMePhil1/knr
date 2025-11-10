@@ -1,7 +1,7 @@
 package memory.rc
 
-import com.github.callmephil.knr.runtime.memory.rc.Arc
-import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
+import knr.runtime.memory.rc.Arc
+import knr.runtime.typing.pointer.bytePointerOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

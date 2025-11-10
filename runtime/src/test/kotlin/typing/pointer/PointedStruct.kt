@@ -1,16 +1,16 @@
 package typing.pointer
 
-import com.github.callmephil.knr.runtime.memory.Memory
-import com.github.callmephil.knr.runtime.typing.Struct
-import com.github.callmephil.knr.runtime.typing.StructCompanion
-import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.longPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.shortPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.ubytePointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.uintPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.ulongPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.ushortPointerOf
+import knr.runtime.memory.Memory
+import knr.runtime.typing.Struct
+import knr.runtime.typing.StructCompanion
+import knr.runtime.typing.pointer.bytePointerOf
+import knr.runtime.typing.pointer.intPointerOf
+import knr.runtime.typing.pointer.longPointerOf
+import knr.runtime.typing.pointer.shortPointerOf
+import knr.runtime.typing.pointer.ubytePointerOf
+import knr.runtime.typing.pointer.uintPointerOf
+import knr.runtime.typing.pointer.ulongPointerOf
+import knr.runtime.typing.pointer.ushortPointerOf
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.StructLayout
 import java.lang.foreign.ValueLayout

@@ -1,10 +1,10 @@
 package typing.pointer
 
-import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.longPointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.nativePointerOf
-import com.github.callmephil.knr.runtime.typing.pointer.shortPointerOf
+import knr.runtime.typing.pointer.bytePointerOf
+import knr.runtime.typing.pointer.intPointerOf
+import knr.runtime.typing.pointer.longPointerOf
+import knr.runtime.typing.pointer.nativePointerOf
+import knr.runtime.typing.pointer.shortPointerOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails

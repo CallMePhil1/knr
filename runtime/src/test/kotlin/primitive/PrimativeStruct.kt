@@ -1,8 +1,8 @@
 package primitive
 
-import com.github.callmephil.knr.runtime.memory.Memory
-import com.github.callmephil.knr.runtime.typing.Struct
-import com.github.callmephil.knr.runtime.typing.StructCompanion
+import knr.runtime.memory.Memory
+import knr.runtime.typing.Struct
+import knr.runtime.typing.StructCompanion
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.StructLayout
 import java.lang.foreign.ValueLayout

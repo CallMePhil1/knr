@@ -1,7 +1,7 @@
 package typing.array
 
-import com.github.callmephil.knr.runtime.typing.array.pointerNativeArray
-import com.github.callmephil.knr.runtime.typing.pointer.bytePointerOf
+import knr.runtime.typing.array.pointerNativeArray
+import knr.runtime.typing.pointer.bytePointerOf
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
 import kotlin.test.Test

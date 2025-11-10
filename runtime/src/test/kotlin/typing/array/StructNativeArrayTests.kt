@@ -1,10 +1,10 @@
 package typing.array
 
-import com.github.callmephil.knr.runtime.memory.Memory
-import com.github.callmephil.knr.runtime.typing.Struct
-import com.github.callmephil.knr.runtime.typing.StructCompanion
-import com.github.callmephil.knr.runtime.typing.array.structNativeArray
-import com.github.callmephil.knr.runtime.typing.pointer.intPointerOf
+import knr.runtime.memory.Memory
+import knr.runtime.typing.Struct
+import knr.runtime.typing.StructCompanion
+import knr.runtime.typing.array.structNativeArray
+import knr.runtime.typing.pointer.intPointerOf
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.StructLayout
 import java.lang.foreign.ValueLayout

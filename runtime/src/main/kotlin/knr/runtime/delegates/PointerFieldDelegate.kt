@@ -1,11 +1,11 @@
 package knr.runtime.delegates
 
-import knr.runtime.typing.Struct
+import knr.runtime.typing.Native
 import knr.runtime.typing.pointer.Pointer
 import java.lang.foreign.MemorySegment
 
 open class PointerFieldDelegate<T, P : Pointer<T>?> internal constructor(
-    parent: Struct<*>,
+    parent: Native<*>,
     offset: Long,
     initialValue: P
 ) : FieldDelegate<P>(
