@@ -1,5 +1,6 @@
-package knr.runtime.delegates
+package knr.runtime.delegates.struct
 
+import knr.runtime.delegates.FieldDelegate
 import knr.runtime.typing.Native
 import knr.runtime.typing.pointer.Pointer
 import java.lang.foreign.MemorySegment

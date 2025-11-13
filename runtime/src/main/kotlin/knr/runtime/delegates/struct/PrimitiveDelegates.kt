@@ -1,5 +1,6 @@
-package knr.runtime.delegates
+package knr.runtime.delegates.struct
 
+import knr.runtime.delegates.FieldDelegate
 import knr.runtime.typing.Native
 
 class BooleanDelegate internal constructor(

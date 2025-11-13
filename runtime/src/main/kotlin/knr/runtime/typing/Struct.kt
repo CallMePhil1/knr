@@ -1,6 +1,17 @@
 package knr.runtime.typing
 
-import knr.runtime.delegates.*
+import knr.runtime.delegates.struct.BooleanDelegate
+import knr.runtime.delegates.struct.ByteDelegate
+import knr.runtime.delegates.struct.DoubleDelegate
+import knr.runtime.delegates.struct.FloatDelegate
+import knr.runtime.delegates.struct.IntDelegate
+import knr.runtime.delegates.struct.LongDelegate
+import knr.runtime.delegates.struct.PointerFieldDelegate
+import knr.runtime.delegates.struct.ShortDelegate
+import knr.runtime.delegates.struct.UByteDelegate
+import knr.runtime.delegates.struct.UIntDelegate
+import knr.runtime.delegates.struct.ULongDelegate
+import knr.runtime.delegates.struct.UShortDelegate
 import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
 import knr.runtime.typing.pointer.BytePointer

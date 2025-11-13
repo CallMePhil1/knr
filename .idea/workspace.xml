@@ -4,25 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c6745c1-a76a-46b4-aa0a-fefb0c0e4d74" name="Changes" comment="Change arrays to take in a size for use with non arena memory">
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="1c6745c1-a76a-46b4-aa0a-fefb0c0e4d74" name="Changes" comment="Fix package names for unit tests">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/processors/src/main/kotlin/knr/processors/ext/KSType.kt" beforeDir="false" afterPath="$PROJECT_DIR$/processors/src/main/kotlin/knr/processors/ext/KSType.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/FieldDelegate.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/FieldDelegate.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/PointerFieldDelegate.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/PointerFieldDelegate.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/PrimitiveDelegates.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/PrimitiveDelegates.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/memory/Native.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/memory/rc/Arc.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/memory/rc/Arc.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/memory/rc/Rc.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/memory/rc/Rc.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/PointerFieldDelegate.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/PrimitiveDelegates.kt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/Struct.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/Struct.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/NativeArray.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/array/NativeArray.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/pointer/NativePointer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/pointer/NativePointer.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/pointer/Pointer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/pointer/Pointer.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/test/kotlin/primitive/PrimativeStruct.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/test/kotlin/primitive/PrimativeStruct.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/test/kotlin/typing/array/ArrayTestLibrary.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/test/kotlin/typing/array/ArrayTestLibrary.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/test/kotlin/typing/array/StructNativeArrayTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/test/kotlin/typing/array/StructNativeArrayTests.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/test/testlib/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/test/testlib/CMakeLists.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,28 +49,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.knr:processors-test [:processors-test:knr.libgen.processor.ProcessorTestsKt.main()].executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifing its fields THEN it should succeed.executor": "Run",
+    "Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifying a pointer field THEN it should succeed.executor": "Run",
+    "Gradle.knr:processors-test [:processors-test:knr.libgen.processor.ProcessorTestsKt.main()].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "develop",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/asljb/IdeaProjects/knr/runtime/src/main/kotlin/knr/runtime/delegates/union",
+    "show.migrate.to.gradle.popup": "false"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\asljb\IdeaProjects\knr\runtime\src\main\kotlin\knr\runtime\delegates\union" />
+    </key>
+    <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
+      <recent name="knr.runtime.delegates.union" />
+    </key>
     <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="knr.runtime.delegates.struct" />
       <recent name="knr.runtime.typing" />
       <recent name="knr.runtime.typing.union" />
       <recent name="knr.runtime.typing.struct.delegates" />
       <recent name="knr.runtime.typing.struct" />
-      <recent name="knr.annotations" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifing its fields THEN it should succeed">
+  <component name="RunManager" selected="Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifying a pointer field THEN it should succeed">
     <configuration name="UnionTests.GIVEN a UnionStruct WHEN accessing or modifing its fields THEN it should succeed" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -99,6 +94,30 @@
             <option value=":runtime:test" />
             <option value="--tests" />
             <option value="&quot;typing.union.UnionTests.GIVEN a UnionStruct WHEN accessing or modifing its fields THEN it should succeed&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="UnionTests.GIVEN a UnionStruct WHEN accessing or modifying a pointer field THEN it should succeed" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":runtime:test" />
+            <option value="--tests" />
+            <option value="&quot;typing.union.UnionTests.GIVEN a UnionStruct WHEN accessing or modifying a pointer field THEN it should succeed&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -129,6 +148,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifying a pointer field THEN it should succeed" />
         <item itemvalue="Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifing its fields THEN it should succeed" />
         <item itemvalue="Kotlin.ProcessorTestsKt" />
       </list>
@@ -150,7 +170,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762714729399</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Fix package names for unit tests">
+      <option name="closed" value="true" />
+      <created>1762810144194</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1762810144194</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -166,6 +194,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Remove libgen from two module packagenames" />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove libgen from two module packagenames" />
+    <MESSAGE value="Fix package names for unit tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix package names for unit tests" />
   </component>
 </project>
