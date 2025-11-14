@@ -4,11 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c6745c1-a76a-46b4-aa0a-fefb0c0e4d74" name="Changes" comment="Fix package names for unit tests">
+    <list default="true" id="1c6745c1-a76a-46b4-aa0a-fefb0c0e4d74" name="Changes" comment="Implement primitives and pointers for Union">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/PointerFieldDelegate.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/PrimitiveDelegates.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/struct/PrimitiveDelegates.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/union/PointerFieldDelegate.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/union/PointerFieldDelegate.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/union/PrimitiveDelegates.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/delegates/PrimitiveDelegates.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/Struct.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/Struct.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/Union.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/main/kotlin/knr/runtime/typing/Union.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/test/kotlin/typing/union/UnionStruct.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/test/kotlin/typing/union/UnionStruct.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runtime/src/test/kotlin/typing/union/UnionTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/runtime/src/test/kotlin/typing/union/UnionTests.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +56,9 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifing its fields THEN it should succeed.executor": "Run",
+    "Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifying a inner union THEN it should succeed.executor": "Run",
     "Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifying a pointer field THEN it should succeed.executor": "Run",
+    "Gradle.UnionTests.executor": "Run",
     "Gradle.knr:processors-test [:processors-test:knr.libgen.processor.ProcessorTestsKt.main()].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -72,14 +78,38 @@
       <recent name="knr.runtime.delegates.union" />
     </key>
     <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="knr.runtime.delegates" />
       <recent name="knr.runtime.delegates.struct" />
       <recent name="knr.runtime.typing" />
       <recent name="knr.runtime.typing.union" />
       <recent name="knr.runtime.typing.struct.delegates" />
-      <recent name="knr.runtime.typing.struct" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifying a pointer field THEN it should succeed">
+  <component name="RunManager" selected="Gradle.UnionTests">
+    <configuration name="UnionTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":runtime:test" />
+            <option value="--tests" />
+            <option value="&quot;typing.union.UnionTests&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
     <configuration name="UnionTests.GIVEN a UnionStruct WHEN accessing or modifing its fields THEN it should succeed" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -94,6 +124,30 @@
             <option value=":runtime:test" />
             <option value="--tests" />
             <option value="&quot;typing.union.UnionTests.GIVEN a UnionStruct WHEN accessing or modifing its fields THEN it should succeed&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="UnionTests.GIVEN a UnionStruct WHEN accessing or modifying a inner union THEN it should succeed" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":runtime:test" />
+            <option value="--tests" />
+            <option value="&quot;typing.union.UnionTests.GIVEN a UnionStruct WHEN accessing or modifying a inner union THEN it should succeed&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -148,7 +202,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.UnionTests" />
         <item itemvalue="Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifying a pointer field THEN it should succeed" />
+        <item itemvalue="Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifying a inner union THEN it should succeed" />
         <item itemvalue="Gradle.UnionTests.GIVEN a UnionStruct WHEN accessing or modifing its fields THEN it should succeed" />
         <item itemvalue="Kotlin.ProcessorTestsKt" />
       </list>
@@ -178,7 +234,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762810144194</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Implement primitives and pointers for Union">
+      <option name="closed" value="true" />
+      <created>1763070365861</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1763070365861</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -195,6 +259,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Remove libgen from two module packagenames" />
     <MESSAGE value="Fix package names for unit tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix package names for unit tests" />
+    <MESSAGE value="Implement primitives and pointers for Union" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement primitives and pointers for Union" />
   </component>
 </project>
