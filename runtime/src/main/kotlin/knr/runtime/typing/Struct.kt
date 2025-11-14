@@ -141,5 +141,11 @@ interface StructCompanion<T : Struct<T>> {
         return wrap(memory)
     }
 
+    fun allocate(init: T.() -> Unit): T {
+        val newStruct = allocate()
+        newStruct.init()
+        return newStruct
+    }
+
     fun wrap(memory: Memory): T
 }
