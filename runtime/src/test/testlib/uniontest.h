@@ -11,6 +11,11 @@
     #define API __attribute__(visibility("default"))
 #endif
 
+typedef struct {
+    int i;
+    long long l;
+} UnionStruct;
+
 union PrimitivesUnion {
     char c;
     short s;
@@ -18,6 +23,7 @@ union PrimitivesUnion {
     long long l;
     long long *p;
     int *p1;
+    UnionStruct us;
 };
 
 API char get_byte(union PrimitivesUnion* primUnion);
@@ -28,9 +34,13 @@ API int get_int(union PrimitivesUnion* primUnion);
 
 API int get_int_from_pointer(union PrimitivesUnion* primUnion);
 
+API int get_int_from_struct(union PrimitivesUnion* primUnion);
+
 API long long get_long(union PrimitivesUnion* primUnion);
 
 API long long get_long_from_pointer(union PrimitivesUnion* primUnion);
+
+API long long get_long_from_struct(union PrimitivesUnion* primUnion);
 
 API void set_byte(union PrimitivesUnion* primUnion, char value);
 

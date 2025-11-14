@@ -16,12 +16,20 @@ int get_int_from_pointer(union PrimitivesUnion* primUnion) {
     return *(primUnion->p1);
 }
 
+int get_int_from_struct(union PrimitivesUnion* primUnion) {
+    return primUnion->us.i;
+}
+
 long long get_long(union PrimitivesUnion* primUnion) {
     return primUnion->c;
 }
 
 long long get_long_from_pointer(union PrimitivesUnion* primUnion) {
     return *(primUnion->p);
+}
+
+long long get_long_from_struct(union PrimitivesUnion* primUnion) {
+    return primUnion->us.l;
 }
 
 void set_byte(union PrimitivesUnion* primUnion, char value) {

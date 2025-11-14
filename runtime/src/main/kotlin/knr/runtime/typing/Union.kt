@@ -12,6 +12,7 @@ import knr.runtime.delegates.UIntDelegate
 import knr.runtime.delegates.ULongDelegate
 import knr.runtime.delegates.UShortDelegate
 import knr.runtime.delegates.union.PointerFieldDelegate
+import knr.runtime.delegates.union.StructFieldDelegate
 import knr.runtime.delegates.union.UnionFieldDelegate
 import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
@@ -44,6 +45,8 @@ abstract class Union(
 
     protected fun floatField() = FloatDelegate(this, 0)
     protected fun doubleField() = DoubleDelegate(this, 0)
+
+    protected fun <T: Struct<T>> structField(structCompanion: StructCompanion<T>) = StructFieldDelegate(this, structCompanion)
 
     protected fun <T: Union> unionField(unionCompanion: UnionCompanion<T>) = UnionFieldDelegate(this, unionCompanion)
 

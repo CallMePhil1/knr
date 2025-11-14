@@ -39,6 +39,12 @@ object UnionTestLibrary {
         ValueLayout.ADDRESS
     )
 
+    private val getIntFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("get_int_from_struct").orElseThrow(),
+        retType = ValueLayout.JAVA_INT,
+        ValueLayout.ADDRESS
+    )
+
     private val getLongHandle: MethodHandle = linker.downcallHandle(
         segment = lookup.find("get_long").orElseThrow(),
         retType = ValueLayout.JAVA_LONG,
@@ -47,6 +53,12 @@ object UnionTestLibrary {
 
     private val getLongFromPointerHandle: MethodHandle = linker.downcallHandle(
         segment = lookup.find("get_long_from_pointer").orElseThrow(),
+        retType = ValueLayout.JAVA_LONG,
+        ValueLayout.ADDRESS
+    )
+
+    private val getLongFromStructHandle: MethodHandle = linker.downcallHandle(
+        segment = lookup.find("get_long_from_struct").orElseThrow(),
         retType = ValueLayout.JAVA_LONG,
         ValueLayout.ADDRESS
     )
@@ -79,23 +91,26 @@ object UnionTestLibrary {
         ValueLayout.JAVA_LONG
     )
 
-    fun getByte(union: UnionStruct) = getByteHandle.invokeExact(union.memory.memorySegment) as Byte
-    fun getShort(union: UnionStruct) = getShortHandle.invokeExact(union.memory.memorySegment) as Short
-    fun getInt(union: UnionStruct) = getIntHandle.invokeExact(union.memory.memorySegment) as Int
-    fun getIntFromPointer(union: UnionStruct) = getIntFromPointerHandle.invokeExact(union.memory.memorySegment) as Int
-    fun getLong(union: UnionStruct) = getLongHandle.invokeExact(union.memory.memorySegment) as Long
-    fun getLongFromPointer(union: UnionStruct) = getLongFromPointerHandle.invokeExact(union.memory.memorySegment) as Long
+    fun getByte(union: UnionObj) = getByteHandle.invokeExact(union.memory.memorySegment) as Byte
+    fun getShort(union: UnionObj) = getShortHandle.invokeExact(union.memory.memorySegment) as Short
+    fun getInt(union: UnionObj) = getIntHandle.invokeExact(union.memory.memorySegment) as Int
+    fun getIntFromPointer(union: UnionObj) = getIntFromPointerHandle.invokeExact(union.memory.memorySegment) as Int
+    fun getIntFromStruct(union: UnionObj) = getIntFromStructHandle.invokeExact(union.memory.memorySegment) as Int
+    fun getLong(union: UnionObj) = getLongHandle.invokeExact(union.memory.memorySegment) as Long
+    fun getLongFromPointer(union: UnionObj) = getLongFromPointerHandle.invokeExact(union.memory.memorySegment) as Long
+    fun getLongFromStruct(union: UnionObj) = getLongFromStructHandle.invokeExact(union.memory.memorySegment) as Long
 
-    fun setByte(union: UnionStruct, value: Byte) {
+
+    fun setByte(union: UnionObj, value: Byte) {
         setByteHandle.invokeExact(union.memory.memorySegment, value)
     }
-    fun setShort(union: UnionStruct, value: Short) {
+    fun setShort(union: UnionObj, value: Short) {
         setShortHandle.invokeExact(union.memory.memorySegment, value)
     }
-    fun setInt(union: UnionStruct, value: Int) {
+    fun setInt(union: UnionObj, value: Int) {
         setIntHandle.invokeExact(union.memory.memorySegment, value)
     }
-    fun setLong(union: UnionStruct, value: Long) {
+    fun setLong(union: UnionObj, value: Long) {
         setLongHandle.invokeExact(union.memory.memorySegment, value)
     }
 }

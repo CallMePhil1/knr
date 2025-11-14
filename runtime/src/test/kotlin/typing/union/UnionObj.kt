@@ -1,11 +1,31 @@
 package typing.union
 
 import knr.runtime.memory.Memory
+import knr.runtime.typing.Struct
+import knr.runtime.typing.StructCompanion
 import knr.runtime.typing.Union
 import knr.runtime.typing.UnionCompanion
 import java.lang.foreign.MemoryLayout
+import java.lang.foreign.StructLayout
 import java.lang.foreign.UnionLayout
 import java.lang.foreign.ValueLayout
+
+class UnionStruct(
+    memory: Memory
+) : Struct<UnionStruct>(memory) {
+    var i by intField(0)
+    var l by longField(8)
+
+    companion object : StructCompanion<UnionStruct> {
+        override val layout: StructLayout = MemoryLayout.structLayout(
+            ValueLayout.JAVA_INT,
+            MemoryLayout.paddingLayout(4),
+            ValueLayout.JAVA_LONG
+        )
+
+        override fun wrap(memory: Memory) = UnionStruct(memory)
+    }
+}
 
 class InnerUnion(
     memory: Memory
@@ -25,7 +45,7 @@ class InnerUnion(
     }
 }
 
-class UnionStruct(
+class UnionObj(
     memory: Memory
 ) : Union(memory) {
     var c by byteField()
@@ -33,21 +53,23 @@ class UnionStruct(
     var i by intField()
     var l by longField()
     var u by unionField(InnerUnion)
+    var us by structField(UnionStruct)
 
     var p by nullableLongPointerField()
     var p1 by nullableIntPointerField()
 
-    companion object : UnionCompanion<UnionStruct> {
+    companion object : UnionCompanion<UnionObj> {
         override val layout: UnionLayout = MemoryLayout.unionLayout(
             ValueLayout.JAVA_BYTE,
             ValueLayout.JAVA_SHORT,
             ValueLayout.JAVA_INT,
             ValueLayout.JAVA_LONG,
             InnerUnion.layout,
+            UnionStruct.layout,
             ValueLayout.ADDRESS,
             ValueLayout.ADDRESS
         )
 
-        override fun wrap(memory: Memory) = UnionStruct(memory)
+        override fun wrap(memory: Memory) = UnionObj(memory)
     }
 }

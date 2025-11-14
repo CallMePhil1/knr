@@ -7,8 +7,8 @@ import kotlin.test.assertEquals
 
 class UnionTests {
     @Test
-    fun `GIVEN a UnionStruct WHEN accessing or modifying its fields THEN it should succeed`() {
-        val union = UnionStruct.allocate()
+    fun `GIVEN a UnionObj WHEN accessing or modifying its fields THEN it should succeed`() {
+        val union = UnionObj.allocate()
 
         union.c = 120
 
@@ -20,8 +20,8 @@ class UnionTests {
     }
 
     @Test
-    fun `GIVEN a UnionStruct WHEN accessing or modifying a pointer field THEN it should succeed`() {
-        val union = UnionStruct.allocate()
+    fun `GIVEN a UnionObj WHEN accessing or modifying a pointer field THEN it should succeed`() {
+        val union = UnionObj.allocate()
 
         union.p = longPointerOf(1000L)
 
@@ -49,8 +49,8 @@ class UnionTests {
     }
 
     @Test
-    fun `GIVEN a UnionStruct WHEN accessing or modifying a inner union THEN it should succeed`() {
-        val union = UnionStruct.allocate()
+    fun `GIVEN a UnionObj WHEN accessing or modifying a inner union THEN it should succeed`() {
+        val union = UnionObj.allocate()
 
         union.u.s = 1000
 
@@ -61,5 +61,22 @@ class UnionTests {
 
         assertEquals(100000, union.u.l)
         assertEquals(union.u.l, union.i.toLong())
+    }
+
+    @Test
+    fun `GIVEN a UnionObj WHEN accessing or modifying a union struct THEN it should succeed`() {
+        val union = UnionObj.allocate()
+
+        union.us.i = 1000
+
+        assertEquals(1000, union.us.i)
+        assertEquals(1000, union.i)
+        assertEquals(1000L, union.l)
+        assertEquals(1000, UnionTestLibrary.getIntFromStruct(union))
+
+        union.us.l = 1_000_000_000_000
+
+        assertEquals(1_000_000_000_000, union.us.l)
+        assertEquals(1_000_000_000_000, UnionTestLibrary.getLongFromStruct(union))
     }
 }
