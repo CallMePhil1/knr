@@ -12,6 +12,7 @@ import knr.runtime.delegates.UByteDelegate
 import knr.runtime.delegates.UIntDelegate
 import knr.runtime.delegates.ULongDelegate
 import knr.runtime.delegates.UShortDelegate
+import knr.runtime.delegates.struct.UnionFieldDelegate
 import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
 import knr.runtime.typing.pointer.BytePointer
@@ -98,6 +99,8 @@ abstract class Struct<T : Struct<T>>(
         if (get() != 0.0)
             set(initialValue)
     }
+
+    protected fun <U: Union> unionField(offset: Long, unionCompanion: UnionCompanion<U>) = UnionFieldDelegate(this, offset, unionCompanion)
 
     protected fun <T, P : Pointer<T>?> pointerField(offset: Long, initialValue: P): PointerFieldDelegate<T, P> {
         val delegate = PointerFieldDelegate(this, offset, initialValue)

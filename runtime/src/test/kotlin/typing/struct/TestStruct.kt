@@ -1,15 +1,34 @@
-package primitive
+package typing.struct
 
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
 import knr.runtime.typing.StructCompanion
+import knr.runtime.typing.Union
+import knr.runtime.typing.UnionCompanion
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.StructLayout
+import java.lang.foreign.UnionLayout
 import java.lang.foreign.ValueLayout
 
-class PrimitiveStruct(
+class TestUnion(
     memory: Memory
-) : Struct<PrimitiveStruct>(memory) {
+) : Union(memory) {
+    var i by intField()
+    var l by longField()
+
+    companion object : UnionCompanion<TestUnion> {
+        override val layout: UnionLayout = MemoryLayout.unionLayout(
+            ValueLayout.JAVA_INT,
+            ValueLayout.JAVA_LONG
+        )
+
+        override fun wrap(memory: Memory) = TestUnion(memory)
+    }
+}
+
+class TestStruct(
+    memory: Memory
+) : Struct<TestStruct>(memory) {
 
     var c by byteField(0)
     var uc by ubyteField(1)
@@ -31,7 +50,9 @@ class PrimitiveStruct(
 
     var b by booleanField(56)
 
-    companion object : StructCompanion<PrimitiveStruct> {
+    var u by unionField(64, TestUnion)
+
+    companion object : StructCompanion<TestStruct> {
         override val layout: StructLayout = MemoryLayout.structLayout(
             ValueLayout.JAVA_BYTE.withName("c"),
             ValueLayout.JAVA_BYTE.withName("uc"),
@@ -48,9 +69,10 @@ class PrimitiveStruct(
             MemoryLayout.paddingLayout(4),
             ValueLayout.JAVA_DOUBLE.withName("d"),
             ValueLayout.JAVA_BOOLEAN.withName("b"),
-            MemoryLayout.paddingLayout(7)
+            MemoryLayout.paddingLayout(7),
+            TestUnion.layout
         )
 
-        override fun wrap(memory: Memory) = PrimitiveStruct(memory)
+        override fun wrap(memory: Memory) = TestStruct(memory)
     }
 }

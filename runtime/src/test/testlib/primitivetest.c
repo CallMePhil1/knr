@@ -52,6 +52,14 @@ double get_double(AllPrimitives all_prim) {
     return all_prim.d;
 }
 
+int get_int_from_union(AllPrimitives* all_prim) {
+    return all_prim->u.i;
+}
+
+long long get_long_from_union(AllPrimitives* all_prim) {
+    return all_prim->u.l;
+}
+
 void set_bool(AllPrimitives *all_prim, bool value) {
     all_prim->b = value;
 }
@@ -102,4 +110,12 @@ void set_float(AllPrimitives *all_prim, float value) {
 
 void set_double(AllPrimitives *all_prim, double value) {
     all_prim->d = value;
+}
+
+void set_int_from_union(AllPrimitives* all_prim, int value) {
+    all_prim->u.i = value;
+}
+
+void set_long_from_union(AllPrimitives* all_prim, long long value) {
+    all_prim->u.l = value;
 }

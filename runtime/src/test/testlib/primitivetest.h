@@ -13,6 +13,11 @@
     #define API __attribute__(visibility("default"))
 #endif
 
+union StructUnion {
+    int i;
+    long long l;
+};
+
 typedef struct {
     char c;
     unsigned char uc;
@@ -33,6 +38,8 @@ typedef struct {
     double d;
 
     bool b;
+
+    union StructUnion u;
 } AllPrimitives;
 
 API bool get_bool(AllPrimitives all_prim);
@@ -61,6 +68,10 @@ API float get_float(AllPrimitives all_prim);
 
 API double get_double(AllPrimitives all_prim);
 
+API int get_int_from_union(AllPrimitives* all_prim);
+
+API long long get_long_from_union(AllPrimitives* all_prim);
+
 API void set_bool(AllPrimitives *all_prim, bool value);
 
 API void set_char(AllPrimitives *all_prim, char value);
@@ -86,5 +97,9 @@ API void set_ulonglong(AllPrimitives *all_prim, unsigned long long value);
 API void set_float(AllPrimitives *all_prim, float value);
 
 API void set_double(AllPrimitives *all_prim, double value);
+
+API void set_int_from_union(AllPrimitives* all_prim, int value);
+
+API void set_long_from_union(AllPrimitives* all_prim, long long value);
 
 #endif
