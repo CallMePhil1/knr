@@ -28,6 +28,13 @@ ksp {
     arg("knr.processors.logLevel", "debug")
 }
 
+tasks.withType<PublishToMavenLocal>().configureEach {
+    enabled = false
+}
+tasks.withType<PublishToMavenRepository>().configureEach {
+    enabled = false
+}
+
 tasks.test {
     useJUnitPlatform()
 }
