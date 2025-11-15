@@ -26,6 +26,23 @@ class TestUnion(
     }
 }
 
+class InnerStruct(
+    memory: Memory
+) : Struct<InnerStruct>(memory) {
+    var i by intField(0)
+    var l by longField(8)
+
+    companion object : StructCompanion<InnerStruct> {
+        override val layout: StructLayout = MemoryLayout.structLayout(
+            ValueLayout.JAVA_INT,
+            MemoryLayout.paddingLayout(4),
+            ValueLayout.JAVA_LONG
+        )
+
+        override fun wrap(memory: Memory) = InnerStruct(memory)
+    }
+}
+
 class TestStruct(
     memory: Memory
 ) : Struct<TestStruct>(memory) {
@@ -52,6 +69,8 @@ class TestStruct(
 
     var u by unionField(64, TestUnion)
 
+    var innerStruct by structField(72, InnerStruct)
+
     companion object : StructCompanion<TestStruct> {
         override val layout: StructLayout = MemoryLayout.structLayout(
             ValueLayout.JAVA_BYTE.withName("c"),
@@ -70,7 +89,8 @@ class TestStruct(
             ValueLayout.JAVA_DOUBLE.withName("d"),
             ValueLayout.JAVA_BOOLEAN.withName("b"),
             MemoryLayout.paddingLayout(7),
-            TestUnion.layout
+            TestUnion.layout,
+            InnerStruct.layout
         )
 
         override fun wrap(memory: Memory) = TestStruct(memory)

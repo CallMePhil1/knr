@@ -197,4 +197,17 @@ class StructTests {
         assertEquals(1_000_000, struct.u.i)
         assertEquals(1_000_000, StructTestLibrary.getLongFromUnion(struct))
     }
+
+    @Test
+    fun `GIVEN a TestStruct WHEN accessing or modifying a inner struct THEN it should work`() {
+        val struct = TestStruct.allocate()
+
+        struct.innerStruct.l = 1_000_000_000_000
+
+        assertEquals(1_000_000_000_000, StructTestLibrary.getLongFromInnerStruct(struct))
+
+        StructTestLibrary.setLongForInnerStruct(struct, 3_500_000_000_000)
+
+        assertEquals(3_500_000_000_000, struct.innerStruct.l)
+    }
 }

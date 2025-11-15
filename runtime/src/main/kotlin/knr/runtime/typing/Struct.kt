@@ -12,12 +12,14 @@ import knr.runtime.delegates.UByteDelegate
 import knr.runtime.delegates.UIntDelegate
 import knr.runtime.delegates.ULongDelegate
 import knr.runtime.delegates.UShortDelegate
+import knr.runtime.delegates.struct.StructFieldDelegate
 import knr.runtime.delegates.struct.UnionFieldDelegate
 import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
 import knr.runtime.typing.pointer.BytePointer
 import knr.runtime.typing.pointer.IntPointer
 import knr.runtime.typing.pointer.LongPointer
+import knr.runtime.typing.pointer.OpaquePointer
 import knr.runtime.typing.pointer.Pointer
 import knr.runtime.typing.pointer.ShortPointer
 import knr.runtime.typing.pointer.UBytePointer
@@ -100,6 +102,7 @@ abstract class Struct<T : Struct<T>>(
             set(initialValue)
     }
 
+    protected fun <S: Struct<S>> structField(offset: Long, structCompanion: StructCompanion<S>) = StructFieldDelegate(this, offset, structCompanion)
     protected fun <U: Union> unionField(offset: Long, unionCompanion: UnionCompanion<U>) = UnionFieldDelegate(this, offset, unionCompanion)
 
     protected fun <T, P : Pointer<T>?> pointerField(offset: Long, initialValue: P): PointerFieldDelegate<T, P> {
@@ -107,6 +110,9 @@ abstract class Struct<T : Struct<T>>(
         addPointerDelegate(delegate)
         return delegate
     }
+
+    protected fun opaquePointer(offset: Long, initialValue: OpaquePointer) = pointerField(offset, initialValue)
+    protected fun nullableOpaquePointer(offset: Long, initialValue: OpaquePointer?) = pointerField(offset, initialValue)
 
     protected fun bytePointerField(offset: Long, initialValue: BytePointer) = pointerField(offset, initialValue)
     protected fun nullableBytePointerField(offset: Long, initialValue: BytePointer?) = pointerField(offset, initialValue)

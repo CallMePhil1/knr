@@ -1,4 +1,4 @@
-#include "primitivetest.h"
+#include "structtest.h"
 
 bool get_bool(AllPrimitives all_prim) {
     return all_prim.b;
@@ -60,6 +60,14 @@ long long get_long_from_union(AllPrimitives* all_prim) {
     return all_prim->u.l;
 }
 
+int get_int_from_inner_struct(AllPrimitives* all_prim) {
+    return all_prim->is.i;
+}
+
+long long get_long_from_inner_struct(AllPrimitives* all_prim) {
+    return all_prim->is.l;
+}
+
 void set_bool(AllPrimitives *all_prim, bool value) {
     all_prim->b = value;
 }
@@ -112,10 +120,18 @@ void set_double(AllPrimitives *all_prim, double value) {
     all_prim->d = value;
 }
 
-void set_int_from_union(AllPrimitives* all_prim, int value) {
+void set_int_for_union(AllPrimitives* all_prim, int value) {
     all_prim->u.i = value;
 }
 
-void set_long_from_union(AllPrimitives* all_prim, long long value) {
+void set_long_for_union(AllPrimitives* all_prim, long long value) {
     all_prim->u.l = value;
+}
+
+void set_int_for_inner_struct(AllPrimitives* all_prim, int value) {
+    all_prim->is.i = value;
+}
+
+void set_long_for_inner_struct(AllPrimitives* all_prim, long long value) {
+    all_prim->is.l = value;
 }
