@@ -120,6 +120,7 @@ internal class LibraryProcessor(
 
         val invokeParams = invokeParamsList.joinToString()
         val returnType = func.returnType!!.resolve()
+        val returnTypeName = returnType.simpleName.asString()
 
         when {
             returnType.toClassName() == Unit::class.java.asTypeName() -> {
@@ -144,19 +145,20 @@ internal class LibraryProcessor(
                     val clsImplName = "${cls.simpleName.asString()}Impl"
                     val invokeCall = "$clsImplPackage.$clsImplName.$funcName"
 
-                    funcBody.add("""val result = ${methodHandle.name}.invokeExact($invokeParams) as MemorySegment
-                        |var struct: ${returnType.simpleName.asString()}? = null
+                    funcBody.add("""val byteSize = ${returnTypeName}.layout.byteSize()
+                        |val result = (${methodHandle.name}.invokeExact($invokeParams) as MemorySegment).reinterpret(byteSize)
+                        |var struct: ${returnTypeName}? = null
                         |val disposeFun = { $invokeCall(struct!!) }
                         |val memory = NativeMemory.wrap(result, disposeFun)
-                        |struct = ${returnType.simpleName.asString()}.wrap(memory)
+                        |struct = ${returnTypeName}.wrap(memory)
                         |return struct
                     """.trimMargin())
 
                 } else {
-                    funcBody.add(
-                        """val result = ${methodHandle.name}.invokeExact($invokeParams) as MemorySegment
+                    funcBody.add("""val byteSize = ${returnTypeName}.layout.byteSize()
+                        |val result = (${methodHandle.name}.invokeExact($invokeParams) as MemorySegment).reinterpret(byteSize)
                         |val memory = NativeMemory.wrap(result)
-                        |return ${returnType.simpleName.asString()}.wrap(memory)
+                        |return ${returnTypeName}.wrap(memory)
                     """.trimMargin())
                 }
             }
