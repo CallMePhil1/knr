@@ -11,7 +11,7 @@ object StructTestLibrary {
     private val arena: Arena = Arena.global()
     private val linker: Linker = Linker.nativeLinker()
     private val lookup: SymbolLookup = SymbolLookup.libraryLookup(
-        "src/test/testlib/build/Debug/primitivetest",
+        "src/test/testlib/build/Debug/structtest",
         arena
     )
 
@@ -107,6 +107,18 @@ object StructTestLibrary {
         ValueLayout.ADDRESS
     )
 
+    private val getIntFromInnerStructHandle: MethodHandle = linker.downcallHandle(
+        lookup.find("get_int_from_inner_struct").orElseThrow(),
+        retType = ValueLayout.JAVA_INT,
+        ValueLayout.ADDRESS
+    )
+
+    private val getLongFromInnerStructHandle: MethodHandle = linker.downcallHandle(
+        lookup.find("get_long_from_inner_struct").orElseThrow(),
+        retType = ValueLayout.JAVA_LONG,
+        ValueLayout.ADDRESS
+    )
+
     // endregion
 
     // region Setters
@@ -189,6 +201,18 @@ object StructTestLibrary {
         ValueLayout.ADDRESS, ValueLayout.JAVA_DOUBLE
     )
 
+    private val setIntForInnerStructHandle: MethodHandle = linker.downcallHandle(
+        lookup.find("set_int_for_inner_struct").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS, ValueLayout.JAVA_INT
+    )
+
+    private val setLongForInnerStructHandle: MethodHandle = linker.downcallHandle(
+        lookup.find("set_long_for_inner_struct").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS, ValueLayout.JAVA_LONG
+    )
+
     // endregion
 
     fun getBool(struct: TestStruct) =
@@ -235,6 +259,12 @@ object StructTestLibrary {
 
     fun getLongFromUnion(struct: TestStruct) =
         getLongFromUnionHandle.invokeExact(struct.memory.memorySegment) as Long
+
+    fun getIntFromInnerStruct(struct: TestStruct) =
+        getIntFromInnerStructHandle.invokeExact(struct.memory.memorySegment) as Int
+
+    fun getLongFromInnerStruct(struct: TestStruct) =
+        getLongFromInnerStructHandle.invokeExact(struct.memory.memorySegment) as Long
 
     fun setBool(struct: TestStruct, value: Boolean) {
         setBoolHandle.invokeExact(struct.memory.memorySegment, value)
@@ -286,5 +316,13 @@ object StructTestLibrary {
 
     fun setDouble(struct: TestStruct, value: Double) {
         setDoubleHandle.invokeExact(struct.memory.memorySegment, value)
+    }
+
+    fun setIntForInnerStruct(struct: TestStruct, value: Int) {
+        setIntForInnerStructHandle.invokeExact(struct.memory.memorySegment, value)
+    }
+
+    fun setLongForInnerStruct(struct: TestStruct, value: Long) {
+        setLongForInnerStructHandle.invokeExact(struct.memory.memorySegment, value)
     }
 }

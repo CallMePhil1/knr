@@ -47,11 +47,12 @@ abstract class Union(
     protected fun doubleField() = DoubleDelegate(this, 0)
 
     protected fun <T: Struct<T>> structField(structCompanion: StructCompanion<T>) = StructFieldDelegate(this, structCompanion)
-
     protected fun <T: Union> unionField(unionCompanion: UnionCompanion<T>) = UnionFieldDelegate(this, unionCompanion)
 
     protected fun <T, P : Pointer<T>?> pointerField(byteSize: Long, ctor: (Memory) -> P): PointerFieldDelegate<T, P?> =
         PointerFieldDelegate(this, byteSize, ctor)
+
+    protected fun nullableOpaquePointer() = pointerField(0, ::OpaquePointer)
 
     protected fun nullableBytePointerField() = pointerField(ValueLayout.JAVA_BYTE.byteSize(), ::BytePointer)
     protected fun nullableUBytePointerField() = pointerField(ValueLayout.JAVA_BYTE.byteSize(), ::UBytePointer)

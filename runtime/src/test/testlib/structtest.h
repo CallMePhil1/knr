@@ -1,10 +1,10 @@
-#ifndef PRIMTEST_H
-#define PRIMTEST_H
+#ifndef STRUCTTEST_H
+#define STRUCTTEST_H
 
 #include <stdbool.h>
 
 #ifdef _WIN32
-    #ifdef PRIMTEST_EXPORTS
+    #ifdef STRUCTTEST_EXPORTS
         #define API __declspec(dllexport)
     #else
         #define API __declspec(dllimport)
@@ -17,6 +17,11 @@ union StructUnion {
     int i;
     long long l;
 };
+
+typedef struct {
+    int i;
+    long long l;
+} InnerStruct;
 
 typedef struct {
     char c;
@@ -40,6 +45,8 @@ typedef struct {
     bool b;
 
     union StructUnion u;
+
+    InnerStruct is;
 } AllPrimitives;
 
 API bool get_bool(AllPrimitives all_prim);
@@ -72,6 +79,10 @@ API int get_int_from_union(AllPrimitives* all_prim);
 
 API long long get_long_from_union(AllPrimitives* all_prim);
 
+API int get_int_from_inner_struct(AllPrimitives* all_prim);
+
+API long long get_long_from_inner_struct(AllPrimitives* all_prim);
+
 API void set_bool(AllPrimitives *all_prim, bool value);
 
 API void set_char(AllPrimitives *all_prim, char value);
@@ -98,8 +109,12 @@ API void set_float(AllPrimitives *all_prim, float value);
 
 API void set_double(AllPrimitives *all_prim, double value);
 
-API void set_int_from_union(AllPrimitives* all_prim, int value);
+API void set_int_for_union(AllPrimitives* all_prim, int value);
 
-API void set_long_from_union(AllPrimitives* all_prim, long long value);
+API void set_long_for_union(AllPrimitives* all_prim, long long value);
+
+API void set_int_for_inner_struct(AllPrimitives* all_prim, int value);
+
+API void set_long_for_inner_struct(AllPrimitives* all_prim, long long value);
 
 #endif
