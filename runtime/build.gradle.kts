@@ -4,6 +4,10 @@ plugins {
     kotlin("jvm")
 }
 
+kotlin {
+    jvmToolchain(22)
+}
+
 dependencies {
     api(project(":annotations"))
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")

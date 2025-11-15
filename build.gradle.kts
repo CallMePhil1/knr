@@ -9,6 +9,12 @@ allprojects {
 }
 
 subprojects {
-    group = "io.github.callmephil.knr"
-    version = "0.1"
+    group = "io.github.knr"
+    version = "0.1.0-alpha"
+
+    if (this.name != "processors-test") {
+        apply {
+            plugin("maven-publish")
+        }
+    }
 }

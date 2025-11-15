@@ -3,6 +3,10 @@ plugins {
     id("com.google.devtools.ksp") version "2.2.20-2.0.4"
 }
 
+kotlin {
+    jvmToolchain(22)
+}
+
 repositories {
     mavenCentral()
 }

@@ -10,6 +10,10 @@ repositories {
     mavenCentral()
 }
 
+kotlin {
+    jvmToolchain(22)
+}
+
 dependencies {
     ksp(project(":processors"))
 
