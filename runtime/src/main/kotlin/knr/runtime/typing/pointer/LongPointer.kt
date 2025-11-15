@@ -5,9 +5,8 @@ import knr.runtime.memory.Memory
 import java.lang.foreign.ValueLayout
 
 class LongPointer internal constructor(
-    arc: Memory,
-    onPointerUpdated: (() -> Unit)? = null
-) : Pointer<Long>(arc, onPointerUpdated) {
+    memory: Memory
+) : Pointer<Long>(memory) {
 
     override fun get() = memory.getLong(0)
 
@@ -17,9 +16,8 @@ class LongPointer internal constructor(
 }
 
 class ULongPointer internal constructor(
-    arc: Memory,
-    onPointerUpdated: (() -> Unit)? = null
-) : Pointer<ULong>(arc, onPointerUpdated) {
+    memory: Memory
+) : Pointer<ULong>(memory) {
 
     override fun get() = memory.getLong(0).toULong()
 
@@ -30,34 +28,22 @@ class ULongPointer internal constructor(
 
 // region Long Pointer
 
-fun longPointerOf(arc: Memory = ArenaMemory.allocate(ValueLayout.JAVA_LONG)) = LongPointer(arc)
-fun longPointerOf(value: Long, arc: Memory = ArenaMemory.allocate(ValueLayout.JAVA_LONG)): LongPointer {
-    val pointer = LongPointer(arc)
+fun longPointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_LONG)) = LongPointer(memory)
+fun longPointerOf(value: Long, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_LONG)): LongPointer {
+    val pointer = LongPointer(memory)
     pointer.set(value)
     return pointer
-}
-internal fun longPointerOf(
-    value: Long,
-    onPointerUpdated: () -> Unit
-) = LongPointer(ArenaMemory.allocate(ValueLayout.JAVA_LONG), onPointerUpdated).apply {
-    set(value)
 }
 
 // endregion
 
 // region ULong Pointer
 
-fun ulongPointerOf(arc: Memory = ArenaMemory.allocate(ValueLayout.JAVA_LONG)) = ULongPointer(arc)
-fun ulongPointerOf(value: ULong, arc: Memory = ArenaMemory.allocate(ValueLayout.JAVA_LONG)): ULongPointer {
-    val pointer = ULongPointer(arc)
+fun ulongPointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_LONG)) = ULongPointer(memory)
+fun ulongPointerOf(value: ULong, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_LONG)): ULongPointer {
+    val pointer = ULongPointer(memory)
     pointer.set(value)
     return pointer
-}
-internal fun ulongPointerOf(
-    value: ULong,
-    onPointerUpdated: () -> Unit
-) = ULongPointer(ArenaMemory.allocate(ValueLayout.JAVA_LONG), onPointerUpdated).apply {
-    set(value)
 }
 
 // endregion

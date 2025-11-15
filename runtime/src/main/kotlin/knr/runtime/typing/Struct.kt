@@ -52,55 +52,22 @@ abstract class Struct<T : Struct<T>>(
         }
     }
 
-    protected fun booleanField(offset: Long, initialValue: Boolean = false) = BooleanDelegate(this, offset).apply {
-        if (!get())
-            set(initialValue)
-    }
+    protected fun booleanField(offset: Long) = BooleanDelegate(this, offset)
 
-    protected fun byteField(offset: Long, initialValue: Byte = 0) = ByteDelegate(this, offset).apply {
-        if (get() != 0.toByte())
-            set(initialValue)
-    }
-    protected fun ubyteField(offset: Long, initialValue: UByte = 0u) = UByteDelegate(this, offset).apply {
-        if (get() != 0u.toUByte())
-            set(initialValue)
-    }
+    protected fun byteField(offset: Long) = ByteDelegate(this, offset)
+    protected fun ubyteField(offset: Long) = UByteDelegate(this, offset)
 
-    protected fun shortField(offset: Long, initialValue: Short = 0) = ShortDelegate(this, offset).apply {
-        if (get() != 0.toShort())
-            set(initialValue)
-    }
-    protected fun ushortField(offset: Long, initialValue: UShort = 0u) = UShortDelegate(this, offset).apply {
-        if (get() != 0u.toUShort())
-            set(initialValue)
-    }
+    protected fun shortField(offset: Long) = ShortDelegate(this, offset)
+    protected fun ushortField(offset: Long) = UShortDelegate(this, offset)
 
-    protected fun intField(offset: Long, initialValue: Int = 0) = IntDelegate(this, offset).apply {
-        if (get() != 0)
-            set(initialValue)
-    }
-    protected fun uintField(offset: Long, initialValue: UInt = 0u) = UIntDelegate(this, offset).apply {
-        if (get() != 0u)
-            set(initialValue)
-    }
+    protected fun intField(offset: Long) = IntDelegate(this, offset)
+    protected fun uintField(offset: Long) = UIntDelegate(this, offset)
 
-    protected fun longField(offset: Long, initialValue: Long = 0L) = LongDelegate(this, offset).apply {
-        if (get() != 0L)
-            set(initialValue)
-    }
-    protected fun ulongField(offset: Long, initialValue: ULong = 0u) = ULongDelegate(this, offset).apply {
-        if (get() != 0u.toULong())
-            set(initialValue)
-    }
+    protected fun longField(offset: Long) = LongDelegate(this, offset)
+    protected fun ulongField(offset: Long) = ULongDelegate(this, offset)
 
-    protected fun floatField(offset: Long, initialValue: Float = 0.0f) = FloatDelegate(this, offset).apply {
-        if (get() != 0f)
-            set(initialValue)
-    }
-    protected fun doubleField(offset: Long, initialValue: Double = 0.0) = DoubleDelegate(this, offset).apply {
-        if (get() != 0.0)
-            set(initialValue)
-    }
+    protected fun floatField(offset: Long) = FloatDelegate(this, offset)
+    protected fun doubleField(offset: Long) = DoubleDelegate(this, offset)
 
     protected fun <S: Struct<S>> structField(offset: Long, structCompanion: StructCompanion<S>) = StructFieldDelegate(this, offset, structCompanion)
     protected fun <U: Union> unionField(offset: Long, unionCompanion: UnionCompanion<U>) = UnionFieldDelegate(this, offset, unionCompanion)
@@ -111,8 +78,8 @@ abstract class Struct<T : Struct<T>>(
         return delegate
     }
 
-    protected fun opaquePointer(offset: Long, initialValue: OpaquePointer) = pointerField(offset, initialValue)
-    protected fun nullableOpaquePointer(offset: Long, initialValue: OpaquePointer?) = pointerField(offset, initialValue)
+    protected fun opaquePointerField(offset: Long, initialValue: OpaquePointer) = pointerField(offset, initialValue)
+    protected fun nullableOpaquePointerField(offset: Long, initialValue: OpaquePointer?) = pointerField(offset, initialValue)
 
     protected fun bytePointerField(offset: Long, initialValue: BytePointer) = pointerField(offset, initialValue)
     protected fun nullableBytePointerField(offset: Long, initialValue: BytePointer?) = pointerField(offset, initialValue)

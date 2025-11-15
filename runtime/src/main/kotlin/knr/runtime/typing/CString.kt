@@ -8,9 +8,8 @@ import java.nio.charset.Charset
 
 open class CString internal constructor(
     memory: Memory,
-    onArcUpdated: (() -> Unit)? = null,
     val charset: Charset
-) : Pointer<String>(memory, onArcUpdated) {
+) : Pointer<String>(memory) {
 
     override fun get(): String = memory.getString(0, charset)
 
@@ -23,10 +22,9 @@ open class CString internal constructor(
 
 class CachedCString(
     memory: Memory,
-    onArcUpdated: (() -> Unit)? = null,
     private var value: String = "",
     charset: Charset
-) : CString(memory, onArcUpdated, charset) {
+) : CString(memory, charset) {
 
     override fun get(): String = value
 
@@ -42,11 +40,8 @@ infix fun Pointer<String>.equal(other: Pointer<String>) = StringLib.equal(this, 
 
 val Pointer<String>.length get() = StringLib.length(this)
 
-internal fun cstringOf(value: String = "", charset: Charset = Charsets.UTF_8, onPointerUpdated: (() -> Unit)?) =
-    CString(ArenaMemory.string(value, charset), onPointerUpdated, charset)
 fun cstringOf(value: String = "", charset: Charset = Charsets.UTF_8) =
-    cstringOf(value, charset, null)
+    CString(ArenaMemory.string(value, charset), charset)
 
-internal fun cachedCStringOf(value: String = "", charset: Charset = Charsets.UTF_8, onPointerUpdated: (() -> Unit)?) =
-    CachedCString(ArenaMemory.string(value, charset), onPointerUpdated, value, charset)
-fun cachedCStringOf(value: String = "", charset: Charset = Charsets.UTF_8) = cachedCStringOf(value, charset, null)
+fun cachedCStringOf(value: String = "", charset: Charset = Charsets.UTF_8) =
+    CachedCString(ArenaMemory.string(value, charset), value, charset)

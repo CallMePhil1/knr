@@ -27,6 +27,21 @@ class NativePointerTests {
     }
 
     @Test
+    fun `GIVEN a struct with a pointer WHEN setting and getting the pointer THEN it should work`() {
+        val struct = AllPointers.allocate()
+
+        struct.i = intPointerOf(100)
+
+        assertEquals(100, struct.i.get())
+        assertEquals(100, PointerTestLibrary.getIntViaPointerFromStruct(struct))
+
+        struct.i = intPointerOf(10000)
+
+        assertEquals(10000, struct.i.get())
+        assertEquals(10000, PointerTestLibrary.getIntViaPointerFromStruct(struct))
+    }
+
+    @Test
     fun `GIVEN a struct with a byte pointer field WHEN setting and getting the pointer THEN it should work`() {
         val allPointersDirect = AllPointers.allocate()
 

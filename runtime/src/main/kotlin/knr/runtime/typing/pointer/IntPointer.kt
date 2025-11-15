@@ -5,9 +5,8 @@ import knr.runtime.memory.Memory
 import java.lang.foreign.ValueLayout
 
 class IntPointer internal constructor(
-    arc: Memory,
-    onPointerUpdated: (() -> Unit)? = null
-) : Pointer<Int>(arc, onPointerUpdated) {
+    memory: Memory
+) : Pointer<Int>(memory) {
 
     override fun get() = memory.getInt(0)
 
@@ -17,9 +16,8 @@ class IntPointer internal constructor(
 }
 
 class UIntPointer internal constructor(
-    arc: Memory,
-    onPointerUpdated: (() -> Unit)? = null
-) : Pointer<UInt>(arc, onPointerUpdated) {
+    memory: Memory
+) : Pointer<UInt>(memory) {
 
     override fun get() = memory.getInt(0).toUInt()
 
@@ -30,34 +28,22 @@ class UIntPointer internal constructor(
 
 // region Int Pointer
 
-fun intPointerOf(arc: Memory = ArenaMemory.allocate(ValueLayout.JAVA_INT)) = IntPointer(arc)
-fun intPointerOf(value: Int, arc: Memory = ArenaMemory.allocate(ValueLayout.JAVA_INT)): IntPointer {
-    val pointer = IntPointer(arc)
+fun intPointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_INT)) = IntPointer(memory)
+fun intPointerOf(value: Int, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_INT)): IntPointer {
+    val pointer = IntPointer(memory)
     pointer.set(value)
     return pointer
-}
-internal fun intPointerOf(
-    value: Int,
-    onPointerUpdated: () -> Unit
-) = IntPointer(ArenaMemory.allocate(ValueLayout.JAVA_INT), onPointerUpdated).apply {
-    set(value)
 }
 
 // endregion
 
 // region UInt Pointer
 
-fun uintPointerOf(arc: Memory = ArenaMemory.allocate(ValueLayout.JAVA_INT)) = UIntPointer(arc)
-fun uintPointerOf(value: UInt, arc: Memory = ArenaMemory.allocate(ValueLayout.JAVA_INT)): UIntPointer {
-    val pointer = UIntPointer(arc)
+fun uintPointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_INT)) = UIntPointer(memory)
+fun uintPointerOf(value: UInt, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_INT)): UIntPointer {
+    val pointer = UIntPointer(memory)
     pointer.set(value)
     return pointer
-}
-internal fun uintPointerOf(
-    value: UInt,
-    onPointerUpdated: () -> Unit
-) = UIntPointer(ArenaMemory.allocate(ValueLayout.JAVA_INT), onPointerUpdated).apply {
-    set(value)
 }
 
 // endregion

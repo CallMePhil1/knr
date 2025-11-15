@@ -5,9 +5,8 @@ import knr.runtime.memory.Memory
 import java.lang.foreign.ValueLayout
 
 class BytePointer internal constructor(
-    memory: Memory,
-    onPointerUpdated: (() -> Unit)? = null
-) : Pointer<Byte>(memory, onPointerUpdated) {
+    memory: Memory
+) : Pointer<Byte>(memory) {
 
     override fun get() = memory.getByte(0)
 
@@ -17,9 +16,8 @@ class BytePointer internal constructor(
 }
 
 class UBytePointer internal constructor(
-    memory: Memory,
-    onPointerUpdated: (() -> Unit)? = null
-) : Pointer<UByte>(memory, onPointerUpdated) {
+    memory: Memory
+) : Pointer<UByte>(memory) {
 
     override fun get() = memory.getByte(0).toUByte()
 
@@ -34,12 +32,6 @@ fun bytePointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_BYTE)) 
 fun bytePointerOf(value: Byte, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_BYTE)) = BytePointer(memory).apply {
     set(value)
 }
-internal fun bytePointerOf(
-    value: Byte,
-    onPointerUpdated: () -> Unit
-) = BytePointer(ArenaMemory.allocate(ValueLayout.JAVA_BYTE), onPointerUpdated).apply {
-    set(value)
-}
 
 // endregion
 
@@ -47,12 +39,6 @@ internal fun bytePointerOf(
 
 fun ubytePointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_BYTE)) = UBytePointer(memory)
 fun ubytePointerOf(value: UByte, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_BYTE)) = UBytePointer(memory).apply {
-    set(value)
-}
-internal fun ubytePointerOf(
-    value: UByte,
-    onPointerUpdated: () -> Unit
-) = UBytePointer(ArenaMemory.allocate(ValueLayout.JAVA_BYTE), onPointerUpdated).apply {
     set(value)
 }
 

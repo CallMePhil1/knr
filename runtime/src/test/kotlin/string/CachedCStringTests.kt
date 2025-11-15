@@ -26,19 +26,6 @@ class CachedCStringTests {
     }
 
     @Test
-    fun `GIVEN a CachedCString WHEN pointing to another ArenaMemory THEN it should succeed`() {
-        val str = cachedCStringOf("")
-
-        assertEquals("", str.get())
-
-        val memory = ArenaMemory.string("testing", Charsets.UTF_8)
-
-        str.pointTo(memory)
-        str.updateCache()
-        assertEquals("testing", str.get())
-    }
-
-    @Test
     fun `GIVEN a CachedCString WHEN trying to update its value THEN it should fail`() {
         val str = cachedCStringOf("testing")
 
