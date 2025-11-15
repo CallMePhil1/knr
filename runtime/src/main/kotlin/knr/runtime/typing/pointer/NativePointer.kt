@@ -3,9 +3,8 @@ package knr.runtime.typing.pointer
 import knr.runtime.typing.Native
 
 class NativePointer<T : Native<T>> internal constructor(
-    private var value: T,
-    onPointerUpdated: (() -> Unit)? = null
-) : Pointer<T>(value.memory, onPointerUpdated) {
+    private var value: T
+) : Pointer<T>(value.memory) {
     override fun clone(): Pointer<T> {
         val newNative = value.clone()
         return NativePointer(newNative)
@@ -22,4 +21,3 @@ class NativePointer<T : Native<T>> internal constructor(
 }
 
 fun <T : Native<T>> nativePointerOf(native: T) = NativePointer(native)
-internal fun <T : Native<T>> nativePointerOf(native: T, onPointerUpdated: (() -> Unit)) = NativePointer(native, onPointerUpdated)

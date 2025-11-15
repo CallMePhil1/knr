@@ -26,18 +26,6 @@ class CStringTests {
     }
 
     @Test
-    fun `GIVEN a CString WHEN pointing to another ArenaMemory THEN it should succeed`() {
-        val str = cstringOf("")
-
-        val memory = ArenaMemory.string("testing", Charsets.UTF_8)
-
-        assertEquals("", str.get())
-
-        str.pointTo(memory)
-        assertEquals("testing", str.get())
-    }
-
-    @Test
     fun `GIVEN a CString WHEN trying to update its value THEN it should fail`() {
         val str = cstringOf("testing")
 

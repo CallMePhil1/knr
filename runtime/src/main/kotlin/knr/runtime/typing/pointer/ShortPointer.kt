@@ -5,9 +5,8 @@ import knr.runtime.memory.Memory
 import java.lang.foreign.ValueLayout
 
 class ShortPointer internal constructor(
-    arc: Memory,
-    onPointerUpdated: (()-> Unit)? = null
-) : Pointer<Short>(arc, onPointerUpdated) {
+    arc: Memory
+) : Pointer<Short>(arc) {
 
     override fun get() = memory.getShort(0)
 
@@ -17,9 +16,8 @@ class ShortPointer internal constructor(
 }
 
 class UShortPointer internal constructor(
-    arc: Memory,
-    onPointerUpdated: (()-> Unit)? = null
-) : Pointer<UShort>(arc, onPointerUpdated) {
+    arc: Memory
+) : Pointer<UShort>(arc) {
 
     override fun get() = memory.getShort(0).toUShort()
 
@@ -36,12 +34,6 @@ fun shortPointerOf(value: Short, arc: Memory = ArenaMemory.allocate(ValueLayout.
     pointer.set(value)
     return pointer
 }
-internal fun shortPointerOf(
-    value: Short,
-    onPointerUpdated: () -> Unit
-) = ShortPointer(ArenaMemory.allocate(ValueLayout.JAVA_SHORT), onPointerUpdated).apply {
-    set(value)
-}
 
 // endregion
 
@@ -52,12 +44,6 @@ fun ushortPointerOf(value: UShort, arc: Memory = ArenaMemory.allocate(ValueLayou
     val pointer = UShortPointer(arc)
     pointer.set(value)
     return pointer
-}
-internal fun ushortPointerOf(
-    value: UShort,
-    onPointerUpdated: () -> Unit
-) = UShortPointer(ArenaMemory.allocate(ValueLayout.JAVA_SHORT), onPointerUpdated).apply {
-    set(value)
 }
 
 // endregion
