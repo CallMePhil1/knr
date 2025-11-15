@@ -10,5 +10,5 @@ allprojects {
 
 subprojects {
     group = "io.github.knr"
-    version = "0.1.2-alpha"
+    version = "0.1.4-alpha"
 }
