@@ -31,10 +31,8 @@ class ArrayStruct(
 class StructNativeArrayTests {
     @Test
     fun `GIVEN a StructNativeArray WHEN calling c getter and setter THEN it should work`() {
-        val array = structNativeArray(10, ArrayStruct.layout) { idx, memory ->
-            ArrayStruct.wrap(memory).apply {
-                i = idx
-            }
+        val array = structNativeArray(10, ArrayStruct) { idx, struct ->
+            struct.i = idx
         }
 
         for (i in 0 ..< 10) {

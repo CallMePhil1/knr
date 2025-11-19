@@ -2,6 +2,7 @@ package typing.struct
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class StructTests {
     @Test
@@ -209,5 +210,49 @@ class StructTests {
         StructTestLibrary.setLongForInnerStruct(struct, 3_500_000_000_000)
 
         assertEquals(3_500_000_000_000, struct.innerStruct.l)
+    }
+
+    @Test
+    fun `GIVEN a TestStruct WHEN accessing or modifying struct array THEN it should work`() {
+        val struct = TestStruct.allocate()
+
+        struct.structArray[1].i = 1_000_000
+        val returnedStruct = StructTestLibrary.getStructFromArray(struct, 1)
+
+        assertEquals(1_000_000, struct.structArray[1].i)
+        assertEquals(1_000_000, returnedStruct.i)
+
+        StructTestLibrary.setStructForArray(struct, 2, InnerStruct.allocate { i = 2_000_000 })
+        val returnedStruct2 = StructTestLibrary.getStructFromArray(struct, 2)
+
+        assertEquals(2_000_000, struct.structArray[2].i)
+        assertEquals(2_000_000, returnedStruct2.i)
+    }
+
+    @Test
+    fun `GIVEN a TestStruct WHEN accessing or modifying pointer array THEN it should work`() {
+        val struct = TestStruct.allocate()
+
+        struct.pointerArray[1].set(1_000_000)
+
+        assertEquals(1_000_000, struct.pointerArray[1].get())
+        assertEquals(1_000_000, StructTestLibrary.getIntFromPointerArray(struct, 1))
+
+        StructTestLibrary.setIntForPointerArray(struct, 2, 2_000_000)
+
+        assertEquals(2_000_000, struct.pointerArray[2].get())
+        assertEquals(2_000_000, StructTestLibrary.getIntFromPointerArray(struct, 2))
+    }
+
+    @Test
+    fun `GIVEN a TestStruct WHEN accessing or modifying nullable pointer array THEN it should work`() {
+        val struct = TestStruct.allocate()
+
+        struct.nullablePointerArray[0]?.set(1_000_000)
+
+        assertEquals(1_000_000, struct.nullablePointerArray[0]?.get())
+        assertNull(struct.nullablePointerArray[1])
+
+        StructTestLibrary.setIntForPointerArray(struct, 2, 2_000_000)
     }
 }

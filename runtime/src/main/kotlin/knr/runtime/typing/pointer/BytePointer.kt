@@ -28,18 +28,28 @@ class UBytePointer internal constructor(
 
 // region Byte Pointer
 
-fun bytePointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_BYTE)) = BytePointer(memory)
-fun bytePointerOf(value: Byte, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_BYTE)) = BytePointer(memory).apply {
-    set(value)
+fun bytePointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_BYTE)) = when(memory.isNull) {
+    true -> BytePointer(ArenaMemory.allocate(ValueLayout.JAVA_BYTE))
+    false -> BytePointer(memory)
+}
+fun bytePointerOf(value: Byte, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_BYTE)): BytePointer {
+    val pointer = bytePointerOf(memory)
+    pointer.set(value)
+    return pointer
 }
 
 // endregion
 
 // region UByte Pointer
 
-fun ubytePointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_BYTE)) = UBytePointer(memory)
-fun ubytePointerOf(value: UByte, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_BYTE)) = UBytePointer(memory).apply {
-    set(value)
+fun ubytePointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_BYTE)) = when(memory.isNull) {
+    true -> UBytePointer(ArenaMemory.allocate(ValueLayout.JAVA_BYTE))
+    false -> UBytePointer(memory)
+}
+fun ubytePointerOf(value: UByte, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_BYTE)): UBytePointer {
+    val pointer = ubytePointerOf(memory)
+    pointer.set(value)
+    return pointer
 }
 
 // endregion

@@ -9,7 +9,8 @@ private fun getLayout(vararg layouts: MemoryLayout): Array<out MemoryLayout> {
 
     for (layout in layouts) {
         val byteSize = layout.byteSize()
-        val padding = totalSize % layout.byteAlignment()
+        val alignmentOffset = totalSize % layout.byteAlignment()
+        val padding = if (alignmentOffset != 0L) byteSize - alignmentOffset else 0
 
         if (padding > 0) {
             structLayouts.add(MemoryLayout.paddingLayout(padding))

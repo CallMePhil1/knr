@@ -28,9 +28,12 @@ class ULongPointer internal constructor(
 
 // region Long Pointer
 
-fun longPointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_LONG)) = LongPointer(memory)
+fun longPointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_LONG)) = when(memory.isNull) {
+    true -> LongPointer(ArenaMemory.allocate(ValueLayout.JAVA_LONG))
+    false -> LongPointer(memory)
+}
 fun longPointerOf(value: Long, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_LONG)): LongPointer {
-    val pointer = LongPointer(memory)
+    val pointer = longPointerOf(memory)
     pointer.set(value)
     return pointer
 }
@@ -39,9 +42,12 @@ fun longPointerOf(value: Long, memory: Memory = ArenaMemory.allocate(ValueLayout
 
 // region ULong Pointer
 
-fun ulongPointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_LONG)) = ULongPointer(memory)
+fun ulongPointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_LONG)) = when(memory.isNull) {
+    true -> ULongPointer(ArenaMemory.allocate(ValueLayout.JAVA_LONG))
+    false -> ULongPointer(memory)
+}
 fun ulongPointerOf(value: ULong, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_LONG)): ULongPointer {
-    val pointer = ULongPointer(memory)
+    val pointer = ulongPointerOf(memory)
     pointer.set(value)
     return pointer
 }

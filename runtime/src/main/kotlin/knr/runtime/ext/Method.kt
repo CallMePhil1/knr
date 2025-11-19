@@ -1,13 +1,15 @@
 package knr.runtime.ext
 
+import java.lang.foreign.AddressLayout
 import java.lang.foreign.FunctionDescriptor
 import java.lang.foreign.Linker
+import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
+import java.lang.foreign.StructLayout
 import java.lang.foreign.ValueLayout
 import java.lang.invoke.MethodHandle
-import java.lang.invoke.MethodType
 
-private val typeMapping = mapOf<ValueLayout, Class<*>>(
+private val typeMapping = mapOf<MemoryLayout, Class<*>>(
     ValueLayout.JAVA_BOOLEAN to Boolean::class.javaPrimitiveType!!,
     ValueLayout.JAVA_BYTE to Byte::class.javaPrimitiveType!!,
     ValueLayout.JAVA_SHORT to Short::class.javaPrimitiveType!!,
@@ -18,9 +20,21 @@ private val typeMapping = mapOf<ValueLayout, Class<*>>(
     ValueLayout.ADDRESS to MemorySegment::class.java
 )
 
+private val newTypeMapping = mapOf(
+    ValueLayout.OfBoolean::class.java to Boolean::class.javaPrimitiveType!!,
+    ValueLayout.OfByte::class.java to Byte::class.javaPrimitiveType!!,
+    ValueLayout.OfShort::class.java to Short::class.javaPrimitiveType!!,
+    ValueLayout.OfInt::class.java to Int::class.javaPrimitiveType!!,
+    ValueLayout.OfLong::class.java to Long::class.javaPrimitiveType!!,
+    ValueLayout.OfFloat::class.java to Float::class.javaPrimitiveType!!,
+    ValueLayout.OfDouble::class.java to Double::class.javaPrimitiveType!!,
+    AddressLayout::class.java to MemorySegment::class.java,
+    StructLayout::class.java to MemorySegment::class.java
+)
+
 fun Linker.downcallHandle(
     segment: MemorySegment,
-    retType: ValueLayout? = null,
+    retType: MemoryLayout? = null,
     vararg params: ValueLayout
 ): MethodHandle {
     val funcDescriptor = if (retType == null) {
@@ -28,11 +42,6 @@ fun Linker.downcallHandle(
     } else {
         FunctionDescriptor.of(retType, *params)
     }
+
     return this.downcallHandle(segment, funcDescriptor)
-        .asType(
-        MethodType.methodType(
-            if (retType == null) Void::class.javaPrimitiveType else typeMapping[retType],
-            params.map { typeMapping[it] }
-        )
-    )
 }

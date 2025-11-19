@@ -3,7 +3,7 @@ package knr.runtime.typing.array
 import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
-import java.lang.foreign.StructLayout
+import knr.runtime.typing.StructCompanion
 
 class StructNativeArray<T : Struct<T>>(
     memory: Memory,
@@ -31,27 +31,21 @@ class StructNativeArray<T : Struct<T>>(
     }
 }
 
-inline fun <reified T: Struct<T>> structNativeArray(size: Int, layout: StructLayout, init: (Int, Memory) -> T) = structNativeArray(size, layout.byteSize(), init)
-inline fun <reified T: Struct<T>> structNativeArray(size: Int, structByteSize: Long, init: (Int, Memory) -> T): StructNativeArray<T> {
-    val memory = ArenaMemory.allocate(structByteSize * size)
-    val array = Array(size) {
+inline fun <reified T: Struct<T>> structNativeArray(memory: Memory, size: Int, companion: StructCompanion<T>, noinline init: ((Int, T) -> Unit)? = null): StructNativeArray<T> {
+    val structByteSize = companion.layout.byteSize()
+    val nativeArray = Array(size) {
         val slice = memory.asSlice(it * structByteSize, structByteSize)
-        init(it, slice)
+        companion.wrap(slice)
     }
-    return StructNativeArray(memory, size, structByteSize.toInt(), array)
-}
-inline fun <reified T: Struct<T>> structNativeArray(vararg values: T, init: (Memory) -> T): StructNativeArray<T> {
-    return if (values.isEmpty())
-        StructNativeArray(ArenaMemory.allocate(0), 0, 0, arrayOf())
-    else {
-        val byteSize = values[0].memory.byteSize
-        val memory = ArenaMemory.allocate(byteSize * values.size)
-        val array = Array(values.size) {
-            val slice = memory.asSlice(it * byteSize, byteSize)
-            val struct = init(slice)
-            values[it].copyTo(struct)
-            struct
-        }
-        StructNativeArray(memory, values.size, byteSize.toInt(), array)
+    if (init != null && size > 0) {
+        nativeArray.forEachIndexed { idx, struct -> init(idx, struct) }
     }
+    return StructNativeArray(memory, size, structByteSize.toInt(),nativeArray)
 }
+inline fun <reified T: Struct<T>> structNativeArray(size: Int, companion: StructCompanion<T>, noinline init: ((Int, T) -> Unit)? = null): StructNativeArray<T> =
+    structNativeArray(ArenaMemory.allocate(size * companion.layout.byteSize()), size, companion, init)
+
+inline fun <reified T: Struct<T>> structNativeArray(vararg values: T, structCompanion: StructCompanion<T>) =
+    structNativeArray(values.size, structCompanion) { idx, struct ->
+        values[idx].copyTo(struct)
+    }

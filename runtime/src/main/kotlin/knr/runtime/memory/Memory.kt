@@ -98,7 +98,7 @@ class ArenaMemory(
             val segment = arena.allocate(byteSize)
             return ArenaMemory(arena, segment)
         }
-        fun allocate(layout: ValueLayout) = allocate(layout.byteSize())
+        fun allocate(layout: MemoryLayout) = allocate(layout.byteSize())
 
         fun string(value: String, charset: Charset): ArenaMemory {
             val arena = Arena.ofShared()
@@ -108,12 +108,16 @@ class ArenaMemory(
     }
 }
 
-internal class MemorySlice(
+class MemorySlice internal constructor(
     memorySegment: MemorySegment
 ) : Memory(memorySegment) {
 
     override fun dispose() {
         memorySegment = null
+    }
+
+    companion object {
+        fun wrap(memorySegment: MemorySegment) = MemorySlice(memorySegment)
     }
 }
 

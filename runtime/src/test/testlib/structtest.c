@@ -68,6 +68,14 @@ long long get_long_from_inner_struct(AllPrimitives* all_prim) {
     return all_prim->is.l;
 }
 
+InnerStruct get_struct_from_array(AllPrimitives* all_prim, int index) {
+    return all_prim->sa[index];
+}
+
+int get_int_from_pointer_array(AllPrimitives* all_prim, int index) {
+    return *(all_prim->pa[index]);
+}
+
 void set_bool(AllPrimitives *all_prim, bool value) {
     all_prim->b = value;
 }
@@ -134,4 +142,12 @@ void set_int_for_inner_struct(AllPrimitives* all_prim, int value) {
 
 void set_long_for_inner_struct(AllPrimitives* all_prim, long long value) {
     all_prim->is.l = value;
+}
+
+void set_struct_for_array(AllPrimitives* all_prim, int index, InnerStruct value) {
+    all_prim->sa[index] = value;
+}
+
+void set_int_for_pointer_array(AllPrimitives* all_prim, int index, int value) {
+    *(all_prim->pa[index]) = value;
 }
