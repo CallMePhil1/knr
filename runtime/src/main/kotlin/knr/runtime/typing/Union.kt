@@ -11,11 +11,22 @@ import knr.runtime.delegates.UByteDelegate
 import knr.runtime.delegates.UIntDelegate
 import knr.runtime.delegates.ULongDelegate
 import knr.runtime.delegates.UShortDelegate
+import knr.runtime.delegates.union.ArrayFieldDelegate
 import knr.runtime.delegates.union.PointerFieldDelegate
 import knr.runtime.delegates.union.StructFieldDelegate
 import knr.runtime.delegates.union.UnionFieldDelegate
 import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
+import knr.runtime.typing.array.NativeArray
+import knr.runtime.typing.array.byteNativeArray
+import knr.runtime.typing.array.intNativeArray
+import knr.runtime.typing.array.longNativeArray
+import knr.runtime.typing.array.shortNativeArray
+import knr.runtime.typing.array.structNativeArray
+import knr.runtime.typing.array.ubyteNativeArray
+import knr.runtime.typing.array.uintNativeArray
+import knr.runtime.typing.array.ulongNativeArray
+import knr.runtime.typing.array.ushortNativeArray
 import knr.runtime.typing.pointer.*
 import java.lang.foreign.Arena
 import java.lang.foreign.UnionLayout
@@ -48,6 +59,22 @@ abstract class Union(
 
     protected fun <T: Struct<T>> structField(structCompanion: StructCompanion<T>) = StructFieldDelegate(this, structCompanion)
     protected fun <T: Union> unionField(unionCompanion: UnionCompanion<T>) = UnionFieldDelegate(this, unionCompanion)
+
+    protected fun <T, C, A: NativeArray<T, C>> nativeArrayField(initialValue: A): ArrayFieldDelegate<T, C, A> {
+        val delegate = ArrayFieldDelegate(this, initialValue)
+        return delegate
+    }
+
+    protected fun byteArrayField(size: Long) = nativeArrayField(byteNativeArray(memory.asSlice(0, size)))
+    protected fun ubyteArrayField(size: Long) = nativeArrayField(ubyteNativeArray(memory.asSlice(0, size)))
+    protected fun shortArrayField(size: Long) = nativeArrayField(shortNativeArray(memory.asSlice(0, size * Short.SIZE_BYTES)))
+    protected fun ushortArrayField(size: Long) = nativeArrayField(ushortNativeArray(memory.asSlice(0, size * UShort.SIZE_BYTES)))
+    protected fun intArrayField(size: Long) = nativeArrayField(intNativeArray(memory.asSlice(0, size * Int.SIZE_BYTES)))
+    protected fun uintArrayField(size: Long) = nativeArrayField(uintNativeArray(memory.asSlice(0, size * UInt.SIZE_BYTES)))
+    protected fun longArrayField(size: Long) = nativeArrayField(longNativeArray(memory.asSlice(0, size * Long.SIZE_BYTES)))
+    protected fun ulongArrayField(size: Long) = nativeArrayField(ulongNativeArray(memory.asSlice(0, size * ULong.SIZE_BYTES)))
+    protected inline fun <reified S: Struct<S>> structArrayField(size: Int, structCompanion: StructCompanion<S>) =
+        structNativeArray(memory.asSlice(0, size * structCompanion.layout.byteSize()), size, structCompanion)
 
     protected fun <T, P : Pointer<T>?> pointerField(byteSize: Long, ctor: (Memory) -> P): PointerFieldDelegate<T, P?> =
         PointerFieldDelegate(this, byteSize, ctor)

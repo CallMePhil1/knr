@@ -73,8 +73,6 @@ void set_long_for_struct(PointedStruct *ps, long value) {
     ps->l = value;
 }
 
-
-
 char get_byte_via_pointer_from_struct(AllPointers *ap) {
     if (ap == NULL)
         return -1;

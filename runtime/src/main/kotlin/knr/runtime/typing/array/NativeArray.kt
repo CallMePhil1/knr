@@ -8,11 +8,15 @@ abstract class NativeArray<T, C> internal constructor(
     memory: Memory,
     val size: Int,
     val typeByteSize: Int
-) : Native<T>(memory), Iterable<T> {
+) : Native<NativeArray<T, C>>(memory), Iterable<T> {
 
     protected fun checkBounds(target: Int) {
         if (size <= target)
             throw IndexOutOfBoundsException()
+    }
+
+    override fun copyTo(native: NativeArray<T, C>) {
+        this.memory.copyTo(native.memory)
     }
 
     abstract fun getUnchecked(index: Int): T

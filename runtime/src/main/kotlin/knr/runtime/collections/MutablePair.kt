@@ -4,9 +4,9 @@ open class ImmutablePair<T1, T2> internal constructor(
     open val first: T1,
     open val second: T2
 ) {
-    override fun equals(other: Any?) = when {
-        other == this -> true
-        other !is ImmutablePair<T1, T2> -> false
+    override fun equals(other: Any?) = when (other) {
+        this -> true
+        !is ImmutablePair<T1, T2> -> false
         else -> first == other.first && second == other.second
     }
 
@@ -15,6 +15,8 @@ open class ImmutablePair<T1, T2> internal constructor(
         result = 31 * result + (second?.hashCode() ?: 0)
         return result
     }
+
+    fun toPair() = Pair(first, second)
 }
 
 class MutablePair<T1, T2> internal constructor(
@@ -27,3 +29,6 @@ class MutablePair<T1, T2> internal constructor(
 
 fun <T1, T2> immutablePair(first: T1, second: T2) = ImmutablePair(first, second)
 fun <T1, T2> mutablePair(first: T1, second: T2) = MutablePair(first, second)
+
+fun <T1, T2> Pair<T1, T2>.toImmutablePair() = ImmutablePair(first, second)
+fun <T1, T2> Pair<T1, T2>.toMutablePair() = MutablePair(first, second)

@@ -2,7 +2,9 @@ package knr.runtime.typing.array
 
 import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
+import knr.runtime.memory.MemorySlice
 import knr.runtime.typing.pointer.Pointer
+import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
 
 class PointerNativeArray<T : Pointer<*>?>(
@@ -31,11 +33,33 @@ class PointerNativeArray<T : Pointer<*>?>(
     }
 }
 
-inline fun <reified T : Pointer<*>?> pointerNativeArray(size: Int, noinline init: (Int) -> T?): PointerNativeArray<T?> {
+inline fun <reified T : Pointer<*>?> pointerNativeArray(memory: Memory, ctor: (Int, Memory) -> T): PointerNativeArray<T> {
     val addressByteSize = ValueLayout.ADDRESS.byteSize()
-    val memory = ArenaMemory.allocate(size * addressByteSize)
+    val size = (memory.byteSize / addressByteSize).toInt()
+    val array = Array(size) {
+        val offset = addressByteSize * it
+        val segment = memory.getAddress(offset).reinterpret(addressByteSize)
+        val slice = MemorySlice.wrap(segment)
+        val pointer = ctor(it, slice)
+
+        if (segment == MemorySegment.NULL && pointer != null) {
+            memory.setAddress(offset, pointer.memory.memorySegment!!)
+        }
+
+        pointer
+    }
+
+    return PointerNativeArray(memory, size, array) as PointerNativeArray<T>
+}
+
+inline fun <reified T : Pointer<*>?> pointerNativeArray(size: Int, init: (Int, Memory) -> T): PointerNativeArray<T> {
+    val memory = ArenaMemory.allocate(size * ValueLayout.ADDRESS.byteSize())
+    return pointerNativeArray(memory, init)
+}
+
+inline fun <reified P : Pointer<*>?> pointerNativeArray(size: Int, noinline init: (Int) -> P): PointerNativeArray<P> {
     val array = Array(size, init)
-    return PointerNativeArray(memory, size, array)
+    return pointerNativeArray(*array)
 }
 
 inline fun <reified T : Pointer<*>?> pointerNativeArray(vararg values: T): PointerNativeArray<T> {

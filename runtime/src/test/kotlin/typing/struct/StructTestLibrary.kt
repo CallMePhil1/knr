@@ -1,8 +1,11 @@
 package typing.struct
 
 import knr.runtime.ext.downcallHandle
+import knr.runtime.memory.ArenaMemory
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
+import java.lang.foreign.MemorySegment
+import java.lang.foreign.SegmentAllocator
 import java.lang.foreign.SymbolLookup
 import java.lang.foreign.ValueLayout
 import java.lang.invoke.MethodHandle
@@ -119,6 +122,20 @@ object StructTestLibrary {
         ValueLayout.ADDRESS
     )
 
+    private val getStructFromArrayHandle: MethodHandle = linker.downcallHandle(
+        lookup.find("get_struct_from_array").orElseThrow(),
+        retType = InnerStruct.layout,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT
+    )
+
+    private val getIntFromPointerArrayHandle: MethodHandle = linker.downcallHandle(
+        lookup.find("get_int_from_pointer_array").orElseThrow(),
+        retType = ValueLayout.JAVA_INT,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT
+    )
+
     // endregion
 
     // region Setters
@@ -213,6 +230,20 @@ object StructTestLibrary {
         ValueLayout.ADDRESS, ValueLayout.JAVA_LONG
     )
 
+    private val setStructForArrayHandle: MethodHandle = linker.downcallHandle(
+        lookup.find("set_struct_for_array").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.ADDRESS
+    )
+
+    private val setIntForPointerArrayHandle: MethodHandle = linker.downcallHandle(
+        lookup.find("set_int_for_pointer_array").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT,
+        ValueLayout.JAVA_INT
+    )
+
     // endregion
 
     fun getBool(struct: TestStruct) =
@@ -265,6 +296,15 @@ object StructTestLibrary {
 
     fun getLongFromInnerStruct(struct: TestStruct) =
         getLongFromInnerStructHandle.invokeExact(struct.memory.memorySegment) as Long
+
+    fun getStructFromArray(struct: TestStruct, index: Int): InnerStruct {
+        val memory = ArenaMemory.allocate(InnerStruct.layout)
+        getStructFromArrayHandle.invokeExact(memory.memorySegment as SegmentAllocator, struct.memory.memorySegment, index) as MemorySegment
+        return InnerStruct.wrap(memory)
+    }
+
+    fun getIntFromPointerArray(struct: TestStruct, index: Int) =
+        getIntFromPointerArrayHandle.invokeExact(struct.memory.memorySegment, index) as Int
 
     fun setBool(struct: TestStruct, value: Boolean) {
         setBoolHandle.invokeExact(struct.memory.memorySegment, value)
@@ -324,5 +364,13 @@ object StructTestLibrary {
 
     fun setLongForInnerStruct(struct: TestStruct, value: Long) {
         setLongForInnerStructHandle.invokeExact(struct.memory.memorySegment, value)
+    }
+
+    fun setStructForArray(struct: TestStruct, index: Int, value: InnerStruct) {
+        setStructForArrayHandle.invokeExact(struct.memory.memorySegment, index, value.memory.memorySegment)
+    }
+
+    fun setIntForPointerArray(struct: TestStruct, index: Int, value: Int) {
+        setIntForPointerArrayHandle.invokeExact(struct.memory.memorySegment, index, value)
     }
 }

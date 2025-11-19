@@ -47,6 +47,8 @@ typedef struct {
     union StructUnion u;
 
     InnerStruct is;
+    InnerStruct sa[4];
+    int* pa[4];
 } AllPrimitives;
 
 API bool get_bool(AllPrimitives all_prim);
@@ -83,6 +85,10 @@ API int get_int_from_inner_struct(AllPrimitives* all_prim);
 
 API long long get_long_from_inner_struct(AllPrimitives* all_prim);
 
+API InnerStruct get_struct_from_array(AllPrimitives* all_prim, int index);
+
+API int get_int_from_pointer_array(AllPrimitives* all_prim, int index);
+
 API void set_bool(AllPrimitives *all_prim, bool value);
 
 API void set_char(AllPrimitives *all_prim, char value);
@@ -116,5 +122,9 @@ API void set_long_for_union(AllPrimitives* all_prim, long long value);
 API void set_int_for_inner_struct(AllPrimitives* all_prim, int value);
 
 API void set_long_for_inner_struct(AllPrimitives* all_prim, long long value);
+
+API void set_struct_for_array(AllPrimitives* all_prim, int index, InnerStruct value);
+
+API void set_int_for_pointer_array(AllPrimitives* all_prim, int index, int value);
 
 #endif

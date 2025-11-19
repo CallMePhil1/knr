@@ -9,9 +9,9 @@ abstract class Native<T> internal constructor(
     internal open var innerMemory: Memory? = memory
 
     val memory: Memory
-        get() = checkNotNull(innerMemory) { "Tried to access a Native object that was disposed of" }
+        get() = checkNotNull(innerMemory) { "Tried to use a Native object '${this::class.java.simpleName}' that was disposed of" }
 
-    val isValid get() = innerMemory != null
+    val isValid get() = innerMemory != null && innerMemory?.isNull == false
     val isNotValid get() = !isValid
 
     open fun clone(): T {
@@ -31,6 +31,7 @@ abstract class Native<T> internal constructor(
         innerMemory = null
     }
 
+    @Deprecated("To be removed in favor of isValid")
     open fun verifyIsValid() {
         if (isNotValid) {
             val nativeName = this::class.java.simpleName

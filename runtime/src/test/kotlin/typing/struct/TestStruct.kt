@@ -1,11 +1,14 @@
 package typing.struct
 
+import knr.runtime.ext.structLayout
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
 import knr.runtime.typing.StructCompanion
 import knr.runtime.typing.Union
 import knr.runtime.typing.UnionCompanion
-import java.lang.foreign.MemoryLayout
+import knr.runtime.typing.pointer.intPointerOf
+import java.lang.foreign.MemoryLayout.sequenceLayout
+import java.lang.foreign.MemoryLayout.unionLayout
 import java.lang.foreign.StructLayout
 import java.lang.foreign.UnionLayout
 import java.lang.foreign.ValueLayout
@@ -17,7 +20,7 @@ class TestUnion(
     var l by longField()
 
     companion object : UnionCompanion<TestUnion> {
-        override val layout: UnionLayout = MemoryLayout.unionLayout(
+        override val layout: UnionLayout = unionLayout(
             ValueLayout.JAVA_INT,
             ValueLayout.JAVA_LONG
         )
@@ -33,9 +36,8 @@ class InnerStruct(
     var l by longField(8)
 
     companion object : StructCompanion<InnerStruct> {
-        override val layout: StructLayout = MemoryLayout.structLayout(
+        override val layout: StructLayout = structLayout(
             ValueLayout.JAVA_INT,
-            MemoryLayout.paddingLayout(4),
             ValueLayout.JAVA_LONG
         )
 
@@ -70,14 +72,16 @@ class TestStruct(
     var u by unionField(64, TestUnion)
 
     var innerStruct by structField(72, InnerStruct)
+    var structArray by structArrayField(88, 4, InnerStruct)
+    var pointerArray by pointerArrayField(152, 4) { _, slice -> intPointerOf(0, slice) }
+    var nullablePointerArray by pointerArrayField(184, 4) { idx, slice -> if (idx % 2 == 0) intPointerOf(0, slice) else null }
 
     companion object : StructCompanion<TestStruct> {
-        override val layout: StructLayout = MemoryLayout.structLayout(
+        override val layout: StructLayout = structLayout(
             ValueLayout.JAVA_BYTE.withName("c"),
             ValueLayout.JAVA_BYTE.withName("uc"),
             ValueLayout.JAVA_SHORT.withName("s"),
             ValueLayout.JAVA_SHORT.withName("us"),
-            MemoryLayout.paddingLayout(2),
             ValueLayout.JAVA_INT.withName("i"),
             ValueLayout.JAVA_INT.withName("ui"),
             ValueLayout.JAVA_INT.withName("l"),
@@ -85,12 +89,13 @@ class TestStruct(
             ValueLayout.JAVA_LONG.withName("ll"),
             ValueLayout.JAVA_LONG.withName("ull"),
             ValueLayout.JAVA_FLOAT.withName("f"),
-            MemoryLayout.paddingLayout(4),
             ValueLayout.JAVA_DOUBLE.withName("d"),
             ValueLayout.JAVA_BOOLEAN.withName("b"),
-            MemoryLayout.paddingLayout(7),
             TestUnion.layout,
-            InnerStruct.layout
+            InnerStruct.layout,
+            sequenceLayout(4, InnerStruct.layout),
+            sequenceLayout(4, ValueLayout.ADDRESS),
+            sequenceLayout(4, ValueLayout.ADDRESS)
         )
 
         override fun wrap(memory: Memory) = TestStruct(memory)

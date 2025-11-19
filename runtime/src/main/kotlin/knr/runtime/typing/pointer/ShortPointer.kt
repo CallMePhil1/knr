@@ -28,9 +28,12 @@ class UShortPointer internal constructor(
 
 // region Short Pointer
 
-fun shortPointerOf(arc: Memory = ArenaMemory.allocate(ValueLayout.JAVA_SHORT)) = ShortPointer(arc)
-fun shortPointerOf(value: Short, arc: Memory = ArenaMemory.allocate(ValueLayout.JAVA_SHORT)): ShortPointer {
-    val pointer = ShortPointer(arc)
+fun shortPointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_SHORT)) = when(memory.isNull) {
+    true -> ShortPointer(ArenaMemory.allocate(ValueLayout.JAVA_SHORT))
+    false -> ShortPointer(memory)
+}
+fun shortPointerOf(value: Short, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_SHORT)): ShortPointer {
+    val pointer = shortPointerOf(memory)
     pointer.set(value)
     return pointer
 }
@@ -39,9 +42,12 @@ fun shortPointerOf(value: Short, arc: Memory = ArenaMemory.allocate(ValueLayout.
 
 // region UShort Pointer
 
-fun ushortPointerOf(arc: Memory = ArenaMemory.allocate(ValueLayout.JAVA_SHORT)) = UShortPointer(arc)
-fun ushortPointerOf(value: UShort, arc: Memory = ArenaMemory.allocate(ValueLayout.JAVA_SHORT)): UShortPointer {
-    val pointer = UShortPointer(arc)
+fun ushortPointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_SHORT)) = when(memory.isNull) {
+    true -> UShortPointer(ArenaMemory.allocate(ValueLayout.JAVA_SHORT))
+    false -> UShortPointer(memory)
+}
+fun ushortPointerOf(value: UShort, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_SHORT)): UShortPointer {
+    val pointer = ushortPointerOf(memory)
     pointer.set(value)
     return pointer
 }

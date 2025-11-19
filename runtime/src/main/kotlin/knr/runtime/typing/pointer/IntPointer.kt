@@ -28,20 +28,26 @@ class UIntPointer internal constructor(
 
 // region Int Pointer
 
-fun intPointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_INT)) = IntPointer(memory)
+fun intPointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_INT)): IntPointer = when(memory.isNull) {
+    true -> IntPointer(ArenaMemory.allocate(ValueLayout.JAVA_INT))
+    false -> IntPointer(memory)
+}
 fun intPointerOf(value: Int, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_INT)): IntPointer {
-    val pointer = IntPointer(memory)
-    pointer.set(value)
-    return pointer
+    val newPointer = intPointerOf(memory)
+    newPointer.set(value)
+    return newPointer
 }
 
 // endregion
 
 // region UInt Pointer
 
-fun uintPointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_INT)) = UIntPointer(memory)
+fun uintPointerOf(memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_INT)) = when(memory.isNull) {
+    true -> UIntPointer(ArenaMemory.allocate(ValueLayout.JAVA_INT))
+    false -> UIntPointer(memory)
+}
 fun uintPointerOf(value: UInt, memory: Memory = ArenaMemory.allocate(ValueLayout.JAVA_INT)): UIntPointer {
-    val pointer = UIntPointer(memory)
+    val pointer = uintPointerOf(memory)
     pointer.set(value)
     return pointer
 }
