@@ -19,6 +19,8 @@ import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
 import knr.runtime.typing.array.NativeArray
 import knr.runtime.typing.array.byteNativeArray
+import knr.runtime.typing.array.doubleNativeArray
+import knr.runtime.typing.array.floatNativeArray
 import knr.runtime.typing.array.intNativeArray
 import knr.runtime.typing.array.longNativeArray
 import knr.runtime.typing.array.shortNativeArray
@@ -73,6 +75,8 @@ abstract class Union(
     protected fun uintArrayField(size: Long) = nativeArrayField(uintNativeArray(memory.asSlice(0, size * UInt.SIZE_BYTES)))
     protected fun longArrayField(size: Long) = nativeArrayField(longNativeArray(memory.asSlice(0, size * Long.SIZE_BYTES)))
     protected fun ulongArrayField(size: Long) = nativeArrayField(ulongNativeArray(memory.asSlice(0, size * ULong.SIZE_BYTES)))
+    protected fun floatArrayField(size: Long) = nativeArrayField(floatNativeArray(memory.asSlice(0, size * Float.SIZE_BYTES)))
+    protected fun doubleArrayField(size: Long) = nativeArrayField(doubleNativeArray(memory.asSlice(0, size * Double.SIZE_BYTES)))
     protected inline fun <reified S: Struct<S>> structArrayField(size: Int, structCompanion: StructCompanion<S>) =
         structNativeArray(memory.asSlice(0, size * structCompanion.layout.byteSize()), size, structCompanion)
 

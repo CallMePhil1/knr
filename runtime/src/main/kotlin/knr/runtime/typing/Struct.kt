@@ -19,6 +19,8 @@ import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
 import knr.runtime.typing.array.NativeArray
 import knr.runtime.typing.array.byteNativeArray
+import knr.runtime.typing.array.doubleNativeArray
+import knr.runtime.typing.array.floatNativeArray
 import knr.runtime.typing.array.intNativeArray
 import knr.runtime.typing.array.longNativeArray
 import knr.runtime.typing.array.pointerNativeArray
@@ -98,6 +100,8 @@ abstract class Struct<T : Struct<T>>(
     protected fun uintArrayField(offset: Long, size: Long) = nativeArrayField(offset, uintNativeArray(memory.asSlice(offset, size * UInt.SIZE_BYTES)))
     protected fun longArrayField(offset: Long, size: Long) = nativeArrayField(offset, longNativeArray(memory.asSlice(offset, size * Long.SIZE_BYTES)))
     protected fun ulongArrayField(offset: Long, size: Long) = nativeArrayField(offset, ulongNativeArray(memory.asSlice(offset, size * ULong.SIZE_BYTES)))
+    protected fun floatArrayField(offset: Long, size: Long) = nativeArrayField(offset, floatNativeArray(memory.asSlice(offset, size * Float.SIZE_BYTES)))
+    protected fun doubleArrayField(offset: Long, size: Long) = nativeArrayField(offset, doubleNativeArray(memory.asSlice(offset, size * Double.SIZE_BYTES)))
     protected inline fun <reified P: Pointer<*>?> pointerArrayField(offset: Long, size: Long, ctor: (Int, Memory) -> P) =
         nativeArrayField(offset, pointerNativeArray(memory.asSlice(offset, size * ValueLayout.ADDRESS.byteSize()), ctor))
 
