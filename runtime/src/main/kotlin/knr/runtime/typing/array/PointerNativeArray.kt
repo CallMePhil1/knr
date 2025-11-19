@@ -3,10 +3,7 @@ package knr.runtime.typing.array
 import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
 import knr.runtime.memory.MemorySlice
-import knr.runtime.typing.Struct
-import knr.runtime.typing.StructCompanion
 import knr.runtime.typing.pointer.Pointer
-import knr.runtime.typing.pointer.nativePointerOf
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
 

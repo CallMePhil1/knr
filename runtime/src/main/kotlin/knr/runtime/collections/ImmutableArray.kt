@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalUnsignedTypes::class)
+
 package knr.runtime.collections
 
 class ImmutableByteArray(private val array: ByteArray): Iterable<Byte> {

@@ -6,7 +6,6 @@ import knr.runtime.typing.Struct
 import knr.runtime.typing.StructCompanion
 import knr.runtime.typing.Union
 import knr.runtime.typing.UnionCompanion
-import knr.runtime.typing.pointer.IntPointer
 import knr.runtime.typing.pointer.intPointerOf
 import java.lang.foreign.MemoryLayout.sequenceLayout
 import java.lang.foreign.MemoryLayout.unionLayout
