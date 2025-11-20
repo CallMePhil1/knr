@@ -52,4 +52,12 @@ API unsigned long long get_ulong(unsigned long long *arr, int index);
 
 API void set_ulong(unsigned long long *arr, int index, unsigned long long value);
 
+API float get_float(float *arr, int index);
+
+API void set_float(float *arr, int index, float value);
+
+API double get_double(double *arr, int index);
+
+API void set_double(double *arr, int index, double value);
+
 #endif

@@ -2,6 +2,8 @@ package typing.array
 
 import knr.runtime.ext.downcallHandle
 import knr.runtime.typing.array.ByteNativeArray
+import knr.runtime.typing.array.DoubleNativeArray
+import knr.runtime.typing.array.FloatNativeArray
 import knr.runtime.typing.array.IntNativeArray
 import knr.runtime.typing.array.LongNativeArray
 import knr.runtime.typing.array.ShortNativeArray
@@ -159,6 +161,36 @@ object ArrayTestLibrary {
         ValueLayout.JAVA_LONG
     )
 
+    private val getFloatHandle = linker.downcallHandle(
+        segment = lookup.find("get_float").orElseThrow(),
+        retType = ValueLayout.JAVA_FLOAT,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT
+    )
+
+    private val setFloatHandle = linker.downcallHandle(
+        segment = lookup.find("set_float").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT,
+        ValueLayout.JAVA_FLOAT
+    )
+
+    private val getDoubleHandle = linker.downcallHandle(
+        segment = lookup.find("get_double").orElseThrow(),
+        retType = ValueLayout.JAVA_DOUBLE,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT
+    )
+
+    private val setDoubleHandle = linker.downcallHandle(
+        segment = lookup.find("set_double").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS,
+        ValueLayout.JAVA_INT,
+        ValueLayout.JAVA_DOUBLE
+    )
+
     fun getIntFromStruct(array: StructNativeArray<*>, index: Int) =
         getIntFromStructHandle.invokeExact(array.memory.memorySegment, index) as Int
 
@@ -220,5 +252,19 @@ object ArrayTestLibrary {
 
     fun setULong(array: ULongNativeArray, index: Int, value: ULong) {
         setULongHandle.invokeExact(array.memory.memorySegment, index, value.toLong())
+    }
+
+    fun getFloat(array: FloatNativeArray, index: Int) =
+        getFloatHandle.invokeExact(array.memory.memorySegment, index) as Float
+
+    fun setFloat(array: FloatNativeArray, index: Int, value: Float) {
+        setFloatHandle.invokeExact(array.memory.memorySegment, index, value)
+    }
+
+    fun getDouble(array: DoubleNativeArray, index: Int) =
+        getDoubleHandle.invokeExact(array.memory.memorySegment, index) as Double
+
+    fun setDouble(array: DoubleNativeArray, index: Int, value: Double) {
+        setDoubleHandle.invokeExact(array.memory.memorySegment, index, value)
     }
 }

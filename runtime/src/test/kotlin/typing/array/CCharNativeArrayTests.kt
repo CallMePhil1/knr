@@ -2,10 +2,9 @@ package typing.array
 
 import knr.runtime.typing.array.ccharNativeArray
 import knr.runtime.typing.array.toTypedArray
-import knr.runtime.typing.array.ubyteNativeArray
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
+import kotlin.test.assertFailsWith
 
 class CCharNativeArrayTests {
     @Test
@@ -20,7 +19,7 @@ class CCharNativeArrayTests {
         array.set("anotherone")
 
         assertEquals("anotherone", array.getString())
-        assertFails { array.set("01234567890") }
+        assertFailsWith<IndexOutOfBoundsException> { array.set("01234567890") }
     }
 
     @Test
