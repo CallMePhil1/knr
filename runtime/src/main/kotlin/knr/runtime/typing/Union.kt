@@ -17,8 +17,11 @@ import knr.runtime.delegates.union.StructFieldDelegate
 import knr.runtime.delegates.union.UnionFieldDelegate
 import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
+import knr.runtime.typing.array.CachedCCharNativeArray
 import knr.runtime.typing.array.NativeArray
 import knr.runtime.typing.array.byteNativeArray
+import knr.runtime.typing.array.cachedCCharNativeArray
+import knr.runtime.typing.array.ccharNativeArray
 import knr.runtime.typing.array.doubleNativeArray
 import knr.runtime.typing.array.floatNativeArray
 import knr.runtime.typing.array.intNativeArray
@@ -33,6 +36,7 @@ import knr.runtime.typing.pointer.*
 import java.lang.foreign.Arena
 import java.lang.foreign.UnionLayout
 import java.lang.foreign.ValueLayout
+import java.nio.charset.Charset
 
 abstract class Union(
     memory: Memory
@@ -77,6 +81,16 @@ abstract class Union(
     protected fun ulongArrayField(size: Long) = nativeArrayField(ulongNativeArray(memory.asSlice(0, size * ULong.SIZE_BYTES)))
     protected fun floatArrayField(size: Long) = nativeArrayField(floatNativeArray(memory.asSlice(0, size * Float.SIZE_BYTES)))
     protected fun doubleArrayField(size: Long) = nativeArrayField(doubleNativeArray(memory.asSlice(0, size * Double.SIZE_BYTES)))
+    protected fun ccharArrayField(size: Long, charset: Charset) = nativeArrayField(ccharNativeArray(memory.asSlice(0, size), charset))
+    protected fun cachedCCharArrayField(size: Long, charset: Charset, initialValue: String?): ArrayFieldDelegate<Byte, ByteArray, CachedCCharNativeArray> {
+        val charArray = when (initialValue) {
+            null -> cachedCCharNativeArray(memory.asSlice(0, size), charset, "").apply {
+                updateCache()
+            }
+            else -> cachedCCharNativeArray(memory.asSlice(0, size), charset, initialValue)
+        }
+        return nativeArrayField(charArray)
+    }
     protected inline fun <reified S: Struct<S>> structArrayField(size: Int, structCompanion: StructCompanion<S>) =
         structNativeArray(memory.asSlice(0, size * structCompanion.layout.byteSize()), size, structCompanion)
 
