@@ -1,7 +1,6 @@
 package string
 
 import knr.runtime.layout.StructDefinition
-import knr.runtime.layout.structDefinition
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
 import knr.runtime.typing.StructCompanion
