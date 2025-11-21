@@ -1,25 +1,25 @@
 package typing.union
 
+import knr.runtime.layout.StructDefinition
+import knr.runtime.layout.structDefinition
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
 import knr.runtime.typing.StructCompanion
 import knr.runtime.typing.Union
 import knr.runtime.typing.UnionCompanion
 import java.lang.foreign.MemoryLayout
-import java.lang.foreign.StructLayout
 import java.lang.foreign.UnionLayout
 import java.lang.foreign.ValueLayout
 
 class UnionStruct(
     memory: Memory
-) : Struct<UnionStruct>(memory) {
-    var i by intField(0)
-    var l by longField(8)
+) : Struct<UnionStruct>(memory, definition) {
+    var i by intField()
+    var l by longField()
 
     companion object : StructCompanion<UnionStruct> {
-        override val layout: StructLayout = MemoryLayout.structLayout(
+        override val definition: StructDefinition = structDefinition(
             ValueLayout.JAVA_INT,
-            MemoryLayout.paddingLayout(4),
             ValueLayout.JAVA_LONG
         )
 
@@ -65,7 +65,7 @@ class UnionObj(
             ValueLayout.JAVA_INT,
             ValueLayout.JAVA_LONG,
             InnerUnion.layout,
-            UnionStruct.layout,
+            UnionStruct.definition.layout,
             ValueLayout.ADDRESS,
             ValueLayout.ADDRESS
         )

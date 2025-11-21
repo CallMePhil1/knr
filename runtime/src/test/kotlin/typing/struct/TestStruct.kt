@@ -1,6 +1,7 @@
 package typing.struct
 
-import knr.runtime.ext.structLayout
+import knr.runtime.layout.StructDefinition
+import knr.runtime.layout.structDefinition
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
 import knr.runtime.typing.StructCompanion
@@ -9,7 +10,6 @@ import knr.runtime.typing.UnionCompanion
 import knr.runtime.typing.pointer.intPointerOf
 import java.lang.foreign.MemoryLayout.sequenceLayout
 import java.lang.foreign.MemoryLayout.unionLayout
-import java.lang.foreign.StructLayout
 import java.lang.foreign.UnionLayout
 import java.lang.foreign.ValueLayout
 
@@ -31,12 +31,12 @@ class TestUnion(
 
 class InnerStruct(
     memory: Memory
-) : Struct<InnerStruct>(memory) {
-    var i by intField(0)
-    var l by longField(8)
+) : Struct<InnerStruct>(memory, definition) {
+    var i by intField()
+    var l by longField()
 
     companion object : StructCompanion<InnerStruct> {
-        override val layout: StructLayout = structLayout(
+        override val definition: StructDefinition = structDefinition(
             ValueLayout.JAVA_INT,
             ValueLayout.JAVA_LONG
         )
@@ -47,37 +47,37 @@ class InnerStruct(
 
 class TestStruct(
     memory: Memory
-) : Struct<TestStruct>(memory) {
+) : Struct<TestStruct>(memory, definition) {
 
-    var c by byteField(0)
-    var uc by ubyteField(1)
+    var c by byteField()
+    var uc by ubyteField()
 
-    var s by shortField(2)
-    var us by ushortField(4)
+    var s by shortField()
+    var us by ushortField()
 
-    var i by intField(8)
-    var ui by uintField(12)
+    var i by intField()
+    var ui by uintField()
 
-    var l by intField(16)
-    var ul by uintField(20)
+    var l by intField()
+    var ul by uintField()
 
-    var ll by longField(24)
-    var ull by ulongField(32)
+    var ll by longField()
+    var ull by ulongField()
 
-    var f by floatField(40)
-    var d by doubleField(48)
+    var f by floatField()
+    var d by doubleField()
 
-    var b by booleanField(56)
+    var b by booleanField()
 
-    var u by unionField(64, TestUnion)
+    var u by unionField(unionCompanion = TestUnion)
 
-    var innerStruct by structField(72, InnerStruct)
-    var structArray by structArrayField(88, 4, InnerStruct)
-    var pointerArray by pointerArrayField(152, 4) { _, slice -> intPointerOf(0, slice) }
-    var nullablePointerArray by pointerArrayField(184, 4) { idx, slice -> if (idx % 2 == 0) intPointerOf(0, slice) else null }
+    var innerStruct by structField(structCompanion = InnerStruct)
+    var structArray by structArrayField(size = 4, structCompanion = InnerStruct)
+    var pointerArray by pointerArrayField(size = 4) { _, slice -> intPointerOf(0, slice) }
+    var nullablePointerArray by pointerArrayField(size = 4) { idx, slice -> if (idx % 2 == 0) intPointerOf(0, slice) else null }
 
     companion object : StructCompanion<TestStruct> {
-        override val layout: StructLayout = structLayout(
+        override val definition: StructDefinition = structDefinition(
             ValueLayout.JAVA_BYTE.withName("c"),
             ValueLayout.JAVA_BYTE.withName("uc"),
             ValueLayout.JAVA_SHORT.withName("s"),
@@ -92,8 +92,8 @@ class TestStruct(
             ValueLayout.JAVA_DOUBLE.withName("d"),
             ValueLayout.JAVA_BOOLEAN.withName("b"),
             TestUnion.layout,
-            InnerStruct.layout,
-            sequenceLayout(4, InnerStruct.layout),
+            InnerStruct.definition.layout,
+            sequenceLayout(4, InnerStruct.definition.layout),
             sequenceLayout(4, ValueLayout.ADDRESS),
             sequenceLayout(4, ValueLayout.ADDRESS)
         )

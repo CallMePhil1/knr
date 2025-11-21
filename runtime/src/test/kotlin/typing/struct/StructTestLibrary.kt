@@ -124,7 +124,7 @@ object StructTestLibrary {
 
     private val getStructFromArrayHandle: MethodHandle = linker.downcallHandle(
         lookup.find("get_struct_from_array").orElseThrow(),
-        retType = InnerStruct.layout,
+        retType = InnerStruct.definition.layout,
         ValueLayout.ADDRESS,
         ValueLayout.JAVA_INT
     )
@@ -298,7 +298,7 @@ object StructTestLibrary {
         getLongFromInnerStructHandle.invokeExact(struct.memory.memorySegment) as Long
 
     fun getStructFromArray(struct: TestStruct, index: Int): InnerStruct {
-        val memory = ArenaMemory.allocate(InnerStruct.layout)
+        val memory = ArenaMemory.allocate(InnerStruct.definition.layout)
         getStructFromArrayHandle.invokeExact(memory.memorySegment as SegmentAllocator, struct.memory.memorySegment, index) as MemorySegment
         return InnerStruct.wrap(memory)
     }

@@ -1,5 +1,6 @@
 package knr.runtime.memory
 
+import knr.runtime.layout.StructDefinition
 import knr.runtime.native.Stdlib
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
@@ -21,6 +22,7 @@ abstract class Memory (
 
     fun asByteBuffer(): ByteBuffer = memorySegment!!.asByteBuffer()
     fun asSlice(offset: Long, layout: MemoryLayout) = asSlice(offset, layout.byteSize())
+    fun asSlice(offset: Long, definition: StructDefinition) = asSlice(offset, definition.layout)
     fun asSlice(offset: Long, byteSize: Long): Memory {
         val memorySegment = memorySegment!!.asSlice(offset, byteSize)
         return MemorySlice(memorySegment)

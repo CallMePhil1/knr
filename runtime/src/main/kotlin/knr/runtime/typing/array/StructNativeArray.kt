@@ -32,7 +32,7 @@ class StructNativeArray<T : Struct<T>>(
 }
 
 inline fun <reified T: Struct<T>> structNativeArray(memory: Memory, size: Int, companion: StructCompanion<T>, noinline init: ((Int, T) -> Unit)? = null): StructNativeArray<T> {
-    val structByteSize = companion.layout.byteSize()
+    val structByteSize = companion.definition.byteSize
     val nativeArray = Array(size) {
         val slice = memory.asSlice(it * structByteSize, structByteSize)
         companion.wrap(slice)
@@ -43,7 +43,7 @@ inline fun <reified T: Struct<T>> structNativeArray(memory: Memory, size: Int, c
     return StructNativeArray(memory, size, structByteSize.toInt(),nativeArray)
 }
 inline fun <reified T: Struct<T>> structNativeArray(size: Int, companion: StructCompanion<T>, noinline init: ((Int, T) -> Unit)? = null): StructNativeArray<T> =
-    structNativeArray(ArenaMemory.allocate(size * companion.layout.byteSize()), size, companion, init)
+    structNativeArray(ArenaMemory.allocate(size * companion.definition.byteSize), size, companion, init)
 
 inline fun <reified T: Struct<T>> structNativeArray(vararg values: T, structCompanion: StructCompanion<T>) =
     structNativeArray(values.size, structCompanion) { idx, struct ->
