@@ -1,5 +1,7 @@
 package typing.pointer
 
+import knr.runtime.layout.StructDefinition
+import knr.runtime.layout.structDefinition
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
 import knr.runtime.typing.StructCompanion
@@ -11,18 +13,16 @@ import knr.runtime.typing.pointer.ubytePointerOf
 import knr.runtime.typing.pointer.uintPointerOf
 import knr.runtime.typing.pointer.ulongPointerOf
 import knr.runtime.typing.pointer.ushortPointerOf
-import java.lang.foreign.MemoryLayout
-import java.lang.foreign.StructLayout
 import java.lang.foreign.ValueLayout
 
 class PointedStruct(
     memory: Memory
-) : Struct<PointedStruct>(memory) {
+) : Struct<PointedStruct>(memory, definition) {
 
     var l by intField(0)
 
     companion object : StructCompanion<PointedStruct> {
-        override val layout: StructLayout = MemoryLayout.structLayout(
+        override val definition: StructDefinition = structDefinition(
             ValueLayout.JAVA_INT.withName("l")
         )
 
@@ -32,30 +32,30 @@ class PointedStruct(
 
 class AllPointers(
     memory: Memory
-) : Struct<AllPointers>(memory) {
+) : Struct<AllPointers>(memory, definition) {
 
-    var b by bytePointerField(0, bytePointerOf())
-    var nb by nullableBytePointerField(8, null)
-    var ub by ubytePointerField(16, ubytePointerOf())
-    var nub by nullableUBytePointerField(24, null)
+    var b by bytePointerField(initialValue = bytePointerOf())
+    var nb by nullableBytePointerField(initialValue =  null)
+    var ub by ubytePointerField(initialValue = ubytePointerOf())
+    var nub by nullableUBytePointerField(initialValue = null)
 
-    var s by shortPointerField(32, shortPointerOf())
-    var ns by nullableShortPointerField(40, null)
-    var us by ushortPointerField(48, ushortPointerOf())
-    var nus by nullableUShortPointerField(56, null)
+    var s by shortPointerField(initialValue = shortPointerOf())
+    var ns by nullableShortPointerField(initialValue = null)
+    var us by ushortPointerField(initialValue = ushortPointerOf())
+    var nus by nullableUShortPointerField(initialValue = null)
 
-    var i by intPointerField(64, intPointerOf())
-    var ni by nullableIntPointerField(72, null)
-    var ui by uintPointerField(80, uintPointerOf())
-    var nui by nullableUIntPointerField(88, null)
+    var i by intPointerField(initialValue = intPointerOf())
+    var ni by nullableIntPointerField(initialValue = null)
+    var ui by uintPointerField(initialValue = uintPointerOf())
+    var nui by nullableUIntPointerField(initialValue = null)
 
-    var l by longPointerField(96, longPointerOf())
-    var nl by nullableLongPointerField(104, null)
-    var ul by ulongPointerField(112, ulongPointerOf())
-    var nul by nullableULongPointerField(120, null)
+    var l by longPointerField(initialValue = longPointerOf())
+    var nl by nullableLongPointerField(initialValue = null)
+    var ul by ulongPointerField(initialValue = ulongPointerOf())
+    var nul by nullableULongPointerField(initialValue = null)
 
     companion object : StructCompanion<AllPointers> {
-        override val layout: StructLayout = MemoryLayout.structLayout(
+        override val definition: StructDefinition = structDefinition(
             ValueLayout.ADDRESS,
             ValueLayout.ADDRESS,
             ValueLayout.ADDRESS,

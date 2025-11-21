@@ -92,7 +92,7 @@ abstract class Union(
         return nativeArrayField(charArray)
     }
     protected inline fun <reified S: Struct<S>> structArrayField(size: Int, structCompanion: StructCompanion<S>) =
-        structNativeArray(memory.asSlice(0, size * structCompanion.layout.byteSize()), size, structCompanion)
+        structNativeArray(memory.asSlice(0, size * structCompanion.definition.byteSize), size, structCompanion)
 
     protected fun <T, P : Pointer<T>?> pointerField(byteSize: Long, ctor: (Memory) -> P): PointerFieldDelegate<T, P?> =
         PointerFieldDelegate(this, byteSize, ctor)

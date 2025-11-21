@@ -10,7 +10,7 @@ class StructFieldDelegate <T: Struct<T>> internal constructor(
     structCompanion: StructCompanion<T>
 ) : FieldDelegate<T>(parent, 0) {
 
-    private val struct = structCompanion.wrap(parent.memory.asSlice(offset, structCompanion.layout))
+    private val struct = structCompanion.wrap(parent.memory.asSlice(offset, structCompanion.definition))
 
     override fun get() = struct
 
