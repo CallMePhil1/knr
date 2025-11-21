@@ -1,43 +1,41 @@
 package knr.libgen.processor
 
+import knr.runtime.layout.StructDefinition
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
 import knr.runtime.typing.StructCompanion
-import java.lang.foreign.MemoryLayout
-import java.lang.foreign.StructLayout
 import java.lang.foreign.ValueLayout
 
 class PrimitiveStruct(
     memory: Memory
-) : Struct<PrimitiveStruct>(memory) {
+) : Struct<PrimitiveStruct>(memory, definition) {
 
-    var c by byteField(0)
-    var uc by ubyteField(1)
+    var c by byteField()
+    var uc by ubyteField()
 
-    var s by shortField(2)
-    var us by ushortField(4)
+    var s by shortField()
+    var us by ushortField()
 
-    var i by intField(8)
-    var ui by uintField(12)
+    var i by intField()
+    var ui by uintField()
 
-    var l by intField(16)
-    var ul by uintField(20)
+    var l by intField()
+    var ul by uintField()
 
-    var ll by longField(24)
-    var ull by ulongField(32)
+    var ll by longField()
+    var ull by ulongField()
 
-    var f by floatField(40)
-    var d by doubleField(48)
+    var f by floatField()
+    var d by doubleField()
 
-    var b by booleanField(56)
+    var b by booleanField()
 
     companion object : StructCompanion<PrimitiveStruct> {
-        override val layout: StructLayout = MemoryLayout.structLayout(
+        override val definition: StructDefinition = structDefinition(
             ValueLayout.JAVA_BYTE.withName("c"),
             ValueLayout.JAVA_BYTE.withName("uc"),
             ValueLayout.JAVA_SHORT.withName("s"),
             ValueLayout.JAVA_SHORT.withName("us"),
-            MemoryLayout.paddingLayout(2),
             ValueLayout.JAVA_INT.withName("i"),
             ValueLayout.JAVA_INT.withName("ui"),
             ValueLayout.JAVA_INT.withName("l"),
@@ -45,10 +43,8 @@ class PrimitiveStruct(
             ValueLayout.JAVA_LONG.withName("ll"),
             ValueLayout.JAVA_LONG.withName("ull"),
             ValueLayout.JAVA_FLOAT.withName("f"),
-            MemoryLayout.paddingLayout(4),
             ValueLayout.JAVA_DOUBLE.withName("d"),
             ValueLayout.JAVA_BOOLEAN.withName("b"),
-            MemoryLayout.paddingLayout(7)
         )
 
         override fun wrap(memory: Memory) = PrimitiveStruct(memory)
