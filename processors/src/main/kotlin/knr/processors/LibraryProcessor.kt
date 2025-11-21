@@ -145,7 +145,7 @@ internal class LibraryProcessor(
                     val clsImplName = "${cls.simpleName.asString()}Impl"
                     val invokeCall = "$clsImplPackage.$clsImplName.$funcName"
 
-                    funcBody.add("""val byteSize = ${returnTypeName}.layout.byteSize()
+                    funcBody.add("""val byteSize = ${returnTypeName}.definition.byteSize
                         |val result = (${methodHandle.name}.invokeExact($invokeParams) as MemorySegment).reinterpret(byteSize)
                         |var struct: ${returnTypeName}? = null
                         |val disposeFun = { $invokeCall(struct!!) }
@@ -155,7 +155,7 @@ internal class LibraryProcessor(
                     """.trimMargin())
 
                 } else {
-                    funcBody.add("""val byteSize = ${returnTypeName}.layout.byteSize()
+                    funcBody.add("""val byteSize = ${returnTypeName}.definition.byteSize
                         |val result = (${methodHandle.name}.invokeExact($invokeParams) as MemorySegment).reinterpret(byteSize)
                         |val memory = NativeMemory.wrap(result)
                         |return ${returnTypeName}.wrap(memory)

@@ -12,14 +12,13 @@ import knr.annotations.Method
 import knr.annotations.NoVerify
 import knr.annotations.ReturnsNative
 import knr.annotations.StringParam
-import java.lang.foreign.MemoryLayout
-import java.lang.foreign.StructLayout
+import knr.runtime.layout.StructDefinition
 
 class TestClass(
     memory: Memory
-) : Struct<TestClass>(memory) {
+) : Struct<TestClass>(memory, definition) {
     companion object : StructCompanion<TestClass> {
-        override val layout: StructLayout = MemoryLayout.structLayout()
+        override val definition: StructDefinition = structDefinition()
 
         override fun wrap(memory: Memory) = TestClass(memory)
     }
