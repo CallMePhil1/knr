@@ -1,12 +1,12 @@
 package typing.array
 
 import knr.runtime.layout.StructDefinition
-import knr.runtime.layout.structDefinition
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
 import knr.runtime.typing.StructCompanion
 import knr.runtime.typing.array.structNativeArray
 import knr.runtime.typing.pointer.intPointerOf
+import java.lang.foreign.MemoryLayout
 import java.lang.foreign.ValueLayout
 import kotlin.test.Test
 import kotlin.test.assertEquals

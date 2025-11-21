@@ -45,6 +45,8 @@ import knr.runtime.typing.pointer.UIntPointer
 import knr.runtime.typing.pointer.ULongPointer
 import knr.runtime.typing.pointer.UShortPointer
 import java.lang.foreign.Arena
+import java.lang.foreign.MemoryLayout
+import java.lang.foreign.PaddingLayout
 import java.lang.foreign.ValueLayout
 import java.nio.charset.Charset
 
@@ -175,6 +177,34 @@ interface StructCompanion<T : Struct<T>> {
         val newStruct = allocate()
         newStruct.init()
         return newStruct
+    }
+
+    fun structDefinition(vararg elements: MemoryLayout): StructDefinition {
+        val offsets = mutableListOf<Long>()
+
+        val structLayouts = mutableListOf<MemoryLayout>()
+        var totalSize = 0L
+
+        for (element in elements) {
+            if (element is PaddingLayout)
+                error("Found Memory.paddingLayout in call to structDefinition for '${this::class.java.canonicalName}'")
+            val byteSize = element.byteSize()
+            val alignmentOffset = totalSize % element.byteAlignment()
+            val padding = if (alignmentOffset != 0L) byteSize - alignmentOffset else 0
+
+            if (padding > 0) {
+                structLayouts.add(MemoryLayout.paddingLayout(padding))
+                totalSize += padding
+            }
+
+            offsets.add(totalSize)
+            structLayouts.add(element)
+            totalSize += byteSize
+        }
+
+        val layout = MemoryLayout.structLayout(*structLayouts.toTypedArray())
+
+        return StructDefinition(layout, offsets)
     }
 
     fun wrap(memory: Memory): T
