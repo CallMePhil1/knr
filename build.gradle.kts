@@ -4,5 +4,5 @@ plugins {
 
 subprojects {
     group = "io.github.knr"
-    version = "0.1.5-alpha"
+    version = "0.2.2-alpha"
 }
