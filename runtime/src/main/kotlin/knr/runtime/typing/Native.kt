@@ -30,12 +30,4 @@ abstract class Native<T> internal constructor(
         innerMemory?.dispose()
         innerMemory = null
     }
-
-    @Deprecated("To be removed in favor of isValid")
-    open fun verifyIsValid() {
-        if (isNotValid) {
-            val nativeName = this::class.java.simpleName
-            throw IllegalStateException("Tried to use native '$nativeName' but it's been disposed")
-        }
-    }
 }
