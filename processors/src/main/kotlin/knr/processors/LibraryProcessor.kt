@@ -31,7 +31,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import knr.annotations.IgnoreReturnsNative
 import knr.annotations.Library
 import knr.annotations.Method
-import knr.annotations.NoVerify
 import knr.annotations.ReturnsNative
 import knr.annotations.StringParam
 import knr.processors.ext.addClsImport
@@ -79,7 +78,6 @@ internal class LibraryProcessor(
     ) {
         val funcBody = CodeBlock.builder()
         val invokeParamsList = mutableListOf<String>()
-        val noVerifyMethod = func.annotations.has<NoVerify>()
 
         func.parameters.forEach { param ->
             val type = param.type.resolve()
@@ -108,8 +106,6 @@ internal class LibraryProcessor(
                     invokeParamsList.add("${cacheName}!!.memory.memorySegment")
                 }
                 type.inheritsNative(resolver) -> {
-                    if (!noVerifyMethod && !param.annotations.has<NoVerify>())
-                        funcBody.addStatement("%L.verifyIsValid()", paramName)
                     invokeParamsList.add("${paramName}.memory.memorySegment")
                 }
                 type.assignableTo<BitFlagSet<*, *>>(resolver) -> {

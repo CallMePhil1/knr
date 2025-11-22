@@ -56,64 +56,47 @@ abstract class Struct<T : Struct<T>>(
 ) : Native<T>(memory) {
 
     private var offsetIndex = 0
-    private val _verifyFuncs = mutableListOf<() -> Unit>()
 
-    private fun addPointerDelegate(delegate: PointerFieldDelegate<*, *>) {
-        _verifyFuncs.add {
-            if (delegate.get()?.isNotValid == true) {
-                val structName = this::class.java.simpleName
-                val delegateType = delegate::class.java.simpleName
-                throw IllegalStateException("Tried to use struct '$structName' but it contained an invalid '$delegateType'.")
-            }
-        }
-    }
+    protected fun currentOffset() = definition.offset(offsetIndex)
+    protected fun nextOffset() = definition.offset(offsetIndex++)
 
-    override fun verifyIsValid() {
-        super.verifyIsValid()
-        _verifyFuncs.forEach {
-            it()
-        }
-    }
+    protected fun booleanField(offset: Long = nextOffset()) = BooleanDelegate(this, offset)
 
-    protected fun getOffset() = definition.offset(offsetIndex++)
+    protected fun byteField(offset: Long = nextOffset()) = ByteDelegate(this, offset)
+    protected fun ubyteField(offset: Long = nextOffset()) = UByteDelegate(this, offset)
 
-    protected fun booleanField(offset: Long = getOffset()) = BooleanDelegate(this, offset)
+    protected fun shortField(offset: Long = nextOffset()) = ShortDelegate(this, offset)
+    protected fun ushortField(offset: Long = nextOffset()) = UShortDelegate(this, offset)
 
-    protected fun byteField(offset: Long = getOffset()) = ByteDelegate(this, offset)
-    protected fun ubyteField(offset: Long = getOffset()) = UByteDelegate(this, offset)
+    protected fun intField(offset: Long = nextOffset()) = IntDelegate(this, offset)
+    protected fun uintField(offset: Long = nextOffset()) = UIntDelegate(this, offset)
 
-    protected fun shortField(offset: Long = getOffset()) = ShortDelegate(this, offset)
-    protected fun ushortField(offset: Long = getOffset()) = UShortDelegate(this, offset)
+    protected fun longField(offset: Long = nextOffset()) = LongDelegate(this, offset)
+    protected fun ulongField(offset: Long = nextOffset()) = ULongDelegate(this, offset)
 
-    protected fun intField(offset: Long = getOffset()) = IntDelegate(this, offset)
-    protected fun uintField(offset: Long = getOffset()) = UIntDelegate(this, offset)
+    protected fun floatField(offset: Long = nextOffset()) = FloatDelegate(this, offset)
+    protected fun doubleField(offset: Long = nextOffset()) = DoubleDelegate(this, offset)
 
-    protected fun longField(offset: Long = getOffset()) = LongDelegate(this, offset)
-    protected fun ulongField(offset: Long = getOffset()) = ULongDelegate(this, offset)
+    protected fun <S: Struct<S>> structField(offset: Long = nextOffset(), structCompanion: StructCompanion<S>) = StructFieldDelegate(this, offset, structCompanion)
+    protected fun <U: Union> unionField(offset: Long = nextOffset(), unionCompanion: UnionCompanion<U>) = UnionFieldDelegate(this, offset, unionCompanion)
 
-    protected fun floatField(offset: Long = getOffset()) = FloatDelegate(this, offset)
-    protected fun doubleField(offset: Long = getOffset()) = DoubleDelegate(this, offset)
-
-    protected fun <S: Struct<S>> structField(offset: Long = getOffset(), structCompanion: StructCompanion<S>) = StructFieldDelegate(this, offset, structCompanion)
-    protected fun <U: Union> unionField(offset: Long = getOffset(), unionCompanion: UnionCompanion<U>) = UnionFieldDelegate(this, offset, unionCompanion)
-
-    protected fun <T, C, A: NativeArray<T, C>> nativeArrayField(offset: Long = getOffset(), initialValue: A): ArrayFieldDelegate<T, C, A> {
+    protected fun <T, C, A: NativeArray<T, C>> nativeArrayField(offset: Long = nextOffset(), initialValue: A): ArrayFieldDelegate<T, C, A> {
         val delegate = ArrayFieldDelegate(this, offset, initialValue)
         return delegate
     }
 
-    protected fun byteArrayField(offset: Long = getOffset(), size: Long) = nativeArrayField(offset, byteNativeArray(memory.asSlice(offset, size)))
-    protected fun ubyteArrayField(offset: Long = getOffset(), size: Long) = nativeArrayField(offset, ubyteNativeArray(memory.asSlice(offset, size)))
-    protected fun shortArrayField(offset: Long = getOffset(), size: Long) = nativeArrayField(offset, shortNativeArray(memory.asSlice(offset, size * Short.SIZE_BYTES)))
-    protected fun ushortArrayField(offset: Long = getOffset(), size: Long) = nativeArrayField(offset, ushortNativeArray(memory.asSlice(offset, size * UShort.SIZE_BYTES)))
-    protected fun intArrayField(offset: Long = getOffset(), size: Long) = nativeArrayField(offset, intNativeArray(memory.asSlice(offset, size * Int.SIZE_BYTES)))
-    protected fun uintArrayField(offset: Long = getOffset(), size: Long) = nativeArrayField(offset, uintNativeArray(memory.asSlice(offset, size * UInt.SIZE_BYTES)))
-    protected fun longArrayField(offset: Long = getOffset(), size: Long) = nativeArrayField(offset, longNativeArray(memory.asSlice(offset, size * Long.SIZE_BYTES)))
-    protected fun ulongArrayField(offset: Long = getOffset(), size: Long) = nativeArrayField(offset, ulongNativeArray(memory.asSlice(offset, size * ULong.SIZE_BYTES)))
-    protected fun floatArrayField(offset: Long = getOffset(), size: Long) = nativeArrayField(offset, floatNativeArray(memory.asSlice(offset, size * Float.SIZE_BYTES)))
-    protected fun doubleArrayField(offset: Long = getOffset(), size: Long) = nativeArrayField(offset, doubleNativeArray(memory.asSlice(offset, size * Double.SIZE_BYTES)))
-    protected fun ccharArrayField(offset: Long = getOffset(), size: Long, charset: Charset) = nativeArrayField(offset, ccharNativeArray(memory.asSlice(offset, size), charset))
-    protected fun cachedCCharArrayField(offset: Long = getOffset(), size: Long, charset: Charset, initialValue: String?): ArrayFieldDelegate<Byte, ByteArray, CachedCCharNativeArray> {
+    protected fun byteArrayField(offset: Long = nextOffset(), size: Long) = nativeArrayField(offset, byteNativeArray(memory.asSlice(offset, size)))
+    protected fun ubyteArrayField(offset: Long = nextOffset(), size: Long) = nativeArrayField(offset, ubyteNativeArray(memory.asSlice(offset, size)))
+    protected fun shortArrayField(offset: Long = nextOffset(), size: Long) = nativeArrayField(offset, shortNativeArray(memory.asSlice(offset, size * Short.SIZE_BYTES)))
+    protected fun ushortArrayField(offset: Long = nextOffset(), size: Long) = nativeArrayField(offset, ushortNativeArray(memory.asSlice(offset, size * UShort.SIZE_BYTES)))
+    protected fun intArrayField(offset: Long = nextOffset(), size: Long) = nativeArrayField(offset, intNativeArray(memory.asSlice(offset, size * Int.SIZE_BYTES)))
+    protected fun uintArrayField(offset: Long = nextOffset(), size: Long) = nativeArrayField(offset, uintNativeArray(memory.asSlice(offset, size * UInt.SIZE_BYTES)))
+    protected fun longArrayField(offset: Long = nextOffset(), size: Long) = nativeArrayField(offset, longNativeArray(memory.asSlice(offset, size * Long.SIZE_BYTES)))
+    protected fun ulongArrayField(offset: Long = nextOffset(), size: Long) = nativeArrayField(offset, ulongNativeArray(memory.asSlice(offset, size * ULong.SIZE_BYTES)))
+    protected fun floatArrayField(offset: Long = nextOffset(), size: Long) = nativeArrayField(offset, floatNativeArray(memory.asSlice(offset, size * Float.SIZE_BYTES)))
+    protected fun doubleArrayField(offset: Long = nextOffset(), size: Long) = nativeArrayField(offset, doubleNativeArray(memory.asSlice(offset, size * Double.SIZE_BYTES)))
+    protected fun ccharArrayField(offset: Long = nextOffset(), size: Long, charset: Charset) = nativeArrayField(offset, ccharNativeArray(memory.asSlice(offset, size), charset))
+    protected fun cachedCCharArrayField(offset: Long = nextOffset(), size: Long, charset: Charset, initialValue: String?): ArrayFieldDelegate<Byte, ByteArray, CachedCCharNativeArray> {
         val charArray = when (initialValue) {
             null -> cachedCCharNativeArray(memory.asSlice(offset, size), charset, "").apply {
                 updateCache()
@@ -122,45 +105,41 @@ abstract class Struct<T : Struct<T>>(
         }
         return nativeArrayField(offset, charArray)
     }
-    protected inline fun <reified P: Pointer<*>?> pointerArrayField(offset: Long = getOffset(), size: Long, ctor: (Int, Memory) -> P) =
+    protected inline fun <reified P: Pointer<*>?> pointerArrayField(offset: Long = nextOffset(), size: Long, ctor: (Int, Memory) -> P) =
         nativeArrayField(offset, pointerNativeArray(memory.asSlice(offset, size * ValueLayout.ADDRESS.byteSize()), ctor))
 
-    protected inline fun <reified S: Struct<S>> structArrayField(offset: Long = getOffset(), size: Int, structCompanion: StructCompanion<S>) =
+    protected inline fun <reified S: Struct<S>> structArrayField(offset: Long = nextOffset(), size: Int, structCompanion: StructCompanion<S>) =
         nativeArrayField(offset, structNativeArray(memory.asSlice(offset, structCompanion.definition.byteSize * size), size, structCompanion))
 
-    protected fun <T, P : Pointer<T>?> pointerField(offset: Long = getOffset(), initialValue: P): PointerFieldDelegate<T, P> {
-        val delegate = PointerFieldDelegate(this, offset, initialValue)
-        addPointerDelegate(delegate)
-        return delegate
-    }
+    protected fun <P : Pointer<*>?> pointerField(offset: Long = nextOffset(), initialValue: P) = PointerFieldDelegate(this, offset, initialValue)
 
-    protected fun opaquePointerField(offset: Long = getOffset(), initialValue: OpaquePointer) = pointerField(offset, initialValue)
-    protected fun nullableOpaquePointerField(offset: Long = getOffset(), initialValue: OpaquePointer?) = pointerField(offset, initialValue)
+    protected fun opaquePointerField(offset: Long = nextOffset(), initialValue: OpaquePointer) = pointerField(offset, initialValue)
+    protected fun nullableOpaquePointerField(offset: Long = nextOffset(), initialValue: OpaquePointer?) = pointerField(offset, initialValue)
 
-    protected fun bytePointerField(offset: Long = getOffset(), initialValue: BytePointer) = pointerField(offset, initialValue)
-    protected fun nullableBytePointerField(offset: Long = getOffset(), initialValue: BytePointer?) = pointerField(offset, initialValue)
-    protected fun ubytePointerField(offset: Long = getOffset(), initialValue: UBytePointer) = pointerField(offset, initialValue)
-    protected fun nullableUBytePointerField(offset: Long = getOffset(), initialValue: UBytePointer?) = pointerField(offset, initialValue)
+    protected fun bytePointerField(offset: Long = nextOffset(), initialValue: BytePointer) = pointerField(offset, initialValue)
+    protected fun nullableBytePointerField(offset: Long = nextOffset(), initialValue: BytePointer?) = pointerField(offset, initialValue)
+    protected fun ubytePointerField(offset: Long = nextOffset(), initialValue: UBytePointer) = pointerField(offset, initialValue)
+    protected fun nullableUBytePointerField(offset: Long = nextOffset(), initialValue: UBytePointer?) = pointerField(offset, initialValue)
 
-    protected fun shortPointerField(offset: Long = getOffset(), initialValue: ShortPointer) = pointerField(offset, initialValue)
-    protected fun nullableShortPointerField(offset: Long = getOffset(), initialValue: ShortPointer?) = pointerField(offset, initialValue)
-    protected fun ushortPointerField(offset: Long = getOffset(), initialValue: UShortPointer) = pointerField(offset, initialValue)
-    protected fun nullableUShortPointerField(offset: Long = getOffset(), initialValue: UShortPointer?) = pointerField(offset, initialValue)
+    protected fun shortPointerField(offset: Long = nextOffset(), initialValue: ShortPointer) = pointerField(offset, initialValue)
+    protected fun nullableShortPointerField(offset: Long = nextOffset(), initialValue: ShortPointer?) = pointerField(offset, initialValue)
+    protected fun ushortPointerField(offset: Long = nextOffset(), initialValue: UShortPointer) = pointerField(offset, initialValue)
+    protected fun nullableUShortPointerField(offset: Long = nextOffset(), initialValue: UShortPointer?) = pointerField(offset, initialValue)
 
-    protected fun intPointerField(offset: Long = getOffset(), initialValue: IntPointer) = pointerField(offset, initialValue)
-    protected fun nullableIntPointerField(offset: Long = getOffset(), initialValue: IntPointer?) = pointerField(offset, initialValue)
-    protected fun uintPointerField(offset: Long = getOffset(), initialValue: UIntPointer) = pointerField(offset, initialValue)
-    protected fun nullableUIntPointerField(offset: Long = getOffset(), initialValue: UIntPointer?) = pointerField(offset, initialValue)
+    protected fun intPointerField(offset: Long = nextOffset(), initialValue: IntPointer) = pointerField(offset, initialValue)
+    protected fun nullableIntPointerField(offset: Long = nextOffset(), initialValue: IntPointer?) = pointerField(offset, initialValue)
+    protected fun uintPointerField(offset: Long = nextOffset(), initialValue: UIntPointer) = pointerField(offset, initialValue)
+    protected fun nullableUIntPointerField(offset: Long = nextOffset(), initialValue: UIntPointer?) = pointerField(offset, initialValue)
 
-    protected fun longPointerField(offset: Long = getOffset(), initialValue: LongPointer) = pointerField(offset, initialValue)
-    protected fun nullableLongPointerField(offset: Long = getOffset(), initialValue: LongPointer?) = pointerField(offset, initialValue)
-    protected fun ulongPointerField(offset: Long = getOffset(), initialValue: ULongPointer) = pointerField(offset, initialValue)
-    protected fun nullableULongPointerField(offset: Long = getOffset(), initialValue: ULongPointer?) = pointerField(offset, initialValue)
+    protected fun longPointerField(offset: Long = nextOffset(), initialValue: LongPointer) = pointerField(offset, initialValue)
+    protected fun nullableLongPointerField(offset: Long = nextOffset(), initialValue: LongPointer?) = pointerField(offset, initialValue)
+    protected fun ulongPointerField(offset: Long = nextOffset(), initialValue: ULongPointer) = pointerField(offset, initialValue)
+    protected fun nullableULongPointerField(offset: Long = nextOffset(), initialValue: ULongPointer?) = pointerField(offset, initialValue)
 
-    protected fun cstringField(offset: Long = getOffset(), initialValue: CString) = pointerField(offset, initialValue)
-    protected fun nullableCStringField(offset: Long = getOffset(), initialValue: CString?) = pointerField(offset, initialValue)
-    protected fun cachedCStringField(offset: Long = getOffset(), initialValue: CachedCString) = pointerField(offset, initialValue)
-    protected fun nullableCachedCStringField(offset: Long = getOffset(), initialValue: CachedCString?) = pointerField(offset, initialValue)
+    protected fun cstringField(offset: Long = nextOffset(), initialValue: CString) = pointerField(offset, initialValue)
+    protected fun nullableCStringField(offset: Long = nextOffset(), initialValue: CString?) = pointerField(offset, initialValue)
+    protected fun cachedCStringField(offset: Long = nextOffset(), initialValue: CachedCString) = pointerField(offset, initialValue)
+    protected fun nullableCachedCStringField(offset: Long = nextOffset(), initialValue: CachedCString?) = pointerField(offset, initialValue)
 }
 
 interface StructCompanion<T : Struct<T>> {

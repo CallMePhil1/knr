@@ -9,7 +9,6 @@ import knr.runtime.typing.flags.IntBitFlagSet
 import knr.annotations.IgnoreReturnsNative
 import knr.annotations.Library
 import knr.annotations.Method
-import knr.annotations.NoVerify
 import knr.annotations.ReturnsNative
 import knr.annotations.StringParam
 import knr.runtime.layout.StructDefinition
@@ -34,10 +33,9 @@ interface TestLibrary {
     fun primitiveFunc(byte: Byte, short: UShort, int: Int, long: Long): Int
     fun nativeFunc(cls: TestClass, array: IntNativeArray, bitMask: IntBitFlagSet<TestBitFlags>): Int
 
-    @NoVerify
     fun noVerifyFunc(cls: TestClass, array: IntNativeArray)
 
-    fun noVerifyParam(@NoVerify cls: TestClass, array: IntNativeArray)
+    fun noVerifyParam(cls: TestClass, array: IntNativeArray)
 
     @Method("this_is_the_name")
     fun namedMethod()
