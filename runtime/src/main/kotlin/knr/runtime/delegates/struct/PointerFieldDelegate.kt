@@ -5,7 +5,7 @@ import knr.runtime.typing.Native
 import knr.runtime.typing.pointer.Pointer
 import java.lang.foreign.MemorySegment
 
-open class PointerFieldDelegate<T, P : Pointer<T>?> internal constructor(
+open class PointerFieldDelegate<P : Pointer<*>?> internal constructor(
     parent: Native<*>,
     offset: Long,
     initialValue: P
