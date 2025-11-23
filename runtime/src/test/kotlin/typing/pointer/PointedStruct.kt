@@ -4,21 +4,14 @@ import knr.runtime.layout.StructDefinition
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
 import knr.runtime.typing.StructCompanion
-import knr.runtime.typing.pointer.bytePointerOf
-import knr.runtime.typing.pointer.intPointerOf
-import knr.runtime.typing.pointer.longPointerOf
-import knr.runtime.typing.pointer.shortPointerOf
-import knr.runtime.typing.pointer.ubytePointerOf
-import knr.runtime.typing.pointer.uintPointerOf
-import knr.runtime.typing.pointer.ulongPointerOf
-import knr.runtime.typing.pointer.ushortPointerOf
+import knr.runtime.typing.pointer.*
 import java.lang.foreign.ValueLayout
 
 class PointedStruct(
     memory: Memory
 ) : Struct<PointedStruct>(memory, definition) {
 
-    var l by intField(0)
+    var l by intField()
 
     companion object : StructCompanion<PointedStruct> {
         override val definition: StructDefinition = structDefinition(
@@ -33,8 +26,8 @@ class AllPointers(
     memory: Memory
 ) : Struct<AllPointers>(memory, definition) {
 
-    var b by bytePointerField(initialValue = bytePointerOf())
-    var nb by nullableBytePointerField(initialValue =  null)
+    var b by bytePointerField(initialValue = bytePointerOf(memory.asAddress(currentOffset(), 1)))
+    var nb by nullableBytePointerField(initialValue = null)
     var ub by ubytePointerField(initialValue = ubytePointerOf())
     var nub by nullableUBytePointerField(initialValue = null)
 

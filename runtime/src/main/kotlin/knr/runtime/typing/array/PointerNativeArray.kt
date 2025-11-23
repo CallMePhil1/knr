@@ -2,7 +2,7 @@ package knr.runtime.typing.array
 
 import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
-import knr.runtime.memory.MemorySlice
+import knr.runtime.memory.ViewMemory
 import knr.runtime.typing.pointer.Pointer
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
@@ -39,7 +39,7 @@ inline fun <reified T : Pointer<*>?> pointerNativeArray(memory: Memory, ctor: (I
     val array = Array(size) {
         val offset = addressByteSize * it
         val segment = memory.getAddress(offset).reinterpret(addressByteSize)
-        val slice = MemorySlice.wrap(segment)
+        val slice = ViewMemory.wrap(segment)
         val pointer = ctor(it, slice)
 
         if (segment == MemorySegment.NULL && pointer != null) {
