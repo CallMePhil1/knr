@@ -1,10 +1,7 @@
 package typing.pointer
 
-import knr.runtime.typing.pointer.bytePointerOf
-import knr.runtime.typing.pointer.intPointerOf
-import knr.runtime.typing.pointer.longPointerOf
-import knr.runtime.typing.pointer.nativePointerOf
-import knr.runtime.typing.pointer.shortPointerOf
+import knr.runtime.memory.ArenaMemory
+import knr.runtime.typing.pointer.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -226,5 +223,16 @@ class NativePointerTests {
         val pointer = nativePointerOf(struct)
 
         assertFailsWith<NotImplementedError> { pointer.clone() }
+    }
+
+    @Test
+    fun `GIVEN a struct with preallocated memory WHEN ininitializing the struct THEN it should work`() {
+        val pointer = bytePointerOf(100)
+        val memory = ArenaMemory.allocate(AllPointers.definition.layout)
+        memory.setAddress(0, pointer.memory.memorySegment!!)
+
+        val struct = AllPointers.wrap(memory)
+
+        assertEquals(100, struct.b.get())
     }
 }

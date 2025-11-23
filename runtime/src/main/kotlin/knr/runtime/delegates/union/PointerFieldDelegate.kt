@@ -2,7 +2,6 @@ package knr.runtime.delegates.union
 
 import knr.runtime.delegates.FieldDelegate
 import knr.runtime.memory.Memory
-import knr.runtime.memory.MemorySlice
 import knr.runtime.typing.Union
 import knr.runtime.typing.pointer.Pointer
 import java.lang.foreign.MemorySegment
@@ -19,10 +18,8 @@ open class PointerFieldDelegate<T, P : Pointer<T>?> internal constructor(
     override fun get() = if (parent.memory.getAddress(0) == MemorySegment.NULL)
         null
     else {
-        val segment = MemorySegment
-            .ofAddress(parent.memory.getLong(0))
-            .reinterpret(byteSize)
-        ctor(MemorySlice(segment))
+        val memory = parent.memory.asAddress(0, byteSize)
+        ctor(memory)
     }
 
     override fun set(value: P?) {

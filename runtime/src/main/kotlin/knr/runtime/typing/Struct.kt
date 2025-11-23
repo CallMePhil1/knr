@@ -1,49 +1,15 @@
 package knr.runtime.typing
 
-import knr.runtime.delegates.BooleanDelegate
-import knr.runtime.delegates.ByteDelegate
-import knr.runtime.delegates.DoubleDelegate
-import knr.runtime.delegates.FloatDelegate
-import knr.runtime.delegates.IntDelegate
-import knr.runtime.delegates.LongDelegate
-import knr.runtime.delegates.struct.PointerFieldDelegate
-import knr.runtime.delegates.ShortDelegate
-import knr.runtime.delegates.UByteDelegate
-import knr.runtime.delegates.UIntDelegate
-import knr.runtime.delegates.ULongDelegate
-import knr.runtime.delegates.UShortDelegate
+import knr.runtime.delegates.*
 import knr.runtime.delegates.struct.ArrayFieldDelegate
+import knr.runtime.delegates.struct.PointerFieldDelegate
 import knr.runtime.delegates.struct.StructFieldDelegate
 import knr.runtime.delegates.struct.UnionFieldDelegate
 import knr.runtime.layout.StructDefinition
 import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
-import knr.runtime.typing.array.CachedCCharNativeArray
-import knr.runtime.typing.array.NativeArray
-import knr.runtime.typing.array.byteNativeArray
-import knr.runtime.typing.array.cachedCCharNativeArray
-import knr.runtime.typing.array.ccharNativeArray
-import knr.runtime.typing.array.doubleNativeArray
-import knr.runtime.typing.array.floatNativeArray
-import knr.runtime.typing.array.intNativeArray
-import knr.runtime.typing.array.longNativeArray
-import knr.runtime.typing.array.pointerNativeArray
-import knr.runtime.typing.array.shortNativeArray
-import knr.runtime.typing.array.structNativeArray
-import knr.runtime.typing.array.ubyteNativeArray
-import knr.runtime.typing.array.uintNativeArray
-import knr.runtime.typing.array.ulongNativeArray
-import knr.runtime.typing.array.ushortNativeArray
-import knr.runtime.typing.pointer.BytePointer
-import knr.runtime.typing.pointer.IntPointer
-import knr.runtime.typing.pointer.LongPointer
-import knr.runtime.typing.pointer.OpaquePointer
-import knr.runtime.typing.pointer.Pointer
-import knr.runtime.typing.pointer.ShortPointer
-import knr.runtime.typing.pointer.UBytePointer
-import knr.runtime.typing.pointer.UIntPointer
-import knr.runtime.typing.pointer.ULongPointer
-import knr.runtime.typing.pointer.UShortPointer
+import knr.runtime.typing.array.*
+import knr.runtime.typing.pointer.*
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.PaddingLayout
@@ -57,8 +23,8 @@ abstract class Struct<T : Struct<T>>(
 
     private var offsetIndex = 0
 
-    protected fun currentOffset() = definition.offset(offsetIndex)
-    protected fun nextOffset() = definition.offset(offsetIndex++)
+    protected fun currentOffset(): Long = definition.offset(offsetIndex)
+    protected fun nextOffset(): Long = definition.offset(offsetIndex++)
 
     protected fun booleanField(offset: Long = nextOffset()) = BooleanDelegate(this, offset)
 

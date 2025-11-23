@@ -21,11 +21,12 @@ abstract class Memory (
     abstract fun dispose()
 
     fun asByteBuffer(): ByteBuffer = memorySegment!!.asByteBuffer()
+    fun asAddress(offset: Long, byteSize: Long = 0): Memory = ViewMemory(MemorySegment.ofAddress(getLong(offset)).reinterpret(byteSize))
     fun asSlice(offset: Long, layout: MemoryLayout) = asSlice(offset, layout.byteSize())
     fun asSlice(offset: Long, definition: StructDefinition) = asSlice(offset, definition.layout)
     fun asSlice(offset: Long, byteSize: Long): Memory {
         val memorySegment = memorySegment!!.asSlice(offset, byteSize)
-        return MemorySlice(memorySegment)
+        return ViewMemory(memorySegment)
     }
 
     fun copyTo(memory: Memory) {
@@ -110,7 +111,7 @@ class ArenaMemory(
     }
 }
 
-class MemorySlice internal constructor(
+class ViewMemory internal constructor(
     memorySegment: MemorySegment
 ) : Memory(memorySegment) {
 
@@ -119,7 +120,7 @@ class MemorySlice internal constructor(
     }
 
     companion object {
-        fun wrap(memorySegment: MemorySegment) = MemorySlice(memorySegment)
+        fun wrap(memorySegment: MemorySegment) = ViewMemory(memorySegment)
     }
 }
 
