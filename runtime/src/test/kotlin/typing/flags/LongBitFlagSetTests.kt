@@ -26,11 +26,7 @@ class LongBitFlagSetTests {
     @Test
     fun `GIVEN an LongBitFlagSet with entries WHEN calling entries THEN it should return list with entries`() {
         val bitSet = LongBitFlagSet.of(LongTestBitFlags.FIRST, LongTestBitFlags.THIRD)
-        val entriesResult = bitSet.entries()
-
-        assertTrue(entriesResult.isSuccess)
-
-        val entries = entriesResult.getOrThrow()
+        val entries = bitSet.entries()
 
         assertContentEquals(listOf(LongTestBitFlags.FIRST, LongTestBitFlags.THIRD), entries)
     }

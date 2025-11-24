@@ -1,29 +1,25 @@
 package knr.runtime.typing.flags
 
-interface BitFlagSet<N, T: BitFlag<N>> {
+interface BitFlagSet<N, F> where F : BitFlag<N>, F : Enum<F> {
     val mask: N
 
-    fun has(vararg others: T): Boolean
-    fun lacks(vararg others: T): Boolean
+    fun has(vararg others: F): Boolean
+    fun lacks(vararg others: F): Boolean
 
-    fun off(vararg others: T): BitFlagSet<N, T>
-    fun on(vararg others: T): BitFlagSet<N, T>
-    fun toggle(vararg others: T): BitFlagSet<N, T>
+    fun off(vararg others: F): BitFlagSet<N, F>
+    fun on(vararg others: F): BitFlagSet<N, F>
+    fun toggle(vararg others: F): BitFlagSet<N, F>
 
-    fun clear(): BitFlagSet<N, T>
-    fun and(vararg other: T): BitFlagSet<N, T>
-    fun nand(vararg other: T): BitFlagSet<N, T>
-    fun or(vararg other: T): BitFlagSet<N, T>
-    fun nor(vararg other: T): BitFlagSet<N, T>
-    fun xor(vararg other: T): BitFlagSet<N, T>
-    fun xnor(vararg other: T): BitFlagSet<N, T>
+    fun clear(): BitFlagSet<N, F>
+    fun and(vararg other: F): BitFlagSet<N, F>
+    fun nand(vararg other: F): BitFlagSet<N, F>
+    fun or(vararg other: F): BitFlagSet<N, F>
+    fun nor(vararg other: F): BitFlagSet<N, F>
+    fun xor(vararg other: F): BitFlagSet<N, F>
+    fun xnor(vararg other: F): BitFlagSet<N, F>
 }
 
-inline fun <N, reified T: BitFlag<N>> BitFlagSet<N, T>.entries(): Result<List<T>> {
-    val cls = T::class.java
-
-    return when {
-        cls.isEnum -> Result.success(cls.enumConstants.filter { this.has(it) })
-        else -> Result.failure(NotImplementedError("Method 'entries' only works when the BitFlag is an Enum."))
-    }
+inline fun <N, reified F> BitFlagSet<N, F>.entries(): List<F> where F : BitFlag<N>, F : Enum<F> {
+    val cls = F::class.java
+    return cls.enumConstants.filter { this.has(it) }
 }

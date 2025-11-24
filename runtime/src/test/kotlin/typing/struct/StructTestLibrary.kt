@@ -2,12 +2,7 @@ package typing.struct
 
 import knr.runtime.ext.downcallHandle
 import knr.runtime.memory.ArenaMemory
-import java.lang.foreign.Arena
-import java.lang.foreign.Linker
-import java.lang.foreign.MemorySegment
-import java.lang.foreign.SegmentAllocator
-import java.lang.foreign.SymbolLookup
-import java.lang.foreign.ValueLayout
+import java.lang.foreign.*
 import java.lang.invoke.MethodHandle
 
 object StructTestLibrary {
@@ -122,6 +117,12 @@ object StructTestLibrary {
         ValueLayout.ADDRESS
     )
 
+    private val getStructEnumHandle: MethodHandle = linker.downcallHandle(
+        lookup.find("get_struct_enum").orElseThrow(),
+        retType = ValueLayout.JAVA_INT,
+        ValueLayout.ADDRESS
+    )
+
     private val getStructFromArrayHandle: MethodHandle = linker.downcallHandle(
         lookup.find("get_struct_from_array").orElseThrow(),
         retType = InnerStruct.definition.layout,
@@ -230,6 +231,12 @@ object StructTestLibrary {
         ValueLayout.ADDRESS, ValueLayout.JAVA_LONG
     )
 
+    private val setStructEnumHandle: MethodHandle = linker.downcallHandle(
+        lookup.find("set_struct_enum").orElseThrow(),
+        retType = null,
+        ValueLayout.ADDRESS, ValueLayout.JAVA_INT
+    )
+
     private val setStructForArrayHandle: MethodHandle = linker.downcallHandle(
         lookup.find("set_struct_for_array").orElseThrow(),
         retType = null,
@@ -303,6 +310,11 @@ object StructTestLibrary {
         return InnerStruct.wrap(memory)
     }
 
+    fun getStructEnum(struct: TestStruct): StructEnum {
+        val value = getStructEnumHandle.invokeExact(struct.memory.memorySegment) as Int
+        return StructEnum.entries.first { it.value == value }
+    }
+
     fun getIntFromPointerArray(struct: TestStruct, index: Int) =
         getIntFromPointerArrayHandle.invokeExact(struct.memory.memorySegment, index) as Int
 
@@ -364,6 +376,10 @@ object StructTestLibrary {
 
     fun setLongForInnerStruct(struct: TestStruct, value: Long) {
         setLongForInnerStructHandle.invokeExact(struct.memory.memorySegment, value)
+    }
+
+    fun setStructEnum(struct: TestStruct, value: StructEnum) {
+        setStructEnumHandle.invokeExact(struct.memory.memorySegment, value.value)
     }
 
     fun setStructForArray(struct: TestStruct, index: Int, value: InnerStruct) {

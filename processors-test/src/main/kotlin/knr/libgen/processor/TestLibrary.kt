@@ -1,17 +1,13 @@
 package knr.libgen.processor
 
+import knr.annotations.*
+import knr.runtime.layout.StructDefinition
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
 import knr.runtime.typing.StructCompanion
 import knr.runtime.typing.array.IntNativeArray
 import knr.runtime.typing.flags.BitFlag
 import knr.runtime.typing.flags.IntBitFlagSet
-import knr.annotations.IgnoreReturnsNative
-import knr.annotations.Library
-import knr.annotations.Method
-import knr.annotations.ReturnsNative
-import knr.annotations.StringParam
-import knr.runtime.layout.StructDefinition
 
 class TestClass(
     memory: Memory
@@ -32,10 +28,6 @@ enum class TestBitFlags(override val mask: Int): BitFlag<Int> {
 interface TestLibrary {
     fun primitiveFunc(byte: Byte, short: UShort, int: Int, long: Long): Int
     fun nativeFunc(cls: TestClass, array: IntNativeArray, bitMask: IntBitFlagSet<TestBitFlags>): Int
-
-    fun noVerifyFunc(cls: TestClass, array: IntNativeArray)
-
-    fun noVerifyParam(cls: TestClass, array: IntNativeArray)
 
     @Method("this_is_the_name")
     fun namedMethod()

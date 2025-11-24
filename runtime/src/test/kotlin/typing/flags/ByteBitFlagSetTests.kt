@@ -26,11 +26,7 @@ class ByteBitFlagSetTests {
     @Test
     fun `GIVEN an ByteBitFlagSet with entries WHEN calling entries THEN it should return list with entries`() {
         val bitSet = ByteBitFlagSet.of(ByteTestBitFlags.FIRST, ByteTestBitFlags.THIRD)
-        val entriesResult = bitSet.entries()
-
-        assertTrue(entriesResult.isSuccess)
-
-        val entries = entriesResult.getOrThrow()
+        val entries = bitSet.entries()
 
         assertContentEquals(listOf(ByteTestBitFlags.FIRST, ByteTestBitFlags.THIRD), entries)
     }
