@@ -2,11 +2,10 @@ package knr.runtime.delegates.union
 
 import knr.runtime.delegates.FieldDelegate
 import knr.runtime.typing.Union
-import knr.runtime.typing.UnionCompanion
 
 class UnionFieldDelegate <T : Union> internal constructor(
     parent: Union,
-    unionCompanion: UnionCompanion<T>
+    unionCompanion: Union.Companion<T>
 ) : FieldDelegate<T>(parent, 0) {
 
     private val union = unionCompanion.wrap(parent.memory)

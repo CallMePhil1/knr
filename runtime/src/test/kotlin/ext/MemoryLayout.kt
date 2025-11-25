@@ -4,7 +4,6 @@ import knr.runtime.ext.structLayout
 import knr.runtime.layout.StructDefinition
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
-import knr.runtime.typing.StructCompanion
 import java.lang.foreign.ValueLayout
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -15,7 +14,7 @@ class TestStructB(
     var i by intField()
     var l by longField()
 
-    companion object : StructCompanion<TestStructB> {
+    companion object : Struct.Companion<TestStructB> {
         override val definition: StructDefinition = structDefinition(
             ValueLayout.JAVA_INT,
             ValueLayout.JAVA_LONG,
@@ -34,7 +33,7 @@ class TestStruct(
     var l by longField()
     var s by structField(structCompanion = TestStructB)
 
-    companion object : StructCompanion<TestStruct> {
+    companion object : Struct.Companion<TestStruct> {
         override val definition: StructDefinition = structDefinition(
             ValueLayout.JAVA_INT,
             ValueLayout.JAVA_LONG,

@@ -60,8 +60,8 @@ abstract class Union(
     protected fun <F> longFlagField() where F : Enum<F>, F : BitFlag<Long> = LongBitFlagSetDelegate<F>(this, 0)
     protected fun <F> ulongFlagField() where F : Enum<F>, F : BitFlag<ULong> = ULongBitFlagSetDelegate<F>(this, 0)
 
-    protected fun <T: Struct<T>> structField(structCompanion: StructCompanion<T>) = StructFieldDelegate(this, structCompanion)
-    protected fun <T: Union> unionField(unionCompanion: UnionCompanion<T>) = UnionFieldDelegate(this, unionCompanion)
+    protected fun <T: Struct<T>> structField(structCompanion: Struct.Companion<T>) = StructFieldDelegate(this, structCompanion)
+    protected fun <T: Union> unionField(unionCompanion: Companion<T>) = UnionFieldDelegate(this, unionCompanion)
 
     protected fun <T, C, A: NativeArray<T, C>> nativeArrayField(initialValue: A) = ArrayFieldDelegate(this, initialValue)
 
@@ -85,7 +85,7 @@ abstract class Union(
         }
         return nativeArrayField(charArray)
     }
-    protected inline fun <reified S: Struct<S>> structArrayField(size: Int, structCompanion: StructCompanion<S>) =
+    protected inline fun <reified S: Struct<S>> structArrayField(size: Int, structCompanion: Struct.Companion<S>) =
         structNativeArray(memory.asSlice(0, size * structCompanion.definition.byteSize), size, structCompanion)
 
     protected fun <T, P : Pointer<T>?> pointerField(byteSize: Long, ctor: (Memory) -> P): PointerFieldDelegate<T, P?> =
@@ -104,17 +104,17 @@ abstract class Union(
 
     protected fun nullableLongPointerField() = pointerField(ValueLayout.JAVA_LONG.byteSize(), ::LongPointer)
     protected fun nullableULongPointerField() = pointerField(ValueLayout.JAVA_LONG.byteSize(), ::ULongPointer)
-}
 
-interface UnionCompanion<T : Union> {
-    val layout: UnionLayout
+    interface Companion<T : Union> {
+        val layout: UnionLayout
 
-    fun allocate(): T {
-        val arena = Arena.ofShared()
-        val segment = arena.allocate(layout)
-        val memory = ArenaMemory(arena, segment)
-        return wrap(memory)
+        fun allocate(): T {
+            val arena = Arena.ofShared()
+            val segment = arena.allocate(layout)
+            val memory = ArenaMemory(arena, segment)
+            return wrap(memory)
+        }
+
+        fun wrap(memory: Memory): T
     }
-
-    fun wrap(memory: Memory): T
 }

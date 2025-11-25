@@ -64,8 +64,8 @@ abstract class Struct<T : Struct<T>>(
     protected fun <F> longFlagField(offset: Long) where F : Enum<F>, F : BitFlag<Long> = LongBitFlagSetDelegate<F>(this, offset)
     protected fun <F> ulongFlagField(offset: Long) where F : Enum<F>, F : BitFlag<ULong> = ULongBitFlagSetDelegate<F>(this, offset)
 
-    protected fun <S: Struct<S>> structField(offset: Long = nextOffset(), structCompanion: StructCompanion<S>) = StructFieldDelegate(this, offset, structCompanion)
-    protected fun <U: Union> unionField(offset: Long = nextOffset(), unionCompanion: UnionCompanion<U>) = UnionFieldDelegate(this, offset, unionCompanion)
+    protected fun <S: Struct<S>> structField(offset: Long = nextOffset(), structCompanion: Companion<S>) = StructFieldDelegate(this, offset, structCompanion)
+    protected fun <U: Union> unionField(offset: Long = nextOffset(), unionCompanion: Union.Companion<U>) = UnionFieldDelegate(this, offset, unionCompanion)
 
     protected fun <T, C, A: NativeArray<T, C>> nativeArrayField(offset: Long = nextOffset(), initialValue: A) = ArrayFieldDelegate(this, offset, initialValue)
 
@@ -92,7 +92,7 @@ abstract class Struct<T : Struct<T>>(
     protected inline fun <reified P: Pointer<*>?> pointerArrayField(offset: Long = nextOffset(), size: Long, ctor: (Int, Memory) -> P) =
         nativeArrayField(offset, pointerNativeArray(memory.asSlice(offset, size * ValueLayout.ADDRESS.byteSize()), ctor))
 
-    protected inline fun <reified S: Struct<S>> structArrayField(offset: Long = nextOffset(), size: Int, structCompanion: StructCompanion<S>) =
+    protected inline fun <reified S: Struct<S>> structArrayField(offset: Long = nextOffset(), size: Int, structCompanion: Companion<S>) =
         nativeArrayField(offset, structNativeArray(memory.asSlice(offset, structCompanion.definition.byteSize * size), size, structCompanion))
 
     protected fun <P : Pointer<*>?> pointerField(offset: Long = nextOffset(), initialValue: P) = PointerFieldDelegate(this, offset, initialValue)
@@ -124,51 +124,51 @@ abstract class Struct<T : Struct<T>>(
     protected fun nullableCStringField(offset: Long = nextOffset(), initialValue: CString?) = pointerField(offset, initialValue)
     protected fun cachedCStringField(offset: Long = nextOffset(), initialValue: CachedCString) = pointerField(offset, initialValue)
     protected fun nullableCachedCStringField(offset: Long = nextOffset(), initialValue: CachedCString?) = pointerField(offset, initialValue)
-}
 
-interface StructCompanion<T : Struct<T>> {
-    val definition: StructDefinition
+    interface Companion<T : Struct<T>> {
+        val definition: StructDefinition
 
-    fun allocate(): T {
-        val arena = Arena.ofShared()
-        val segment = arena.allocate(definition.layout)
-        val memory = ArenaMemory(arena, segment)
-        return wrap(memory)
-    }
-
-    fun allocate(init: T.() -> Unit): T {
-        val newStruct = allocate()
-        newStruct.init()
-        return newStruct
-    }
-
-    fun structDefinition(vararg elements: MemoryLayout): StructDefinition {
-        val offsets = mutableListOf<Long>()
-
-        val structLayouts = mutableListOf<MemoryLayout>()
-        var totalSize = 0L
-
-        for (element in elements) {
-            if (element is PaddingLayout)
-                error("Found Memory.paddingLayout in call to structDefinition for '${this::class.java.canonicalName}'")
-            val byteSize = element.byteSize()
-            val alignmentOffset = totalSize % element.byteAlignment()
-            val padding = if (alignmentOffset != 0L) byteSize - alignmentOffset else 0
-
-            if (padding > 0) {
-                structLayouts.add(MemoryLayout.paddingLayout(padding))
-                totalSize += padding
-            }
-
-            offsets.add(totalSize)
-            structLayouts.add(element)
-            totalSize += byteSize
+        fun allocate(): T {
+            val arena = Arena.ofShared()
+            val segment = arena.allocate(definition.layout)
+            val memory = ArenaMemory(arena, segment)
+            return wrap(memory)
         }
 
-        val layout = MemoryLayout.structLayout(*structLayouts.toTypedArray())
+        fun allocate(init: T.() -> Unit): T {
+            val newStruct = allocate()
+            newStruct.init()
+            return newStruct
+        }
 
-        return StructDefinition(layout, offsets)
+        fun structDefinition(vararg elements: MemoryLayout): StructDefinition {
+            val offsets = mutableListOf<Long>()
+
+            val structLayouts = mutableListOf<MemoryLayout>()
+            var totalSize = 0L
+
+            for (element in elements) {
+                if (element is PaddingLayout)
+                    error("Found Memory.paddingLayout in call to structDefinition for '${this::class.java.canonicalName}'")
+                val byteSize = element.byteSize()
+                val alignmentOffset = totalSize % element.byteAlignment()
+                val padding = if (alignmentOffset != 0L) byteSize - alignmentOffset else 0
+
+                if (padding > 0) {
+                    structLayouts.add(MemoryLayout.paddingLayout(padding))
+                    totalSize += padding
+                }
+
+                offsets.add(totalSize)
+                structLayouts.add(element)
+                totalSize += byteSize
+            }
+
+            val layout = MemoryLayout.structLayout(*structLayouts.toTypedArray())
+
+            return StructDefinition(layout, offsets)
+        }
+
+        fun wrap(memory: Memory): T
     }
-
-    fun wrap(memory: Memory): T
 }

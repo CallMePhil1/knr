@@ -3,7 +3,9 @@ package typing.struct
 import knr.runtime.layout.StructDefinition
 import knr.runtime.layout.enumLayout
 import knr.runtime.memory.Memory
-import knr.runtime.typing.*
+import knr.runtime.typing.NativeEnum
+import knr.runtime.typing.Struct
+import knr.runtime.typing.Union
 import knr.runtime.typing.pointer.intPointerOf
 import java.lang.foreign.MemoryLayout.sequenceLayout
 import java.lang.foreign.MemoryLayout.unionLayout
@@ -29,7 +31,7 @@ class TestUnion(
     var i by intField()
     var l by longField()
 
-    companion object : UnionCompanion<TestUnion> {
+    companion object : Union.Companion<TestUnion> {
         override val layout: UnionLayout = unionLayout(
             ValueLayout.JAVA_INT,
             ValueLayout.JAVA_LONG
@@ -45,7 +47,7 @@ class InnerStruct(
     var i by intField()
     var l by longField()
 
-    companion object : StructCompanion<InnerStruct> {
+    companion object : Struct.Companion<InnerStruct> {
         override val definition: StructDefinition = structDefinition(
             ValueLayout.JAVA_INT,
             ValueLayout.JAVA_LONG
@@ -88,7 +90,7 @@ class TestStruct(
     var pointerArray by pointerArrayField(size = 4) { _, slice -> intPointerOf(0, slice) }
     var nullablePointerArray by pointerArrayField(size = 4) { idx, slice -> if (idx % 2 == 0) intPointerOf(0, slice) else null }
 
-    companion object : StructCompanion<TestStruct> {
+    companion object : Struct.Companion<TestStruct> {
         override val definition: StructDefinition = structDefinition(
             ValueLayout.JAVA_BYTE.withName("c"),
             ValueLayout.JAVA_BYTE.withName("uc"),

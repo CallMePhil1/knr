@@ -3,9 +3,7 @@ package typing.union
 import knr.runtime.layout.StructDefinition
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
-import knr.runtime.typing.StructCompanion
 import knr.runtime.typing.Union
-import knr.runtime.typing.UnionCompanion
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.UnionLayout
 import java.lang.foreign.ValueLayout
@@ -16,7 +14,7 @@ class UnionStruct(
     var i by intField()
     var l by longField()
 
-    companion object : StructCompanion<UnionStruct> {
+    companion object : Struct.Companion<UnionStruct> {
         override val definition: StructDefinition = structDefinition(
             ValueLayout.JAVA_INT,
             ValueLayout.JAVA_LONG
@@ -33,7 +31,7 @@ class InnerUnion(
     var s by shortField()
     var l by longField()
 
-    companion object : UnionCompanion<InnerUnion> {
+    companion object : Union.Companion<InnerUnion> {
         override val layout: UnionLayout = MemoryLayout.unionLayout(
             ValueLayout.JAVA_BYTE,
             ValueLayout.JAVA_SHORT,
@@ -57,7 +55,7 @@ class UnionObj(
     var p by nullableLongPointerField()
     var p1 by nullableIntPointerField()
 
-    companion object : UnionCompanion<UnionObj> {
+    companion object : Union.Companion<UnionObj> {
         override val layout: UnionLayout = MemoryLayout.unionLayout(
             ValueLayout.JAVA_BYTE,
             ValueLayout.JAVA_SHORT,

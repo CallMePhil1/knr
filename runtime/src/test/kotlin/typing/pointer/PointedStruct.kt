@@ -3,7 +3,6 @@ package typing.pointer
 import knr.runtime.layout.StructDefinition
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
-import knr.runtime.typing.StructCompanion
 import knr.runtime.typing.pointer.*
 import java.lang.foreign.ValueLayout
 
@@ -13,7 +12,7 @@ class PointedStruct(
 
     var l by intField()
 
-    companion object : StructCompanion<PointedStruct> {
+    companion object : Struct.Companion<PointedStruct> {
         override val definition: StructDefinition = structDefinition(
             ValueLayout.JAVA_INT.withName("l")
         )
@@ -46,7 +45,7 @@ class AllPointers(
     var ul by ulongPointerField(initialValue = ulongPointerOf())
     var nul by nullableULongPointerField(initialValue = null)
 
-    companion object : StructCompanion<AllPointers> {
+    companion object : Struct.Companion<AllPointers> {
         override val definition: StructDefinition = structDefinition(
             ValueLayout.ADDRESS,
             ValueLayout.ADDRESS,

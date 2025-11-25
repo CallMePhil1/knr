@@ -4,7 +4,6 @@ import knr.annotations.*
 import knr.runtime.layout.StructDefinition
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
-import knr.runtime.typing.StructCompanion
 import knr.runtime.typing.array.IntNativeArray
 import knr.runtime.typing.flags.BitFlag
 import knr.runtime.typing.flags.IntBitFlagSet
@@ -12,7 +11,7 @@ import knr.runtime.typing.flags.IntBitFlagSet
 class TestClass(
     memory: Memory
 ) : Struct<TestClass>(memory, definition) {
-    companion object : StructCompanion<TestClass> {
+    companion object : Struct.Companion<TestClass> {
         override val definition: StructDefinition = structDefinition()
 
         override fun wrap(memory: Memory) = TestClass(memory)

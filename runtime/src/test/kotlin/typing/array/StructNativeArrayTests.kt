@@ -3,7 +3,6 @@ package typing.array
 import knr.runtime.layout.StructDefinition
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
-import knr.runtime.typing.StructCompanion
 import knr.runtime.typing.array.structNativeArray
 import knr.runtime.typing.pointer.intPointerOf
 import java.lang.foreign.ValueLayout
@@ -16,7 +15,7 @@ class ArrayStruct(
     var i by intField()
     var p by intPointerField(initialValue = intPointerOf())
 
-    companion object: StructCompanion<ArrayStruct> {
+    companion object: Struct.Companion<ArrayStruct> {
         override val definition: StructDefinition = structDefinition(
             ValueLayout.JAVA_INT,
             ValueLayout.ADDRESS

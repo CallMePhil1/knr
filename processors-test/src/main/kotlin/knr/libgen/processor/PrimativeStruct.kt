@@ -3,7 +3,6 @@ package knr.libgen.processor
 import knr.runtime.layout.StructDefinition
 import knr.runtime.memory.Memory
 import knr.runtime.typing.Struct
-import knr.runtime.typing.StructCompanion
 import java.lang.foreign.ValueLayout
 
 class PrimitiveStruct(
@@ -30,7 +29,7 @@ class PrimitiveStruct(
 
     var b by booleanField()
 
-    companion object : StructCompanion<PrimitiveStruct> {
+    companion object : Struct.Companion<PrimitiveStruct> {
         override val definition: StructDefinition = structDefinition(
             ValueLayout.JAVA_BYTE.withName("c"),
             ValueLayout.JAVA_BYTE.withName("uc"),
