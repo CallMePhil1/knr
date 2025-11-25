@@ -9,5 +9,7 @@ interface NativeEnum<T> {
         val entriesMap: Map<T, E> = HashMap<T, E>().apply {
             entries.forEach { this[it.value] = it }
         }
+
+        fun of(value: T) = entriesMap[value]!!
     }
 }
