@@ -26,11 +26,7 @@ class ShortBitFlagSetTests {
     @Test
     fun `GIVEN an ShortBitFlagSet with entries WHEN calling entries THEN it should return list with entries`() {
         val bitSet = ShortBitFlagSet.of(ShortTestBitFlags.FIRST, ShortTestBitFlags.THIRD)
-        val entriesResult = bitSet.entries()
-
-        assertTrue(entriesResult.isSuccess)
-
-        val entries = entriesResult.getOrThrow()
+        val entries = bitSet.entries()
 
         assertContentEquals(listOf(ShortTestBitFlags.FIRST, ShortTestBitFlags.THIRD), entries)
     }

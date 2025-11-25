@@ -9,6 +9,7 @@ import knr.runtime.layout.StructDefinition
 import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
 import knr.runtime.typing.array.*
+import knr.runtime.typing.flags.BitFlag
 import knr.runtime.typing.pointer.*
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
@@ -43,13 +44,30 @@ abstract class Struct<T : Struct<T>>(
     protected fun floatField(offset: Long = nextOffset()) = FloatDelegate(this, offset)
     protected fun doubleField(offset: Long = nextOffset()) = DoubleDelegate(this, offset)
 
+    protected fun <E> enumField(offset: Long = nextOffset(), enumCompanion: NativeEnum.Companion<Byte, E>) where E : Enum<E>, E : NativeEnum<Byte> = ByteNativeEnumDelegate(this, offset, enumCompanion.entriesMap)
+    protected fun <E> enumField(offset: Long = nextOffset(), enumCompanion: NativeEnum.Companion<UByte, E>) where E : Enum<E>, E : NativeEnum<UByte> = UByteNativeEnumDelegate(this, offset, enumCompanion.entriesMap)
+    protected fun <E> enumField(offset: Long = nextOffset(), enumCompanion: NativeEnum.Companion<Short, E>) where E : Enum<E>, E : NativeEnum<Short> = ShortNativeEnumDelegate(this, offset, enumCompanion.entriesMap)
+    protected fun <E> enumField(offset: Long = nextOffset(), enumCompanion: NativeEnum.Companion<UShort, E>) where E : Enum<E>, E : NativeEnum<UShort> = UShortNativeEnumDelegate(this, offset, enumCompanion.entriesMap)
+    protected fun <E> enumField(offset: Long = nextOffset(), enumCompanion: NativeEnum.Companion<Int, E>) where E : Enum<E>, E : NativeEnum<Int> = IntNativeEnumDelegate(this, offset, enumCompanion.entriesMap)
+    protected fun <E> enumField(offset: Long = nextOffset(), enumCompanion: NativeEnum.Companion<UInt, E>) where E : Enum<E>, E : NativeEnum<UInt> = UIntNativeEnumDelegate(this, offset, enumCompanion.entriesMap)
+    protected fun <E> enumField(offset: Long = nextOffset(), enumCompanion: NativeEnum.Companion<Long, E>) where E : Enum<E>, E : NativeEnum<Long> = LongNativeEnumDelegate(this, offset, enumCompanion.entriesMap)
+    protected fun <E> enumField(offset: Long = nextOffset(), enumCompanion: NativeEnum.Companion<ULong, E>) where E : Enum<E>, E : NativeEnum<ULong> = ULongNativeEnumDelegate(this, offset, enumCompanion.entriesMap)
+    protected fun <E> enumField(offset: Long = nextOffset(), enumCompanion: NativeEnum.Companion<Float, E>) where E : Enum<E>, E : NativeEnum<Float> = FloatNativeEnumDelegate(this, offset, enumCompanion.entriesMap)
+    protected fun <E> enumField(offset: Long = nextOffset(), enumCompanion: NativeEnum.Companion<Double, E>) where E : Enum<E>, E : NativeEnum<Double> = DoubleNativeEnumDelegate(this, offset, enumCompanion.entriesMap)
+
+    protected fun <F> byteFlagField(offset: Long) where F : Enum<F>, F : BitFlag<Byte> = ByteBitFlagSetDelegate<F>(this, offset)
+    protected fun <F> ubyteFlagField(offset: Long) where F : Enum<F>, F : BitFlag<UByte> = UByteBitFlagSetDelegate<F>(this, offset)
+    protected fun <F> shortFlagField(offset: Long) where F : Enum<F>, F : BitFlag<Short> = ShortBitFlagSetDelegate<F>(this, offset)
+    protected fun <F> ushortFlagField(offset: Long) where F : Enum<F>, F : BitFlag<UShort> = UShortBitFlagSetDelegate<F>(this, offset)
+    protected fun <F> intFlagField(offset: Long) where F : Enum<F>, F : BitFlag<Int> = IntBitFlagSetDelegate<F>(this, offset)
+    protected fun <F> uintFlagField(offset: Long) where F : Enum<F>, F : BitFlag<UInt> = UIntBitFlagSetDelegate<F>(this, offset)
+    protected fun <F> longFlagField(offset: Long) where F : Enum<F>, F : BitFlag<Long> = LongBitFlagSetDelegate<F>(this, offset)
+    protected fun <F> ulongFlagField(offset: Long) where F : Enum<F>, F : BitFlag<ULong> = ULongBitFlagSetDelegate<F>(this, offset)
+
     protected fun <S: Struct<S>> structField(offset: Long = nextOffset(), structCompanion: StructCompanion<S>) = StructFieldDelegate(this, offset, structCompanion)
     protected fun <U: Union> unionField(offset: Long = nextOffset(), unionCompanion: UnionCompanion<U>) = UnionFieldDelegate(this, offset, unionCompanion)
 
-    protected fun <T, C, A: NativeArray<T, C>> nativeArrayField(offset: Long = nextOffset(), initialValue: A): ArrayFieldDelegate<T, C, A> {
-        val delegate = ArrayFieldDelegate(this, offset, initialValue)
-        return delegate
-    }
+    protected fun <T, C, A: NativeArray<T, C>> nativeArrayField(offset: Long = nextOffset(), initialValue: A) = ArrayFieldDelegate(this, offset, initialValue)
 
     protected fun byteArrayField(offset: Long = nextOffset(), size: Long) = nativeArrayField(offset, byteNativeArray(memory.asSlice(offset, size)))
     protected fun ubyteArrayField(offset: Long = nextOffset(), size: Long) = nativeArrayField(offset, ubyteNativeArray(memory.asSlice(offset, size)))

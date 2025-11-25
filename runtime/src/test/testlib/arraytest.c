@@ -87,19 +87,3 @@ double get_double(double *arr, int index) {
 void set_double(double *arr, int index, double value) {
     arr[index] = value;
 }
-
-float get_float(float *arr, int index) {
-    return arr[index];
-}
-
-void set_float(float *arr, int index, float value) {
-    arr[index] = value;
-}
-
-double get_double(double *arr, int index) {
-    return arr[index];
-}
-
-void set_double(double *arr, int index, double value) {
-    arr[index] = value;
-}

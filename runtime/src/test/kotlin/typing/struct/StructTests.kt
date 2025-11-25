@@ -187,7 +187,21 @@ class StructTests {
         assertEquals(-3000000.765, StructTestLibrary.getDouble(structMethod))
         assertEquals(-3000000.765, structMethod.d)
     }
-    
+
+    @Test
+    fun `GIVEN a TestStruct WHEN accessing or modifying a enum THEN it should work`() {
+        val struct = TestStruct.allocate()
+
+        struct.structEnum = StructEnum.LOG_INFO
+
+        assertEquals(StructEnum.LOG_INFO, StructTestLibrary.getStructEnum(struct))
+
+        StructTestLibrary.setStructEnum(struct, StructEnum.LOG_DEBUG)
+
+        assertEquals(StructEnum.LOG_DEBUG, struct.structEnum)
+        assertEquals(StructEnum.LOG_DEBUG, StructTestLibrary.getStructEnum(struct))
+    }
+
     @Test
     fun `GIVEN a TestStruct WHEN accessing or modifying a union THEN it should work`() {
         val struct = TestStruct.allocate()

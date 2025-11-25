@@ -13,6 +13,17 @@
     #define API __attribute__(visibility("default"))
 #endif
 
+typedef enum {
+    LOG_ALL = 0,
+    LOG_TRACE,  
+    LOG_DEBUG,  
+    LOG_INFO,   
+    LOG_WARNING,
+    LOG_ERROR,  
+    LOG_FATAL,  
+    LOG_NONE    
+} StructEnum;
+
 union StructUnion {
     int i;
     long long l;
@@ -43,6 +54,8 @@ typedef struct {
     double d;
 
     bool b;
+
+    enum StructEnum structEnum;
 
     union StructUnion u;
 
@@ -85,6 +98,8 @@ API int get_int_from_inner_struct(AllPrimitives* all_prim);
 
 API long long get_long_from_inner_struct(AllPrimitives* all_prim);
 
+API StructEnum get_struct_enum(AllPrimitives* all_prim);
+
 API InnerStruct get_struct_from_array(AllPrimitives* all_prim, int index);
 
 API int get_int_from_pointer_array(AllPrimitives* all_prim, int index);
@@ -122,6 +137,8 @@ API void set_long_for_union(AllPrimitives* all_prim, long long value);
 API void set_int_for_inner_struct(AllPrimitives* all_prim, int value);
 
 API void set_long_for_inner_struct(AllPrimitives* all_prim, long long value);
+
+API void set_struct_enum(AllPrimitives* all_prim, StructEnum value);
 
 API void set_struct_for_array(AllPrimitives* all_prim, int index, InnerStruct value);
 

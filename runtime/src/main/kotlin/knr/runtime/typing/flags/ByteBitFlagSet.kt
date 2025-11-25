@@ -6,55 +6,55 @@ import kotlin.experimental.or
 import kotlin.experimental.xor
 
 @JvmInline
-value class ByteBitFlagSet<T: BitFlag<Byte>>(override val mask: Byte = 0): BitFlagSet<Byte, T> {
-    override fun has(vararg others: T) = others.all {
+value class ByteBitFlagSet<F>(override val mask: Byte = 0): BitFlagSet<Byte, F> where F : Enum<F>, F : BitFlag<Byte> {
+    override fun has(vararg others: F) = others.all {
         (mask and it.mask) == it.mask
     }
-    override fun lacks(vararg others: T) = others.all {
+    override fun lacks(vararg others: F) = others.all {
         (mask and it.mask) != it.mask
     }
 
-    override fun off(vararg others: T) = nand(*others)
-    override fun on(vararg others: T) = or(*others)
-    override fun toggle(vararg others: T) = xor(*others)
+    override fun off(vararg others: F) = nand(*others)
+    override fun on(vararg others: F) = or(*others)
+    override fun toggle(vararg others: F) = xor(*others)
 
-    override fun clear() = ByteBitFlagSet<T>(0)
-    override fun and(vararg other: T): ByteBitFlagSet<T> {
+    override fun clear() = ByteBitFlagSet<F>(0)
+    override fun and(vararg other: F): ByteBitFlagSet<F> {
         var newMask = mask
         other.forEach {
             newMask = newMask and it.mask
         }
         return ByteBitFlagSet(newMask)
     }
-    override fun nand(vararg other: T): ByteBitFlagSet<T> {
+    override fun nand(vararg other: F): ByteBitFlagSet<F> {
         var invMask: Byte = 0
         other.forEach {
             invMask = invMask or it.mask
         }
         return ByteBitFlagSet(mask and invMask.inv())
     }
-    override fun or(vararg other: T): ByteBitFlagSet<T> {
+    override fun or(vararg other: F): ByteBitFlagSet<F> {
         var newMask = mask
         other.forEach {
             newMask = newMask or it.mask
         }
         return ByteBitFlagSet(newMask)
     }
-    override fun nor(vararg other: T): ByteBitFlagSet<T> {
+    override fun nor(vararg other: F): ByteBitFlagSet<F> {
         var invMask: Byte = 0
         other.forEach {
             invMask = invMask or it.mask
         }
         return ByteBitFlagSet(mask or invMask.inv())
     }
-    override fun xor(vararg other: T): ByteBitFlagSet<T> {
+    override fun xor(vararg other: F): ByteBitFlagSet<F> {
         var newMask = mask
         other.forEach {
             newMask = newMask xor it.mask
         }
         return ByteBitFlagSet(newMask)
     }
-    override fun xnor(vararg other: T): ByteBitFlagSet<T> {
+    override fun xnor(vararg other: F): ByteBitFlagSet<F> {
         var invMask: Byte = 0
         other.forEach {
             invMask = invMask or it.mask
@@ -63,15 +63,12 @@ value class ByteBitFlagSet<T: BitFlag<Byte>>(override val mask: Byte = 0): BitFl
     }
 
     companion object {
-        inline fun <reified T: BitFlag<Byte>> allOf(): ByteBitFlagSet<T> {
-            val cls = T::class.java
-            return when {
-                cls.isEnum -> of(*cls.enumConstants)
-                else -> throw NotImplementedError("Instantiating 'ByteBitFlagSet' via 'allOf' only works with Enums.")
-            }
+        inline fun <reified F> allOf(): ByteBitFlagSet<F> where F : Enum<F>, F : BitFlag<Byte> {
+            val cls = F::class.java
+            return of(*cls.enumConstants)
         }
 
-        fun <T: BitFlag<Byte>> of(vararg flags: T): ByteBitFlagSet<T> {
+        fun <F> of(vararg flags: F): ByteBitFlagSet<F> where F : Enum<F>, F : BitFlag<Byte> {
             var mask: Byte = 0
             flags.forEach { mask = mask or it.mask }
             return ByteBitFlagSet(mask)
@@ -80,55 +77,55 @@ value class ByteBitFlagSet<T: BitFlag<Byte>>(override val mask: Byte = 0): BitFl
 }
 
 @JvmInline
-value class UByteBitFlagSet<T: BitFlag<UByte>>(override val mask: UByte = 0u): BitFlagSet<UByte, T> {
-    override fun has(vararg others: T) = others.all {
+value class UByteBitFlagSet<F>(override val mask: UByte = 0u): BitFlagSet<UByte, F> where F : Enum<F>, F : BitFlag<UByte> {
+    override fun has(vararg others: F) = others.all {
         (mask and it.mask) == it.mask
     }
-    override fun lacks(vararg others: T) = others.all {
+    override fun lacks(vararg others: F) = others.all {
         (mask and it.mask) != it.mask
     }
 
-    override fun off(vararg others: T) = nand(*others)
-    override fun on(vararg others: T) = or(*others)
-    override fun toggle(vararg others: T) = xor(*others)
+    override fun off(vararg others: F) = nand(*others)
+    override fun on(vararg others: F) = or(*others)
+    override fun toggle(vararg others: F) = xor(*others)
 
-    override fun clear() = UByteBitFlagSet<T>(0u)
-    override fun and(vararg other: T): UByteBitFlagSet<T> {
+    override fun clear() = UByteBitFlagSet<F>(0u)
+    override fun and(vararg other: F): UByteBitFlagSet<F> {
         var newMask = mask
         other.forEach {
             newMask = newMask and it.mask
         }
         return UByteBitFlagSet(newMask)
     }
-    override fun nand(vararg other: T): UByteBitFlagSet<T> {
+    override fun nand(vararg other: F): UByteBitFlagSet<F> {
         var invMask: UByte = 0u
         other.forEach {
             invMask = invMask or it.mask
         }
         return UByteBitFlagSet(mask and invMask.inv())
     }
-    override fun or(vararg other: T): UByteBitFlagSet<T> {
+    override fun or(vararg other: F): UByteBitFlagSet<F> {
         var newMask = mask
         other.forEach {
             newMask = newMask or it.mask
         }
         return UByteBitFlagSet(newMask)
     }
-    override fun nor(vararg other: T): UByteBitFlagSet<T> {
+    override fun nor(vararg other: F): UByteBitFlagSet<F> {
         var invMask: UByte = 0u
         other.forEach {
             invMask = invMask or it.mask
         }
         return UByteBitFlagSet(mask or invMask.inv())
     }
-    override fun xor(vararg other: T): UByteBitFlagSet<T> {
+    override fun xor(vararg other: F): UByteBitFlagSet<F> {
         var newMask = mask
         other.forEach {
             newMask = newMask xor it.mask
         }
         return UByteBitFlagSet(newMask)
     }
-    override fun xnor(vararg other: T): UByteBitFlagSet<T> {
+    override fun xnor(vararg other: F): UByteBitFlagSet<F> {
         var invMask: UByte = 0u
         other.forEach {
             invMask = invMask or it.mask
@@ -137,15 +134,12 @@ value class UByteBitFlagSet<T: BitFlag<UByte>>(override val mask: UByte = 0u): B
     }
 
     companion object {
-        inline fun <reified T: BitFlag<UByte>> allOf(): UByteBitFlagSet<T> {
-            val cls = T::class.java
-            return when {
-                cls.isEnum -> of(*cls.enumConstants)
-                else -> throw NotImplementedError("Instantiating 'ByteBitFlagSet' via 'allOf' only works with Enums.")
-            }
+        inline fun <reified F> allOf(): UByteBitFlagSet<F> where F : Enum<F>, F : BitFlag<UByte> {
+            val cls = F::class.java
+            return of(*cls.enumConstants)
         }
 
-        fun <T: BitFlag<UByte>> of(vararg flags: T): UByteBitFlagSet<T> {
+        fun <F> of(vararg flags: F): UByteBitFlagSet<F> where F : Enum<F>, F : BitFlag<UByte> {
             var mask: UByte = 0u
             flags.forEach { mask = mask or it.mask }
             return UByteBitFlagSet(mask)

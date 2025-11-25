@@ -68,6 +68,10 @@ long long get_long_from_inner_struct(AllPrimitives* all_prim) {
     return all_prim->is.l;
 }
 
+StructEnum get_struct_enum(AllPrimitives* all_prim) {
+    return all_prim->structEnum;
+}
+
 InnerStruct get_struct_from_array(AllPrimitives* all_prim, int index) {
     return all_prim->sa[index];
 }
@@ -142,6 +146,10 @@ void set_int_for_inner_struct(AllPrimitives* all_prim, int value) {
 
 void set_long_for_inner_struct(AllPrimitives* all_prim, long long value) {
     all_prim->is.l = value;
+}
+
+void set_struct_enum(AllPrimitives* all_prim, StructEnum value) {
+    all_prim->structEnum = value;
 }
 
 void set_struct_for_array(AllPrimitives* all_prim, int index, InnerStruct value) {

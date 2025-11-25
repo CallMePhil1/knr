@@ -1,37 +1,14 @@
 package knr.runtime.typing
 
-import knr.runtime.delegates.BooleanDelegate
-import knr.runtime.delegates.ByteDelegate
-import knr.runtime.delegates.DoubleDelegate
-import knr.runtime.delegates.FloatDelegate
-import knr.runtime.delegates.IntDelegate
-import knr.runtime.delegates.LongDelegate
-import knr.runtime.delegates.ShortDelegate
-import knr.runtime.delegates.UByteDelegate
-import knr.runtime.delegates.UIntDelegate
-import knr.runtime.delegates.ULongDelegate
-import knr.runtime.delegates.UShortDelegate
+import knr.runtime.delegates.*
 import knr.runtime.delegates.union.ArrayFieldDelegate
 import knr.runtime.delegates.union.PointerFieldDelegate
 import knr.runtime.delegates.union.StructFieldDelegate
 import knr.runtime.delegates.union.UnionFieldDelegate
 import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.Memory
-import knr.runtime.typing.array.CachedCCharNativeArray
-import knr.runtime.typing.array.NativeArray
-import knr.runtime.typing.array.byteNativeArray
-import knr.runtime.typing.array.cachedCCharNativeArray
-import knr.runtime.typing.array.ccharNativeArray
-import knr.runtime.typing.array.doubleNativeArray
-import knr.runtime.typing.array.floatNativeArray
-import knr.runtime.typing.array.intNativeArray
-import knr.runtime.typing.array.longNativeArray
-import knr.runtime.typing.array.shortNativeArray
-import knr.runtime.typing.array.structNativeArray
-import knr.runtime.typing.array.ubyteNativeArray
-import knr.runtime.typing.array.uintNativeArray
-import knr.runtime.typing.array.ulongNativeArray
-import knr.runtime.typing.array.ushortNativeArray
+import knr.runtime.typing.array.*
+import knr.runtime.typing.flags.BitFlag
 import knr.runtime.typing.pointer.*
 import java.lang.foreign.Arena
 import java.lang.foreign.UnionLayout
@@ -63,13 +40,30 @@ abstract class Union(
     protected fun floatField() = FloatDelegate(this, 0)
     protected fun doubleField() = DoubleDelegate(this, 0)
 
+    protected fun <E> enumField(enumCompanion: NativeEnum.Companion<Byte, E>) where E : Enum<E>, E : NativeEnum<Byte> = ByteNativeEnumDelegate(this, 0, enumCompanion.entriesMap)
+    protected fun <E> enumField(enumCompanion: NativeEnum.Companion<UByte, E>) where E : Enum<E>, E : NativeEnum<UByte> = UByteNativeEnumDelegate(this, 0, enumCompanion.entriesMap)
+    protected fun <E> enumField(enumCompanion: NativeEnum.Companion<Short, E>) where E : Enum<E>, E : NativeEnum<Short> = ShortNativeEnumDelegate(this, 0, enumCompanion.entriesMap)
+    protected fun <E> enumField(enumCompanion: NativeEnum.Companion<UShort, E>) where E : Enum<E>, E : NativeEnum<UShort> = UShortNativeEnumDelegate(this, 0, enumCompanion.entriesMap)
+    protected fun <E> enumField(enumCompanion: NativeEnum.Companion<Int, E>) where E : Enum<E>, E : NativeEnum<Int> = IntNativeEnumDelegate(this, 0, enumCompanion.entriesMap)
+    protected fun <E> enumField(enumCompanion: NativeEnum.Companion<UInt, E>) where E : Enum<E>, E : NativeEnum<UInt> = UIntNativeEnumDelegate(this, 0, enumCompanion.entriesMap)
+    protected fun <E> enumField(enumCompanion: NativeEnum.Companion<Long, E>) where E : Enum<E>, E : NativeEnum<Long> = LongNativeEnumDelegate(this, 0, enumCompanion.entriesMap)
+    protected fun <E> enumField(enumCompanion: NativeEnum.Companion<ULong, E>) where E : Enum<E>, E : NativeEnum<ULong> = ULongNativeEnumDelegate(this, 0, enumCompanion.entriesMap)
+    protected fun <E> enumField(enumCompanion: NativeEnum.Companion<Float, E>) where E : Enum<E>, E : NativeEnum<Float> = FloatNativeEnumDelegate(this, 0, enumCompanion.entriesMap)
+    protected fun <E> enumField(enumCompanion: NativeEnum.Companion<Double, E>) where E : Enum<E>, E : NativeEnum<Double> = DoubleNativeEnumDelegate(this, 0, enumCompanion.entriesMap)
+
+    protected fun <F> byteFlagField() where F : Enum<F>, F : BitFlag<Byte> = ByteBitFlagSetDelegate<F>(this, 0)
+    protected fun <F> ubyteFlagField() where F : Enum<F>, F : BitFlag<UByte> = UByteBitFlagSetDelegate<F>(this, 0)
+    protected fun <F> shortFlagField() where F : Enum<F>, F : BitFlag<Short> = ShortBitFlagSetDelegate<F>(this, 0)
+    protected fun <F> ushortFlagField() where F : Enum<F>, F : BitFlag<UShort> = UShortBitFlagSetDelegate<F>(this, 0)
+    protected fun <F> intFlagField() where F : Enum<F>, F : BitFlag<Int> = IntBitFlagSetDelegate<F>(this, 0)
+    protected fun <F> uintFlagField() where F : Enum<F>, F : BitFlag<UInt> = UIntBitFlagSetDelegate<F>(this, 0)
+    protected fun <F> longFlagField() where F : Enum<F>, F : BitFlag<Long> = LongBitFlagSetDelegate<F>(this, 0)
+    protected fun <F> ulongFlagField() where F : Enum<F>, F : BitFlag<ULong> = ULongBitFlagSetDelegate<F>(this, 0)
+
     protected fun <T: Struct<T>> structField(structCompanion: StructCompanion<T>) = StructFieldDelegate(this, structCompanion)
     protected fun <T: Union> unionField(unionCompanion: UnionCompanion<T>) = UnionFieldDelegate(this, unionCompanion)
 
-    protected fun <T, C, A: NativeArray<T, C>> nativeArrayField(initialValue: A): ArrayFieldDelegate<T, C, A> {
-        val delegate = ArrayFieldDelegate(this, initialValue)
-        return delegate
-    }
+    protected fun <T, C, A: NativeArray<T, C>> nativeArrayField(initialValue: A) = ArrayFieldDelegate(this, initialValue)
 
     protected fun byteArrayField(size: Long) = nativeArrayField(byteNativeArray(memory.asSlice(0, size)))
     protected fun ubyteArrayField(size: Long) = nativeArrayField(ubyteNativeArray(memory.asSlice(0, size)))
