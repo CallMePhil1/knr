@@ -1,12 +1,14 @@
 package knr.processors.ext
 
-import knr.runtime.typing.Native
-import knr.runtime.typing.flags.BitFlagSet
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
+import knr.processors.util.getNativeEnumValueType
 import knr.processors.util.valueLayoutMap
+import knr.runtime.typing.Native
+import knr.runtime.typing.NativeEnum
+import knr.runtime.typing.flags.BitFlagSet
 
 private var nativeType: KSType? = null
 
@@ -42,6 +44,10 @@ internal fun KSType.toValueLayoutString(resolver: Resolver): String {
         this.assignableTo<BitFlagSet<*, *>>(resolver) -> {
             val property = (this.declaration as KSClassDeclaration).getAllProperties().first { it.simpleName.asString() == "mask" }
             return valueLayoutMap[property.type.resolve().qualifiedName!!.asString()]!!
+        }
+        this.assignableTo<NativeEnum<*>>(resolver) -> {
+            val valueType = this.getNativeEnumValueType(resolver)
+            return valueLayoutMap[valueType.qualifiedName!!.asString()]!!
         }
         this.isString ||
         this.inheritsNative(resolver) -> "ValueLayout.ADDRESS"

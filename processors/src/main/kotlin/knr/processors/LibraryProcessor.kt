@@ -1,60 +1,32 @@
 package knr.processors
 
-import knr.runtime.memory.NativeMemory
-import knr.runtime.typing.CString
-import knr.runtime.typing.flags.BitFlagSet
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
-import com.google.devtools.ksp.processing.CodeGenerator
-import com.google.devtools.ksp.processing.Resolver
-import com.google.devtools.ksp.processing.SymbolProcessor
-import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
-import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.ParameterSpec
-import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.asTypeName
+import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
-import knr.annotations.IgnoreReturnsNative
-import knr.annotations.Library
-import knr.annotations.Method
-import knr.annotations.ReturnsNative
-import knr.annotations.StringParam
-import knr.processors.ext.addClsImport
-import knr.processors.ext.assignableTo
-import knr.processors.ext.get
-import knr.processors.ext.has
-import knr.processors.ext.inheritsNative
-import knr.processors.ext.isPrimitive
-import knr.processors.ext.isString
-import knr.processors.ext.pascalToSnakecase
-import knr.processors.ext.qualifiedName
-import knr.processors.ext.simpleName
-import knr.processors.ext.toValueLayoutString
+import knr.annotations.*
+import knr.processors.ext.*
+import knr.processors.util.getBitFlagValueType
+import knr.processors.util.getNativeEnumValueType
 import knr.processors.util.standardCharsets
+import knr.runtime.memory.NativeMemory
+import knr.runtime.typing.CString
+import knr.runtime.typing.NativeEnum
+import knr.runtime.typing.flags.BitFlagSet
 import org.tinylog.Level
 import org.tinylog.configuration.Configuration
-import java.lang.foreign.Arena
-import java.lang.foreign.Linker
-import java.lang.foreign.MemorySegment
-import java.lang.foreign.SymbolLookup
-import java.lang.foreign.ValueLayout
+import java.lang.foreign.*
 import java.lang.invoke.MethodHandle
 import java.nio.charset.StandardCharsets
-import kotlin.collections.listOf
 
 private val functionIgnoreList = setOf(
     "kotlin.Any.equals",
@@ -111,6 +83,9 @@ internal class LibraryProcessor(
                 type.assignableTo<BitFlagSet<*, *>>(resolver) -> {
                     invokeParamsList.add("$paramName.mask")
                 }
+                type.assignableTo<NativeEnum<*>>(resolver) -> {
+                    invokeParamsList.add("$paramName.value")
+                }
             }
         }
 
@@ -119,7 +94,7 @@ internal class LibraryProcessor(
         val returnTypeName = returnType.simpleName.asString()
 
         when {
-            returnType.toClassName() == Unit::class.java.asTypeName() -> {
+            returnType.toTypeName() == Unit::class.java.asTypeName() -> {
                 funcBody.add("%L.invokeExact(%L)", methodHandle.name, invokeParams)
             }
             returnType.isPrimitive -> {
@@ -157,6 +132,18 @@ internal class LibraryProcessor(
                         |return ${returnTypeName}.wrap(memory)
                     """.trimMargin())
                 }
+            }
+            returnType.assignableTo<BitFlagSet<*, *>>(resolver) -> {
+                val valueType = returnType.getBitFlagValueType(resolver)
+                funcBody.add("""val result = ${methodHandle.name}.invokeExact($invokeParams) as ${valueType.simpleName.asString()}
+                    |return ${returnType.qualifiedName!!.asString()}(result)
+                """.trimMargin())
+            }
+            returnType.assignableTo<NativeEnum<*>>(resolver) -> {
+                val valueType = returnType.getNativeEnumValueType(resolver)
+                funcBody.add("""val result = ${methodHandle.name}.invokeExact($invokeParams) as ${valueType.simpleName.asString()}
+                    |return ${returnType.qualifiedName!!.asString()}.of(result)
+                """.trimMargin())
             }
             else -> {}
         }
@@ -317,12 +304,23 @@ internal class LibraryProcessor(
                 if (!it.annotations.has<StringParam>())
                     throw IllegalStateException("Parameter '$paramName: String' for function '$funcName' does not have a 'StringParam' annotation")
             }
-            else if (!type.isPrimitive && !type.inheritsNative(resolver) && !type.assignableTo<BitFlagSet<*, *>>(resolver))
+            else if (
+                !type.isPrimitive &&
+                !type.inheritsNative(resolver) &&
+                !type.assignableTo<BitFlagSet<*, *>>(resolver) &&
+                !type.assignableTo<NativeEnum<*>>(resolver)
+            ) {
                 throw IllegalStateException("Parameter '$paramName: ${type.qualifiedName!!.asString()}' for function '$funcName' is not a supported type")
+            }
         }
 
         val returnType = func.returnType!!.resolve()
-        if (!returnType.isPrimitive && !returnType.inheritsNative(resolver)) {
+        if (
+            !returnType.isPrimitive &&
+            !returnType.inheritsNative(resolver) &&
+            !returnType.assignableTo<BitFlagSet<*, *>>(resolver) &&
+            !returnType.assignableTo<NativeEnum<*>>(resolver)
+        ) {
             val returnTypeName = returnType.declaration.qualifiedName!!.asString()
             throw IllegalStateException("Return type '${returnTypeName}' for function '$funcName' is not a primitive or inherits 'Native'")
         }

@@ -3,6 +3,7 @@ package knr.libgen.processor
 import knr.annotations.*
 import knr.runtime.layout.StructDefinition
 import knr.runtime.memory.Memory
+import knr.runtime.typing.NativeEnum
 import knr.runtime.typing.Struct
 import knr.runtime.typing.array.IntNativeArray
 import knr.runtime.typing.flags.BitFlag
@@ -22,11 +23,26 @@ enum class TestBitFlags(override val mask: Int): BitFlag<Int> {
     FIRST(1)
 }
 
+enum class TestEnum(override val value: Int) : NativeEnum<Int> {
+    FIRST(0),
+    SECOND(1);
+
+    companion object : NativeEnum.Companion<Int, TestEnum>(TestEnum.entries)
+}
+
+enum class TestEnumFloat(override val value: Float) : NativeEnum<Float> {
+    FIRST(0f),
+    SECOND(1f);
+
+    companion object : NativeEnum.Companion<Float, TestEnumFloat>(TestEnumFloat.entries)
+}
+
 @Library("test/path")
 @ReturnsNative(TestLibrary::class, "disposeTestClass")
 interface TestLibrary {
     fun primitiveFunc(byte: Byte, short: UShort, int: Int, long: Long): Int
     fun nativeFunc(cls: TestClass, array: IntNativeArray, bitMask: IntBitFlagSet<TestBitFlags>): Int
+    fun bitFlagFunc(bitMask: IntBitFlagSet<TestBitFlags>): IntBitFlagSet<TestBitFlags>
 
     @Method("this_is_the_name")
     fun namedMethod()
@@ -44,4 +60,7 @@ interface TestLibrary {
     fun disposeTestClass(cls: TestClass)
 
     fun disposeTestClass2(cls: TestClass)
+
+    fun enumIntFunction(testEnum: TestEnum): TestEnum
+    fun enumFloatFunction(testEnum: TestEnumFloat): TestEnumFloat
 }
