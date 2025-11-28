@@ -13,3 +13,8 @@ internal val standardCharsets = hashMapOf(
     StandardCharsets.UTF_32BE.name() to "UTF_32BE",
     StandardCharsets.UTF_32LE.name() to "UTF_32LE"
 )
+
+internal fun getCharset(charset: String): String {
+    val charset = standardCharsets[charset]
+    return if (charset != null) "StandardCharsets.$charset" else "charset(\"$charset\")"
+}

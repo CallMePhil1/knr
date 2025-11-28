@@ -1,5 +1,10 @@
 package knr.annotations
 
+enum class NamingConvention {
+    CAMELCASE,
+    PASCALCASE,
+    SNACKCASE
+}
 /**
  * This annotation targets interfaces that describe a C libraries API.
  * The library processor looks for interfaces with this annotation and generates objects with implementations of the functions declared
@@ -15,4 +20,4 @@ package knr.annotations
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Library(val libPath: String)
+annotation class Library(val libPath: String, val naming: NamingConvention)
