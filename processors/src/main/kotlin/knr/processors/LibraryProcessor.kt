@@ -1,12 +1,11 @@
+@file:OptIn(KspExperimental::class)
+
 package knr.processors
 
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.processing.*
-import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSFunctionDeclaration
-import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
@@ -14,10 +13,13 @@ import com.squareup.kotlinpoet.ksp.writeTo
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import knr.annotations.*
+import knr.annotations.string.DisposeMethod
+import knr.annotations.string.ReturnsString
+import knr.annotations.string.StringParam
 import knr.processors.ext.*
 import knr.processors.util.getBitFlagValueType
+import knr.processors.util.getCharset
 import knr.processors.util.getNativeEnumValueType
-import knr.processors.util.standardCharsets
 import knr.runtime.memory.NativeMemory
 import knr.runtime.typing.CString
 import knr.runtime.typing.NativeEnum
@@ -40,7 +42,6 @@ internal class LibraryProcessor(
 
     private val logger = KotlinLogging.logger {  }
 
-    @OptIn(KspExperimental::class)
     private fun addFunctionBody(
         func: KSFunctionDeclaration,
         builder: FunSpec.Builder,
@@ -48,10 +49,19 @@ internal class LibraryProcessor(
         caches: Map<String, PropertySpec>,
         resolver: Resolver
     ) {
+        logger.debug { "Adding function body for '${func.qualifiedName!!.asString()}'" }
+
         val funcBody = CodeBlock.builder()
         val invokeParamsList = mutableListOf<String>()
 
+        val preInvoke = CodeBlock.builder()
+        val invokeBlock = CodeBlock.builder()
+        val postInvoke = CodeBlock.builder()
+        val returnBlock = CodeBlock.builder()
+
         func.parameters.forEach { param ->
+            logger.debug { "Processing Param[Name: '${param.name!!.asString()}', Type: '${param.type.toTypeName()}']" }
+
             val type = param.type.resolve()
             val paramName = param.name!!.asString()
 
@@ -65,17 +75,44 @@ internal class LibraryProcessor(
                     invokeParamsList.add("$paramName$conversionCall")
                 }
                 type.isString -> {
-                    val stringParamAnno = param.annotations.get<StringParam>()
-                    val annoCharsetName = stringParamAnno.get<String>(StringParam::charset.name)
-                    val charset = standardCharsets[annoCharsetName]
+                    val stringParamAnno = param.getAnnotationsByType(StringParam::class).first()
+                    val annoCharsetName = stringParamAnno.charset
+                    val disposeMethod = stringParamAnno.disposeMethod
 
-                    val charsetString = if (charset != null) "StandardCharsets.$charset" else "charset(\"$annoCharsetName\")"
+                    val charsetString = getCharset(annoCharsetName)
 
-                    val cacheName = caches[paramName]!!.name
+                    when (disposeMethod) {
+                        DisposeMethod.AFTER_USE -> {
+                            val cstringName = "${paramName}String"
+                            preInvoke.addStatement(
+                                "val %L = cstringOf(%L, %L)",
+                                cstringName,
+                                paramName,
+                                charsetString
+                            )
+                            postInvoke.addStatement("%L.dispose()", cstringName)
+                            invokeParamsList.add("${cstringName}.memory.memorySegment")
+                        }
 
-                    funcBody.addStatement("%L?.dispose()", cacheName)
-                    funcBody.addStatement("%L = cstringOf(%L, %L)", cacheName, paramName, charsetString)
-                    invokeParamsList.add("${cacheName}!!.memory.memorySegment")
+                        DisposeMethod.CACHE -> {
+                            val cacheName = caches[paramName]!!.name
+
+                            preInvoke.addStatement("%L?.dispose()", cacheName)
+                            preInvoke.addStatement("%L = cstringOf(%L, %L)", cacheName, paramName, charsetString)
+                            invokeParamsList.add("${cacheName}!!.memory.memorySegment")
+                        }
+
+                        DisposeMethod.NONE -> {
+                            val cstringName = "${paramName}String"
+                            preInvoke.addStatement(
+                                "val %L = cstringOf(%L, %L)",
+                                cstringName,
+                                paramName,
+                                charsetString
+                            )
+                            invokeParamsList.add("${cstringName}.memory.memorySegment")
+                        }
+                    }
                 }
                 type.inheritsNative(resolver) -> {
                     invokeParamsList.add("${paramName}.memory.memorySegment")
@@ -93,66 +130,118 @@ internal class LibraryProcessor(
         val returnType = func.returnType!!.resolve()
         val returnTypeName = returnType.simpleName.asString()
 
+        logger.debug { "Processing Return[Type: '${returnType.qualifiedName!!.asString()}']" }
+
         when {
             returnType.toTypeName() == Unit::class.java.asTypeName() -> {
-                funcBody.add("%L.invokeExact(%L)", methodHandle.name, invokeParams)
+                invokeBlock.addStatement("%L.invokeExact(%L)", methodHandle.name, invokeParams)
             }
             returnType.isPrimitive -> {
                 val returnTypeString = returnType.toClassName().simpleName
-                funcBody.add("return %L.invokeExact(%L) as %L", methodHandle.name, invokeParams, returnTypeString)
+                invokeBlock.addStatement("val result = %L.invokeExact(%L) as %L", methodHandle.name, invokeParams, returnTypeString)
+                returnBlock.addStatement("return result")
             }
-            returnType.inheritsNative(resolver) -> {
-                val annotation = when {
-                    func.annotations.has<IgnoreReturnsNative>() -> null
-                    func.annotations.has<ReturnsNative>() -> func.annotations.get<ReturnsNative>()
-                    func.parentDeclaration?.annotations?.has<ReturnsNative>() ?: false -> func.parentDeclaration!!.annotations.get<ReturnsNative>()
-                    else -> null
+            returnType.isString -> {
+                val returnStringAnno = func.getAnnotationsByType(ReturnsString::class).first()
+                val charset = getCharset(returnStringAnno.charset)
+
+                invokeBlock.addStatement("val result = ${methodHandle.name}.invokeExact($invokeParams) as MemorySegment")
+
+                postInvoke.addStatement("var cstring: CString? = null")
+
+                when (val returnNativeAnno = getDisposer(func)) {
+                    null -> {
+                        postInvoke.addStatement("val memory = NativeMemory.wrap(result, null)")
+                    }
+                    else -> {
+                        val disposeFuncString = getDisposeFuncString(returnNativeAnno)
+
+                        postInvoke.add("""val disposeFun = { $disposeFuncString(cstring!!) }
+                            |val memory = NativeMemory.wrap(result, disposeFun)
+                            |""".trimMargin())
+                    }
                 }
 
-                if (annotation != null) {
-                    val cls = annotation.get<KSType>("cls")
-                    val funcName = annotation.get<String>("disposeFunName")
-                    val clsImplPackage = "${cls.declaration.packageName.asString()}.generated"
-                    val clsImplName = "${cls.simpleName.asString()}Impl"
-                    val invokeCall = "$clsImplPackage.$clsImplName.$funcName"
+                postInvoke.add("""cstring = cstringOf(memory, $charset)
+                    |val string = cstring.get()
+                    |cstring.dispose()
+                    |""".trimMargin())
 
-                    funcBody.add("""val byteSize = ${returnTypeName}.definition.byteSize
-                        |val result = (${methodHandle.name}.invokeExact($invokeParams) as MemorySegment).reinterpret(byteSize)
-                        |var struct: ${returnTypeName}? = null
+                returnBlock.addStatement("return string")
+            }
+            returnType.assignableTo<CString>(resolver) -> {
+                val returnStringAnno = func.getAnnotationsByType(ReturnsString::class).first()
+                val charset = getCharset(returnStringAnno.charset)
+
+                invokeBlock.addStatement("val result = ${methodHandle.name}.invokeExact($invokeParams) as MemorySegment")
+
+                postInvoke.addStatement("var cstring: CString? = null")
+
+                when (val returnNativeAnno = getDisposer(func)) {
+                    null -> {
+                        postInvoke.addStatement("val memory = NativeMemory.wrap(result, null)")
+                    }
+                    else -> {
+                        val disposeFuncString = getDisposeFuncString(returnNativeAnno)
+
+                        postInvoke.add("""val disposeFun = { $disposeFuncString(cstring!!) }
+                            |val memory = NativeMemory.wrap(result, disposeFun)
+                            |""".trimMargin())
+                    }
+                }
+
+                postInvoke.addStatement("cstring = cstringOf(memory, $charset)")
+
+                returnBlock.addStatement("return cstring")
+            }
+            returnType.inheritsNative(resolver) -> {
+                val annotation = getDisposer(func)
+
+                if (annotation != null) {
+                    val invokeCall = getDisposeFuncString(annotation)
+
+                    preInvoke.addStatement("val byteSize = ${returnTypeName}.definition.byteSize")
+
+                    invokeBlock.addStatement("val result = (${methodHandle.name}.invokeExact($invokeParams) as MemorySegment).reinterpret(byteSize)")
+
+                    postInvoke.add("""var struct: ${returnTypeName}? = null
                         |val disposeFun = { $invokeCall(struct!!) }
                         |val memory = NativeMemory.wrap(result, disposeFun)
                         |struct = ${returnTypeName}.wrap(memory)
-                        |return struct
-                    """.trimMargin())
+                        |""".trimMargin())
+
+                    returnBlock.addStatement("return struct")
 
                 } else {
-                    funcBody.add("""val byteSize = ${returnTypeName}.definition.byteSize
-                        |val result = (${methodHandle.name}.invokeExact($invokeParams) as MemorySegment).reinterpret(byteSize)
-                        |val memory = NativeMemory.wrap(result)
-                        |return ${returnTypeName}.wrap(memory)
-                    """.trimMargin())
+                    preInvoke.addStatement("val byteSize = ${returnTypeName}.definition.byteSize")
+                    invokeBlock.addStatement("val result = (${methodHandle.name}.invokeExact($invokeParams) as MemorySegment).reinterpret(byteSize)")
+                    postInvoke.addStatement("val memory = NativeMemory.wrap(result)")
+                    returnBlock.addStatement("return ${returnTypeName}.wrap(memory)")
                 }
             }
             returnType.assignableTo<BitFlagSet<*, *>>(resolver) -> {
                 val valueType = returnType.getBitFlagValueType(resolver)
-                funcBody.add("""val result = ${methodHandle.name}.invokeExact($invokeParams) as ${valueType.simpleName.asString()}
-                    |return ${returnType.qualifiedName!!.asString()}(result)
-                """.trimMargin())
+                invokeBlock.addStatement("val result = ${methodHandle.name}.invokeExact($invokeParams) as ${valueType.simpleName.asString()}")
+                returnBlock.addStatement("return ${returnType.qualifiedName!!.asString()}(result)")
             }
             returnType.assignableTo<NativeEnum<*>>(resolver) -> {
                 val valueType = returnType.getNativeEnumValueType(resolver)
-                funcBody.add("""val result = ${methodHandle.name}.invokeExact($invokeParams) as ${valueType.simpleName.asString()}
-                    |return ${returnType.qualifiedName!!.asString()}.of(result)
-                """.trimMargin())
+                invokeBlock.addStatement("val result = ${methodHandle.name}.invokeExact($invokeParams) as ${valueType.simpleName.asString()}")
+                returnBlock.addStatement("return ${returnType.qualifiedName!!.asString()}.of(result)")
             }
             else -> {}
         }
+
+        funcBody.add(preInvoke.build())
+        funcBody.add(invokeBlock.build())
+        funcBody.add(postInvoke.build())
+        funcBody.add(returnBlock.build())
 
         builder.addCode(funcBody.build())
     }
 
     private fun addFunctionHeader(func: KSFunctionDeclaration, builder: FunSpec.Builder, resolver: Resolver) {
-        logger.debug { "Creating function header for ${func.qualifiedName}" }
+        logger.debug { "Creating function header for '${func.qualifiedName!!.asString()}'" }
 
         builder.addModifiers(KModifier.OVERRIDE)
 
@@ -193,6 +282,11 @@ internal class LibraryProcessor(
     private fun createCaches(func: KSFunctionDeclaration): Map<String, PropertySpec> =
         func.parameters
             .filter { it.isString }
+            .filter {
+                val annotation = it.getAnnotationsByType(StringParam::class).first()
+                val disposeMethod = annotation.disposeMethod
+                return@filter disposeMethod == DisposeMethod.CACHE
+            }
             .associate {
                 val name = func.simpleName.asString() + it.name!!.asString()
                 val property = PropertySpec.builder(name, CString::class.asClassName().copy(nullable = true), KModifier.PRIVATE)
@@ -225,7 +319,6 @@ internal class LibraryProcessor(
         return propertySpec
     }
 
-    @OptIn(KspExperimental::class)
     private fun createObjectSpec(libCls: KSClassDeclaration): TypeSpec.Builder {
         val libPath = libCls.getAnnotationsByType(Library::class).first().libPath
         val arenaProperty = PropertySpec.builder("arena", Arena::class, KModifier.PRIVATE)
@@ -247,15 +340,34 @@ internal class LibraryProcessor(
             .addProperties(listOf(arenaProperty, linkerProperty, lookupProperty))
     }
 
-    private fun getNativeFunctionName(func: KSFunctionDeclaration, resolver: Resolver): String {
+    private fun getDisposeFuncString(annotation: KSAnnotation): String {
+        val cls = annotation.get<KSType>("cls")
+        val funcName = annotation.get<String>("disposeFunName")
+        val clsImplPackage = "${cls.declaration.packageName.asString()}.generated"
+        val clsImplName = "${cls.simpleName.asString()}Impl"
+        return "$clsImplPackage.$clsImplName.$funcName"
+    }
+
+    private fun getNativeFunctionName(naming: NamingConvention, func: KSFunctionDeclaration, resolver: Resolver): String {
         val methodAnnotation = func.annotations.firstOrNull { it.annotationType.resolve().assignableTo<Method>(resolver) }
 
         return when {
-            methodAnnotation == null -> func.simpleName.asString().pascalToSnakecase()
+            methodAnnotation == null -> when (naming) {
+                NamingConvention.CAMELCASE -> func.simpleName.asString()
+                NamingConvention.SNACKCASE -> func.simpleName.asString().camelToSnakecase()
+                NamingConvention.PASCALCASE -> func.simpleName.asString().camelToPascalcase()
+            }
             else -> methodAnnotation.arguments.first {
                 it.name!!.asString() == "name"
             }.value!! as String
         }
+    }
+
+    private fun getDisposer(func: KSFunctionDeclaration) = when {
+        func.annotations.has<Disposer>() -> func.annotations.get<Disposer>()
+        func.annotations.has<NoDisposer>() -> null
+        func.parentDeclaration?.annotations?.has<Disposer>() ?: false -> func.parentDeclaration!!.annotations.get<Disposer>()
+        else -> null
     }
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
@@ -270,7 +382,8 @@ internal class LibraryProcessor(
                 .filter { it.qualifiedName!!.asString() !in functionIgnoreList }
                 .forEach { func ->
                     validateFunc(func, resolver)
-                    val funcNativeName = getNativeFunctionName(func, resolver)
+                    val naming = lib.getAnnotationsByType(Library::class).first().naming
+                    val funcNativeName = getNativeFunctionName(naming, func, resolver)
 
                     val caches = createCaches(func)
                     val methodHandle = createMethodHandleProperty(func, funcNativeName,resolver)
@@ -300,7 +413,7 @@ internal class LibraryProcessor(
             val type = it.type.resolve()
             val paramName = it.name!!.asString()
 
-            if (type.isString) {
+            if (type.isString || type.assignableTo<CString>(resolver)) {
                 if (!it.annotations.has<StringParam>())
                     throw IllegalStateException("Parameter '$paramName: String' for function '$funcName' does not have a 'StringParam' annotation")
             }
@@ -317,6 +430,7 @@ internal class LibraryProcessor(
         val returnType = func.returnType!!.resolve()
         if (
             !returnType.isPrimitive &&
+            !returnType.isString &&
             !returnType.inheritsNative(resolver) &&
             !returnType.assignableTo<BitFlagSet<*, *>>(resolver) &&
             !returnType.assignableTo<NativeEnum<*>>(resolver)

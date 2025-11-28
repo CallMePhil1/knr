@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     alias(libs.plugins.ksp)
+    application
 }
 
 group = "com.github.callmephil.knr"
@@ -22,6 +23,10 @@ dependencies {
 
 ksp {
     arg("knr.processors.logLevel", "debug")
+}
+
+application {
+    mainClass = "knr.libgen.processor.LibraryProcessorKt"
 }
 
 tasks.withType<PublishToMavenLocal>().configureEach {

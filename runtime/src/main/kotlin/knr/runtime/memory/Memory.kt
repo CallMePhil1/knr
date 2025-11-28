@@ -137,6 +137,6 @@ class NativeMemory internal constructor(
 
     companion object {
         fun wrap(memorySegment: MemorySegment) = NativeMemory(memorySegment) { Stdlib.free(memorySegment) }
-        fun wrap(memorySegment: MemorySegment, disposeFunc: () -> Unit) = NativeMemory(memorySegment, disposeFunc)
+        fun wrap(memorySegment: MemorySegment, disposeFunc: (() -> Unit)?) = NativeMemory(memorySegment, disposeFunc)
     }
 }

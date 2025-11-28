@@ -1,6 +1,10 @@
 package knr.processors.ext
 
-internal fun String.pascalToSnakecase(): String {
+internal fun String.camelToPascalcase(): String {
+    return this[0].uppercase() + this.substring(1)
+}
+
+internal fun String.camelToSnakecase(): String {
     val underlineIndices = mutableListOf<Int>()
 
     for(i in 0 ..< this.length) {

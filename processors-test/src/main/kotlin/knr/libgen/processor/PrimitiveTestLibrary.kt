@@ -2,9 +2,10 @@ package knr.libgen.processor
 
 import knr.annotations.Library
 import knr.annotations.Method
+import knr.annotations.NamingConvention
 import knr.runtime.library.LibraryLoader
 
-@Library("processors-test/src/main/testlib/build/Debug/primitivetest")
+@Library("processors-test/src/main/testlib/build/Debug/primitivetest", naming = NamingConvention.PASCALCASE)
 interface PrimitiveTestLibrary {
 
     fun getBool(struct: PrimitiveStruct): Boolean

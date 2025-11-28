@@ -5,6 +5,7 @@ import knr.runtime.memory.Memory
 import knr.runtime.native.StringLib
 import knr.runtime.typing.pointer.Pointer
 import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 
 open class CString internal constructor(
     memory: Memory,
@@ -40,6 +41,7 @@ infix fun Pointer<String>.equal(other: Pointer<String>) = StringLib.equal(this, 
 
 val Pointer<String>.length get() = StringLib.length(this)
 
+fun cstringOf(memory: Memory, charset: Charset = StandardCharsets.UTF_8) = CString(memory, charset)
 fun cstringOf(value: String = "", charset: Charset = Charsets.UTF_8) =
     CString(ArenaMemory.string(value, charset), charset)
 

@@ -12,14 +12,14 @@ import kotlin.reflect.KClass
  *
  * ```
  * @Library("path/to/lib")
- * @ReturnsNative(MyLibrary::class, "disposeFunc")
+ * @Disposer(MyLibrary::class, "disposeFunc")
  * interface MyLibrary {
  *     fun disposeFunc(struct: StructA)
  *
- *     @ReturnsNative(MyLibrary::class, "disposeFunc")
+ *     @Disposer(MyLibrary::class, "disposeFunc")
  *     fun myFunction(): StructA
  *
- *     @ReturnsNative(AnotherClass::class, "anotherDisposeFunc")
+ *     @Disposer(AnotherClass::class, "anotherDisposeFunc")
  *     fun myFunction2(): StructA
  *
  *     // Uses MyLibrary.disposeFunc for disposing of StructA due to annotation at class level
@@ -29,14 +29,14 @@ import kotlin.reflect.KClass
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
-annotation class ReturnsNative(
+annotation class Disposer(
     val cls: KClass<*>,
     val disposeFunName: String
 )
 
 /**
- * Tells the library processor to use stdlib function 'free' to dispose of the native object.
+ * Notifies the library processor that no dispose function should be used with this function
  */
 @Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.SOURCE)
-annotation class IgnoreReturnsNative
+@Retention
+annotation class NoDisposer

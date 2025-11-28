@@ -1,8 +1,12 @@
 package knr.libgen.processor
 
 import knr.annotations.*
+import knr.annotations.string.ReturnsString
+import knr.annotations.string.StringParam
 import knr.runtime.layout.StructDefinition
 import knr.runtime.memory.Memory
+import knr.runtime.typing.CString
+import knr.runtime.typing.Native
 import knr.runtime.typing.NativeEnum
 import knr.runtime.typing.Struct
 import knr.runtime.typing.array.IntNativeArray
@@ -37,8 +41,8 @@ enum class TestEnumFloat(override val value: Float) : NativeEnum<Float> {
     companion object : NativeEnum.Companion<Float, TestEnumFloat>(TestEnumFloat.entries)
 }
 
-@Library("test/path")
-@ReturnsNative(TestLibrary::class, "disposeTestClass")
+@Library("test/path", naming = NamingConvention.SNACKCASE)
+@Disposer(TestLibrary::class, "disposeTestClass")
 interface TestLibrary {
     fun primitiveFunc(byte: Byte, short: UShort, int: Int, long: Long): Int
     fun nativeFunc(cls: TestClass, array: IntNativeArray, bitMask: IntBitFlagSet<TestBitFlags>): Int
@@ -49,13 +53,28 @@ interface TestLibrary {
 
     fun stringMethod(@StringParam string: String, @StringParam("nonstandard") string2: String)
 
-    @ReturnsNative(TestLibrary::class, "disposeTestClass2")
+    fun usesCString(@StringParam string: CString)
+
+    @ReturnsString
+    @Disposer(TestLibrary::class, "disposeOf")
+    fun returnsCStringWithDisposer(): CString
+
+    @ReturnsString
+    @NoDisposer
+    fun returnsCString(): CString
+
+    @ReturnsString
+    @NoDisposer
+    fun returnsString(): String
+
+    @Disposer(TestLibrary::class, "disposeTestClass2")
     fun createTestClass(): TestClass
 
     fun createTestClass2(): TestClass
 
-    @IgnoreReturnsNative
     fun createTestClass3(): TestClass
+
+    fun disposeOf(native: Native<*>)
 
     fun disposeTestClass(cls: TestClass)
 
