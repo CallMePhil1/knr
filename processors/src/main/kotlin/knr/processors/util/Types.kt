@@ -1,5 +1,14 @@
 package knr.processors.util
 
+import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.symbol.KSAnnotation
+import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSType
+import knr.annotations.ByRef
+import knr.processors.ext.*
+import knr.runtime.typing.NativeEnum
+import knr.runtime.typing.flags.BitFlagSet
+
 internal val primitiveTypes = setOf(
     "kotlin.Unit",
     "kotlin.Boolean",
@@ -29,3 +38,21 @@ internal val valueLayoutMap = mapOf(
     "kotlin.Float" to "ValueLayout.JAVA_FLOAT",
     "kotlin.Double" to "ValueLayout.JAVA_DOUBLE"
 )
+
+internal fun toMemoryLayout(type: KSType, annotations: Sequence<KSAnnotation>, resolver: Resolver): String {
+    return when {
+        type.isPrimitive -> valueLayoutMap[type.declaration.qualifiedName!!.asString()]!!
+        type.assignableTo<BitFlagSet<*, *>>(resolver) -> {
+            val property = (type.declaration as KSClassDeclaration).getAllProperties().first { it.simpleName.asString() == "mask" }
+            valueLayoutMap[property.type.resolve().qualifiedName!!.asString()]!!
+        }
+        type.assignableTo<NativeEnum<*>>(resolver) -> {
+            val valueType = type.getNativeEnumValueType(resolver)
+            valueLayoutMap[valueType.qualifiedName!!.asString()]!!
+        }
+        type.isStruct(resolver) -> if (annotations.has<ByRef>()) "ValueLayout.ADDRESS" else "${type.qualifiedName!!.asString()}.definition.layout"
+        type.isString ||
+                type.inheritsNative(resolver) -> "ValueLayout.ADDRESS"
+        else -> error("Couldn't convert type '${type.qualifiedName!!.asString()}' to ValueLayout")
+    }
+}

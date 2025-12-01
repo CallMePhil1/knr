@@ -24,6 +24,5 @@ internal inline fun <reified T> Sequence<KSAnnotation>.getOrNull(): KSAnnotation
     return this.firstOrNull { it.annotationType.toTypeName() == T::class.java.asTypeName() }
 }
 
-
 internal inline fun <reified T> Sequence<KSAnnotation>.has() =
     this.any { it.annotationType.toTypeName() == T::class.java.asTypeName() }

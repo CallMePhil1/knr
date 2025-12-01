@@ -2,13 +2,9 @@ package knr.processors.ext
 
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Resolver
-import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
-import knr.processors.util.getNativeEnumValueType
-import knr.processors.util.valueLayoutMap
 import knr.runtime.typing.Native
-import knr.runtime.typing.NativeEnum
-import knr.runtime.typing.flags.BitFlagSet
+import knr.runtime.typing.Struct
 
 private var nativeType: KSType? = null
 
@@ -33,24 +29,9 @@ internal val KSType.qualifiedName
 internal val KSType.simpleName
     get() = this.declaration.simpleName
 
+internal fun KSType.isStruct(resolver: Resolver) = assignableTo<Struct<*>>(resolver)
+
 internal fun KSType.inheritsNative(resolver: Resolver) = getNativeType(resolver).isAssignableFrom(this)
 
 internal inline fun <reified T> KSType.assignableTo(resolver: Resolver) =
     getKSTypeFromClass(resolver, T::class.java).isAssignableFrom(this)
-
-internal fun KSType.toValueLayoutString(resolver: Resolver): String {
-    return when {
-        this.isPrimitive -> valueLayoutMap[this.declaration.qualifiedName!!.asString()]!!
-        this.assignableTo<BitFlagSet<*, *>>(resolver) -> {
-            val property = (this.declaration as KSClassDeclaration).getAllProperties().first { it.simpleName.asString() == "mask" }
-            return valueLayoutMap[property.type.resolve().qualifiedName!!.asString()]!!
-        }
-        this.assignableTo<NativeEnum<*>>(resolver) -> {
-            val valueType = this.getNativeEnumValueType(resolver)
-            return valueLayoutMap[valueType.qualifiedName!!.asString()]!!
-        }
-        this.isString ||
-        this.inheritsNative(resolver) -> "ValueLayout.ADDRESS"
-        else -> error("Couldn't convert type '${this.qualifiedName!!.asString()}' to ValueLayout")
-    }
-}

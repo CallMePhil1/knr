@@ -12,6 +12,7 @@ import knr.runtime.typing.Struct
 import knr.runtime.typing.array.IntNativeArray
 import knr.runtime.typing.flags.BitFlag
 import knr.runtime.typing.flags.IntBitFlagSet
+import knr.runtime.typing.pointer.OpaquePointer
 
 class TestClass(
     memory: Memory
@@ -41,7 +42,7 @@ enum class TestEnumFloat(override val value: Float) : NativeEnum<Float> {
     companion object : NativeEnum.Companion<Float, TestEnumFloat>(TestEnumFloat.entries)
 }
 
-@Library("test/path", naming = NamingConvention.SNACKCASE)
+@Library("test/path", naming = NamingConvention.SNAKECASE)
 @Disposer(TestLibrary::class, "disposeTestClass")
 interface TestLibrary {
     fun primitiveFunc(byte: Byte, short: UShort, int: Int, long: Long): Int
@@ -82,4 +83,7 @@ interface TestLibrary {
 
     fun enumIntFunction(testEnum: TestEnum): TestEnum
     fun enumFloatFunction(testEnum: TestEnumFloat): TestEnumFloat
+
+    @NoDisposer
+    fun returnsPointer(): OpaquePointer
 }

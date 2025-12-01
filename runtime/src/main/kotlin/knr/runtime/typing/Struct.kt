@@ -24,6 +24,8 @@ abstract class Struct<T : Struct<T>>(
 
     private var offsetIndex = 0
 
+    fun asPointer(): NativePointer<T> = nativePointerOf(this as T)
+
     protected fun currentOffset(): Long = definition.offset(offsetIndex)
     protected fun nextOffset(): Long = definition.offset(offsetIndex++)
 

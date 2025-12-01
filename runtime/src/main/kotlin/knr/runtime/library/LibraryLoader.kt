@@ -28,4 +28,7 @@ object LibraryLoader {
 
         return objectInstance
     }
+
+    inline fun <reified R> loadLibrary() = loadLibrary(R::class.java)
 }
+
