@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalUnsignedTypes::class)
+
 package knr.runtime.typing
 
 import knr.runtime.delegates.*
@@ -24,6 +26,7 @@ abstract class Struct<T : Struct<T>>(
 
     private var offsetIndex = 0
 
+    @Suppress("UNCHECKED_CAST")
     fun asPointer(): NativePointer<T> = nativePointerOf(this as T)
 
     protected fun currentOffset(): Long = definition.offset(offsetIndex)

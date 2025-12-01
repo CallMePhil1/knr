@@ -28,6 +28,7 @@ import knr.runtime.typing.Struct
 import knr.runtime.typing.flags.BitFlagSet
 import knr.runtime.typing.pointer.NativePointer
 import knr.runtime.typing.pointer.Pointer
+import knr.runtime.util.SymbolLookupUtils
 import org.tinylog.Level
 import org.tinylog.configuration.Configuration
 import java.lang.foreign.*
@@ -356,6 +357,7 @@ internal class LibraryProcessor(
         fileSpec.addClsImport(MemorySegment::class.java, SegmentAllocator::class.java)
         fileSpec.addClsImport(ArenaMemory::class.java, NativeMemory::class.java)
         fileSpec.addClsImport(StandardCharsets::class.java)
+        fileSpec.addClsImport(SymbolLookupUtils::class.java)
         fileSpec.addClsImport(ValueLayout::class.java)
 
         logger.debug { "Created FileSpec[Path: ${fileSpec.packageName}.${fileSpec.name} | ClassName: $clsName]" }
@@ -405,7 +407,7 @@ internal class LibraryProcessor(
     }
 
     private fun createObjectSpec(libCls: KSClassDeclaration): TypeSpec.Builder {
-        val libPath = libCls.getAnnotationsByType(Library::class).first().libPath
+        val libName = libCls.getAnnotationsByType(Library::class).first().libName
         val arenaProperty = PropertySpec.builder("arena", Arena::class, KModifier.PRIVATE)
             .initializer("Arena.global()")
             .build()
@@ -413,12 +415,12 @@ internal class LibraryProcessor(
             .initializer("Linker.nativeLinker()")
             .build()
         val lookupProperty = PropertySpec.builder("lookup", SymbolLookup::class, KModifier.PRIVATE)
-            .initializer("SymbolLookup.libraryLookup(%S, %L)", libPath, "arena")
+            .initializer("SymbolLookupUtils.lookup(%L, %S)", "arena", libName)
             .build()
 
         val objectName = "${libCls.simpleName.asString()}Impl"
 
-        logger.debug { "Getting TypeSpec[LibPath: $libPath]" }
+        logger.debug { "Getting TypeSpec[LibPath: $libName]" }
 
         return TypeSpec.objectBuilder(objectName)
             .addSuperinterface(libCls.asStarProjectedType().toClassName())
