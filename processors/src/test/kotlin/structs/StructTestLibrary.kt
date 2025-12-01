@@ -1,9 +1,10 @@
 package structs
 
 import knr.annotations.*
+import knr.runtime.library.LibraryLoader
 import knr.runtime.typing.pointer.NativePointer
 
-@Library("src/test/libraries/build/Debug/structlib", naming = NamingConvention.CAMELCASE)
+@Library("structlib", naming = NamingConvention.CAMELCASE)
 interface StructTestLibrary {
 
     fun disposeStruct(@ByRef struct: TestStruct)
@@ -34,4 +35,6 @@ interface StructTestLibrary {
     fun setStructInArray(index: Int, struct: TestStruct)
 
     fun setValueInArray(index: Int, value: Int)
+
+    companion object : StructTestLibrary by LibraryLoader.loadLibrary()
 }

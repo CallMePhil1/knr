@@ -2,9 +2,10 @@ package primitives
 
 import knr.annotations.Library
 import knr.annotations.NamingConvention
+import knr.runtime.library.LibraryLoader
 import knr.runtime.typing.pointer.NativePointer
 
-@Library("src/test/libraries/build/Debug/primitivelib", naming = NamingConvention.SNAKECASE)
+@Library("primitivelib", naming = NamingConvention.SNAKECASE)
 interface PrimitiveTestLibrary {
     fun getBool(struct: NativePointer<PrimitiveStruct>): Boolean
     fun setBool(struct: NativePointer<PrimitiveStruct>, value: Boolean)
@@ -26,4 +27,6 @@ interface PrimitiveTestLibrary {
 
     fun getDouble(struct: NativePointer<PrimitiveStruct>): Double
     fun setDouble(struct: NativePointer<PrimitiveStruct>, value: Double)
+
+    companion object : PrimitiveTestLibrary by LibraryLoader.loadLibrary()
 }

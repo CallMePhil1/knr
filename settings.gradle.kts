@@ -2,7 +2,6 @@ rootProject.name = "knr"
 include("runtime")
 include("annotations")
 include("processors")
-include("processors-test")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
