@@ -20,10 +20,14 @@ import knr.processors.ext.*
 import knr.processors.util.getBitFlagValueType
 import knr.processors.util.getCharset
 import knr.processors.util.getNativeEnumValueType
+import knr.runtime.memory.ArenaMemory
 import knr.runtime.memory.NativeMemory
 import knr.runtime.typing.CString
 import knr.runtime.typing.NativeEnum
+import knr.runtime.typing.Struct
 import knr.runtime.typing.flags.BitFlagSet
+import knr.runtime.typing.pointer.NativePointer
+import knr.runtime.typing.pointer.Pointer
 import org.tinylog.Level
 import org.tinylog.configuration.Configuration
 import java.lang.foreign.*
@@ -58,6 +62,13 @@ internal class LibraryProcessor(
         val invokeBlock = CodeBlock.builder()
         val postInvoke = CodeBlock.builder()
         val returnBlock = CodeBlock.builder()
+
+        val isStruct = func.returnType!!.resolve().assignableTo<Struct<*>>(resolver)
+        val returnsByValue = isStruct && !func.annotations.has<ByRef>()
+
+        if (returnsByValue) {
+            invokeParamsList.add("(memory.memorySegment as SegmentAllocator)")
+        }
 
         func.parameters.forEach { param ->
             logger.debug { "Processing Param[Name: '${param.name!!.asString()}', Type: '${param.type.toTypeName()}']" }
@@ -142,6 +153,9 @@ internal class LibraryProcessor(
                 returnBlock.addStatement("return result")
             }
             returnType.isString -> {
+                if (!func.annotations.has<ReturnsString>())
+                    error("Function ${func.qualifiedName!!.asString()} returns 'String' but is missing 'ReturnsString' annotation")
+
                 val returnStringAnno = func.getAnnotationsByType(ReturnsString::class).first()
                 val charset = getCharset(returnStringAnno.charset)
 
@@ -170,6 +184,9 @@ internal class LibraryProcessor(
                 returnBlock.addStatement("return string")
             }
             returnType.assignableTo<CString>(resolver) -> {
+                if (!func.annotations.has<ReturnsString>())
+                    error("Function ${func.qualifiedName!!.asString()} returns 'CString' but is missing 'ReturnsString' annotation")
+
                 val returnStringAnno = func.getAnnotationsByType(ReturnsString::class).first()
                 val charset = getCharset(returnStringAnno.charset)
 
@@ -194,29 +211,94 @@ internal class LibraryProcessor(
 
                 returnBlock.addStatement("return cstring")
             }
-            returnType.inheritsNative(resolver) -> {
-                val annotation = getDisposer(func)
+            returnType.assignableTo<NativePointer<*>>(resolver) -> {
+                invokeBlock.addStatement("val result = (${methodHandle.name}.invokeExact($invokeParams) as MemorySegment).reinterpret(byteSize)")
 
-                if (annotation != null) {
-                    val invokeCall = getDisposeFuncString(annotation)
+                val structType = returnType.arguments[0].type!!.resolve()
+                val structTypeName = structType.qualifiedName!!.asString()
 
-                    preInvoke.addStatement("val byteSize = ${returnTypeName}.definition.byteSize")
+                when(val disposeAnno = getDisposer(func)) {
+                    null -> {
+                        preInvoke.addStatement("val byteSize = ${structTypeName}.definition.byteSize")
+                        postInvoke.add("""val memory = NativeMemory.wrap(result, null)
+                            |val struct = ${structTypeName}.wrap(memory)
+                            |""".trimMargin())
+                        returnBlock.addStatement("return nativePointerOf(struct)")
+                    }
+                    else -> {
+                        val disposeCall = getDisposeFuncString(disposeAnno)
 
-                    invokeBlock.addStatement("val result = (${methodHandle.name}.invokeExact($invokeParams) as MemorySegment).reinterpret(byteSize)")
+                        preInvoke.addStatement("val byteSize = ${structTypeName}.definition.byteSize")
 
-                    postInvoke.add("""var struct: ${returnTypeName}? = null
-                        |val disposeFun = { $invokeCall(struct!!) }
+                        postInvoke.add("""var ptr: ${returnTypeName}<$structTypeName>? = null
+                                |val disposeFun = { $disposeCall(ptr!!) }
+                                |val memory = NativeMemory.wrap(result, disposeFun)
+                                |val struct = ${structTypeName}.wrap(memory)
+                                |ptr = struct.asPointer()
+                                |""".trimMargin())
+
+                        returnBlock.addStatement("return nativePointerOf(struct)")
+                    }
+                }
+            }
+            returnType.assignableTo<Pointer<*>>(resolver) -> {
+                val returnTypeString = returnTypeName[0].lowercase() + returnTypeName.substring(1)
+
+                when (val disposeAnno = getDisposer(func)) {
+                    null -> {
+                        invokeBlock.addStatement("val result = ${methodHandle.name}.invokeExact($invokeParams) as MemorySegment")
+                        postInvoke.addStatement("val memory = NativeMemory.wrap(result, null)")
+                        returnBlock.addStatement("return ${returnTypeString}Of(memory)")
+                    }
+                    else -> {
+                        val invokeCall = getDisposeFuncString(disposeAnno)
+
+                        invokeBlock.addStatement("val result = ${methodHandle.name}.invokeExact($invokeParams) as MemorySegment")
+
+                        postInvoke.add("""var pointer: ${returnTypeName}? = null
+                        |val disposeFun = { $invokeCall(pointer!!) }
                         |val memory = NativeMemory.wrap(result, disposeFun)
-                        |struct = ${returnTypeName}.wrap(memory)
+                        |pointer = ${returnTypeString}Of(memory)
                         |""".trimMargin())
 
-                    returnBlock.addStatement("return struct")
+                        returnBlock.addStatement("return pointer")
+                    }
+                }
+            }
+            returnType.inheritsNative(resolver) -> {
+                when(returnsByValue) {
+                    true -> {
+                        preInvoke.addStatement("val memory = ArenaMemory.allocate(${returnTypeName}.definition.byteSize)")
 
-                } else {
-                    preInvoke.addStatement("val byteSize = ${returnTypeName}.definition.byteSize")
-                    invokeBlock.addStatement("val result = (${methodHandle.name}.invokeExact($invokeParams) as MemorySegment).reinterpret(byteSize)")
-                    postInvoke.addStatement("val memory = NativeMemory.wrap(result)")
-                    returnBlock.addStatement("return ${returnTypeName}.wrap(memory)")
+                        invokeBlock.addStatement("${methodHandle.name}.invokeExact($invokeParams) as MemorySegment")
+
+                        returnBlock.addStatement("return ${returnTypeName}.wrap(memory)")
+                    }
+                    false -> {
+                        val disposeAnno = getDisposer(func)
+
+                        if (disposeAnno != null) {
+                            val disposeCall = getDisposeFuncString(disposeAnno)
+
+                            preInvoke.addStatement("val byteSize = ${returnTypeName}.definition.byteSize")
+
+                            invokeBlock.addStatement("val result = (${methodHandle.name}.invokeExact($invokeParams) as MemorySegment).reinterpret(byteSize)")
+
+                            postInvoke.add("""var struct: ${returnTypeName}? = null
+                                |val disposeFun = { $disposeCall(struct!!) }
+                                |val memory = NativeMemory.wrap(result, disposeFun)
+                                |struct = ${returnTypeName}.wrap(memory)
+                                |""".trimMargin())
+
+                            returnBlock.addStatement("return struct")
+
+                        } else {
+                            preInvoke.addStatement("val byteSize = ${returnTypeName}.definition.byteSize")
+                            invokeBlock.addStatement("val result = (${methodHandle.name}.invokeExact($invokeParams) as MemorySegment).reinterpret(byteSize)")
+                            postInvoke.addStatement("val memory = NativeMemory.wrap(result, null)")
+                            returnBlock.addStatement("return ${returnTypeName}.wrap(memory)")
+                        }
+                    }
                 }
             }
             returnType.assignableTo<BitFlagSet<*, *>>(resolver) -> {
@@ -270,8 +352,9 @@ internal class LibraryProcessor(
 
         fileSpec.addImport("knr.runtime.ext", "downcallHandle")
         fileSpec.addImport("knr.runtime.typing", "cstringOf")
-        fileSpec.addClsImport(MemorySegment::class.java)
-        fileSpec.addClsImport(NativeMemory::class.java)
+        fileSpec.addPointerFuncs()
+        fileSpec.addClsImport(MemorySegment::class.java, SegmentAllocator::class.java)
+        fileSpec.addClsImport(ArenaMemory::class.java, NativeMemory::class.java)
         fileSpec.addClsImport(StandardCharsets::class.java)
         fileSpec.addClsImport(ValueLayout::class.java)
 
@@ -297,16 +380,18 @@ internal class LibraryProcessor(
             }
 
     private fun createMethodHandleProperty(func: KSFunctionDeclaration, nativeName: String, resolver: Resolver): PropertySpec {
-        val params = func.parameters.map { it.type.resolve().toValueLayoutString(resolver) }
+        val params = func.parameters.map { it.toMemoryLayout(resolver) }
+
         val paramsString = params.joinToString(",\n    ")
-        val returnType = func.returnType!!.resolve().toValueLayoutString(resolver)
+        val returnType = func.returnType!!.resolve()
+        val returnTypeString = func.returnToMemoryLayout(resolver)
 
         val initializer = CodeBlock.builder()
         initializer.add("""linker.downcallHandle(
             |segment = lookup.find(%S).orElseThrow(),
             |retType = %L,
             |%L
-            |)""".trimMargin(), nativeName, returnType, paramsString)
+            |)""".trimMargin(), nativeName, returnTypeString, paramsString)
 
         val propertySpec = PropertySpec
             .builder("${func.simpleName.asString()}Handle", MethodHandle::class, KModifier.PRIVATE)
@@ -354,7 +439,7 @@ internal class LibraryProcessor(
         return when {
             methodAnnotation == null -> when (naming) {
                 NamingConvention.CAMELCASE -> func.simpleName.asString()
-                NamingConvention.SNACKCASE -> func.simpleName.asString().camelToSnakecase()
+                NamingConvention.SNAKECASE -> func.simpleName.asString().camelToSnakecase()
                 NamingConvention.PASCALCASE -> func.simpleName.asString().camelToPascalcase()
             }
             else -> methodAnnotation.arguments.first {

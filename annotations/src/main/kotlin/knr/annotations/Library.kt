@@ -3,7 +3,7 @@ package knr.annotations
 enum class NamingConvention {
     CAMELCASE,
     PASCALCASE,
-    SNACKCASE
+    SNAKECASE
 }
 /**
  * This annotation targets interfaces that describe a C libraries API.

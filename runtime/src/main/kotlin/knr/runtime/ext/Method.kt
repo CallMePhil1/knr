@@ -1,12 +1,6 @@
 package knr.runtime.ext
 
-import java.lang.foreign.AddressLayout
-import java.lang.foreign.FunctionDescriptor
-import java.lang.foreign.Linker
-import java.lang.foreign.MemoryLayout
-import java.lang.foreign.MemorySegment
-import java.lang.foreign.StructLayout
-import java.lang.foreign.ValueLayout
+import java.lang.foreign.*
 import java.lang.invoke.MethodHandle
 
 private val typeMapping = mapOf<MemoryLayout, Class<*>>(
@@ -35,7 +29,7 @@ private val newTypeMapping = mapOf(
 fun Linker.downcallHandle(
     segment: MemorySegment,
     retType: MemoryLayout? = null,
-    vararg params: ValueLayout
+    vararg params: MemoryLayout
 ): MethodHandle {
     val funcDescriptor = if (retType == null) {
         FunctionDescriptor.ofVoid(*params)

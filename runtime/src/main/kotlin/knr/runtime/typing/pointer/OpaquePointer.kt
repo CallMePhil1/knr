@@ -11,4 +11,4 @@ class OpaquePointer internal constructor(
     override fun set(value: Unit) {}
 }
 
-fun opaquePointerOf(arc: Memory) = OpaquePointer(arc)
+fun opaquePointerOf(memory: Memory) = OpaquePointer(memory)

@@ -1,7 +1,6 @@
 package knr.runtime.memory
 
 import knr.runtime.layout.StructDefinition
-import knr.runtime.native.Stdlib
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -136,7 +135,6 @@ class NativeMemory internal constructor(
     }
 
     companion object {
-        fun wrap(memorySegment: MemorySegment) = NativeMemory(memorySegment) { Stdlib.free(memorySegment) }
         fun wrap(memorySegment: MemorySegment, disposeFunc: (() -> Unit)?) = NativeMemory(memorySegment, disposeFunc)
     }
 }
